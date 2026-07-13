@@ -19,7 +19,6 @@ class SimulationType(Enum):
     PARTICLE_IN_CELL = "PIC"  # Particle-in-cell
     MONTE_CARLO = "monte_carlo"
     N_BODY = "n_body"
-    RADIATIVE_TRANSFER = "radiative_transfer"
 
 
 class InsightCategory(Enum):

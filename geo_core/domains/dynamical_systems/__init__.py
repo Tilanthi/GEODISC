@@ -1,5 +1,5 @@
 """
-Dynamical Systems Theory Domain Module for STAN-XI-ASTRO
+Dynamical Systems Theory Domain Module for GEODISC
 
 Chaos theory, stability analysis, bifurcations
 

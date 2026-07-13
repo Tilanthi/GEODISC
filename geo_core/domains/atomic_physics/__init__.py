@@ -1,5 +1,5 @@
 """
-Atomic Physics Domain Module for STAN-XI-ASTRO
+Atomic Physics Domain Module for GEODISC
 
 Energy levels, transitions, collisional excitation, ionization
 

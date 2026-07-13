@@ -1,5 +1,5 @@
 """
-Physical analogical reasoning engine for STAN-XI-ASTRO
+Physical analogical reasoning engine for GEODISC
 
 Applies analogical reasoning to novel physical phenomena.
 Enables transfer of understanding from known to novel phenomena.
@@ -77,75 +77,14 @@ class PhysicalAnalogicalReasoner:
         logger.info("PhysicalAnalogicalReasoner initialized")
 
     def _register_common_phenomena(self):
-        """Register common astrophysical phenomena"""
-        # Black hole accretion
-        self.register_phenomenon(Phenomenon(
-            name="accretion_disk",
-            structure={
-                "type": "rotating_disk",
-                "components": ["central_mass", "disk", "viscosity", "magnetic_field"],
-                "interactions": ["gravitational", "viscous_heating", "magnetic_torque"],
-                "driving_forces": ["gravity"],
-                "dissipative": "viscosity"
-            },
-            parameters={
-                "mass_range": (1e33, 1e40),
-                "temperature_range": (1e4, 1e8),
-                "density_range": (1e-15, 1e-8)
-            },
-            equations=[
-                "Navier-Stokes with viscosity",
-                "Energy equation: Q_visc = nu * (dOmega/dr)^2",
-                "Angular momentum transport"
-            ],
-            key_features=["accretion_power", "jet_formation", "spectral_energy_distribution"]
-        ))
+        """Register common physical phenomena.
 
-        # Stellar oscillation
-        self.register_phenomenon(Phenomenon(
-            name="stellar_oscillation",
-            structure={
-                "type": "oscillating_sphere",
-                "components": ["star", "oscillation_modes", "driving", "damping"],
-                "interactions": ["pressure", "gravity", "radiation"],
-                "driving_forces": ["pressure_gradient", "turbulence"],
-                "dissipative": ["radiation_damping"]
-            },
-            parameters={
-                "period_range": (1e-3, 1),
-                "amplitude_range": (1e-6, 1e-2),
-                "frequency_range": (1e-6, 1)
-            },
-            equations=[
-                "Wave equation with gravity",
-                "Boundary conditions at surface",
-                "Mode coupling"
-            ],
-            key_features=["p_modes", "g_modes", "asteroseismology"]
-        ))
-
-        # Planetary rings
-        self.register_phenomenon(Phenomenon(
-            name="planetary_rings",
-            structure={
-                "type": "disk_system",
-                "components": ["particles", "central_body", "shepherd_moons"],
-                "interactions": ["collisions", "gravitational_perturbations"],
-                "driving_forces": ["gravity", "orbital_mechanics"],
-                "dissipative": ["inelastic_collisions"]
-            },
-            parameters={
-                "particle_size_range": (1e-4, 10),
-                "optical_depth_range": (0.01, 10),
-                "velocity_range": (1e3, 3e4)
-            },
-            equations=[
-                "Balance of gravitational and collisional forces",
-                "Viscous spreading equation",
-                "Gap opening by moons"
-            ],
-            key_features=["resonances", "spokes", "gaps"]
-        ))
+        Astrophysical phenomena (accretion disks, stellar oscillations,
+        planetary rings) were removed during the geochemistry migration.
+        Geochemistry-specific phenomena will be registered here as domain
+        training proceeds.
+        """
+        pass
 
     def register_phenomenon(self, phenomenon: Phenomenon) -> None:
         """

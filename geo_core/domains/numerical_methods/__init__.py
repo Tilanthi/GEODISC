@@ -1,5 +1,5 @@
 """
-Numerical Methods Domain Module for STAN-XI-ASTRO
+Numerical Methods Domain Module for GEODISC
 
 Finite difference/volume, spectral methods, particle methods
 

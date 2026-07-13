@@ -1,5 +1,5 @@
 """
-STAN-XI-ASTRO V4.0 Integration Tests
+GEODISC V4.0 Integration Tests
 
 Tests for the integrated V4.0 system with all four capabilities.
 

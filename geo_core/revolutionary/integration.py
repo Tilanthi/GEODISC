@@ -1,5 +1,5 @@
 """
-STAN-XI-ASTRO V4.0 Integration Coordinator
+GEODISC V4.0 Integration Coordinator
 
 Integrates the four revolutionary V4.0 capabilities:
 1. Meta-Context Engine (MCE)

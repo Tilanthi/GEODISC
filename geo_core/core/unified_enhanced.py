@@ -12,7 +12,7 @@ Integrates:
   - Riemannian optimization (25-30% faster convergence)
   - Convergence monitoring (adaptive control)
 
-This is the main entry point for the enhanced STAN-XI-ASTRO system.
+This is the main entry point for the enhanced GEODISC system.
 """
 
 from typing import Dict, List, Any, Optional, Union
@@ -696,7 +696,7 @@ class EnhancedUnifiedSTANSystem:
         """
         Process a query using all available capabilities
 
-        This is the main entry point for interacting with STAN-XI-ASTRO.
+        This is the main entry point for interacting with GEODISC.
 
         Args:
             query: User query
@@ -769,7 +769,7 @@ class EnhancedUnifiedSTANSystem:
                         if 'confidence' not in result or result['confidence'] == 0:
                             result['confidence'] = 0.6  # Default confidence for base system
                     else:
-                        result['answer'] = "STAN-XI-ASTRO is ready to assist with your query."
+                        result['answer'] = "GEODISC is ready to assist with your query."
                         result['confidence'] = 0.5
             except Exception as e:
                 logger.error(f"Query processing failed: {e}")

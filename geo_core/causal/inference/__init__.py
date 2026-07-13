@@ -1,5 +1,5 @@
 """
-Causal inference methods for STAN-XI-ASTRO
+Causal inference methods for GEODISC
 
 This module provides simulation-based inference methods for cases where
 likelihoods are intractable, which is common in astrophysics.

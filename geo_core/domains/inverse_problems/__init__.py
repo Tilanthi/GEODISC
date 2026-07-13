@@ -1,5 +1,5 @@
 """
-Inverse Problems Domain Module for STAN-XI-ASTRO
+Inverse Problems Domain Module for GEODISC
 
 Deconvolution, reconstruction, regularization
 

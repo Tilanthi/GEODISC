@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-STAN-XI-ASTRO V4.0 Test Runner
+GEODISC V4.0 Test Runner
 
 Simple test runner for V4.0 capabilities.
 
@@ -161,7 +161,7 @@ def run_integration_tests():
 def run_all_tests():
     """Run all tests."""
     print("=" * 60)
-    print("STAN-XI-ASTRO V4.0 Test Suite")
+    print("GEODISC V4.0 Test Suite")
     print("=" * 60)
     print()
 
@@ -190,7 +190,7 @@ def run_all_tests():
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(description="STAN-XI-ASTRO V4.0 Test Runner")
+    parser = argparse.ArgumentParser(description="GEODISC V4.0 Test Runner")
     parser.add_argument("--mce", action="store_true", help="Test MCE only")
     parser.add_argument("--asc", action="store_true", help="Test ASC only")
     parser.add_argument("--crn", action="store_true", help="Test CRN only")

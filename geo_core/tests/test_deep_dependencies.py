@@ -137,9 +137,7 @@ def test_module_exports():
         ],
         "geo_core.reasoning": [
             "DoWhyCausalEngine",
-            "AstrophysicalCausalInference",
             "create_dowhy_engine",
-            "create_astrophysical_causal_engine",
             "is_dowhy_available",
         ],
     }
@@ -190,9 +188,7 @@ def test_function_availability():
         ("geo_core.physics.symbolic_physics", "create_symbolic_physics_engine", []),
         ("geo_core.physics.symbolic_physics", "is_sympy_available", []),
         ("geo_core.reasoning.dowhy_causal_engine", "DoWhyCausalEngine", []),
-        ("geo_core.reasoning.dowhy_causal_engine", "AstrophysicalCausalInference", []),
         ("geo_core.reasoning.dowhy_causal_engine", "create_dowhy_engine", []),
-        ("geo_core.reasoning.dowhy_causal_engine", "create_astrophysical_causal_engine", []),
         ("geo_core.reasoning.dowhy_causal_engine", "is_dowhy_available", []),
     ]
 

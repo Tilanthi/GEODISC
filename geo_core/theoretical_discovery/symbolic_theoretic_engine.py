@@ -16,17 +16,14 @@ import re
 
 
 class PhysicsDomain(Enum):
-    """Major physics domains relevant to astrophysics"""
+    """Major physics domains"""
     MECHANICS = "mechanics"
     THERMODYNAMICS = "thermodynamics"
     ELECTROMAGNETISM = "electromagnetism"
     FLUID_DYNAMICS = "fluid_dynamics"
-    GENERAL_RELATIVITY = "general_relativity"
     QUANTUM_MECHANICS = "quantum_mechanics"
-    PLASMA_PHYSICS = "plasma_physics"
     NUCLEAR_PHYSICS = "nuclear_physics"
     STATISTICAL_MECHANICS = "statistical_mechanics"
-    RADIATIVE_PROCESSES = "radiative_processes"
 
 
 @dataclass
@@ -508,8 +505,6 @@ class SymbolicTheoreticEngine:
                 predictions.extend(self._fluid_dynamics_predictions(variables))
             elif domain == PhysicsDomain.THERMODYNAMICS:
                 predictions.extend(self._thermodynamics_predictions(variables))
-            elif domain == PhysicsDomain.GENERAL_RELATIVITY:
-                predictions.extend(self._gr_predictions(variables))
 
         # Predictions from derived relations
         for relation in relations:
@@ -552,16 +547,6 @@ class SymbolicTheoreticEngine:
         if 'temperature' in variables:
             predictions.append("Thermal equilibrium: energy in = energy out")
             predictions.append("Heat capacity determines thermal response time")
-
-        return predictions
-
-    def _gr_predictions(self, variables: List[str]) -> List[str]:
-        """Generate predictions from general relativity"""
-        predictions = []
-
-        if 'mass' in variables and 'radius' in variables:
-            predictions.append("Schwarzschild radius: R_s = 2GM/c^2")
-            predictions.append("Strong gravity when R ≲ few × R_s")
 
         return predictions
 
@@ -725,8 +710,6 @@ class SymbolicTheoreticEngine:
             'velocity': PhysicsDomain.MECHANICS,
             'magnetic_field': PhysicsDomain.ELECTROMAGNETISM,
             'mass': PhysicsDomain.MECHANICS,
-            'redshift': PhysicsDomain.GENERAL_RELATIVITY,
-            'luminosity': PhysicsDomain.RADIATIVE_PROCESSES,
         }
 
         for obs in observations.keys():
@@ -758,11 +741,6 @@ class SymbolicTheoreticEngine:
                     "Newton's 2nd law: F = ma",
                     "Work-energy: W = ∫F·dl",
                     "Power: P = F·v"
-                ])
-            elif domain == PhysicsDomain.GENERAL_RELATIVITY:
-                equations.extend([
-                    "Einstein field equations: G_μν = 8πG T_μν",
-                    "Geodesic equation: d^2x^μ/dτ^2 + Γ^μ_αβ (dx^α/dτ)(dx^β/dτ) = 0"
                 ])
 
         return equations

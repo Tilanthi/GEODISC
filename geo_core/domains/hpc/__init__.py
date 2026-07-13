@@ -1,5 +1,5 @@
 """
-High Performance Computing Domain Module for STAN-XI-ASTRO
+High Performance Computing Domain Module for GEODISC
 
 Parallelization, GPU computing, optimization
 

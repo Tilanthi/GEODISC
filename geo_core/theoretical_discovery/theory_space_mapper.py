@@ -81,11 +81,11 @@ class TheorySpaceMapper:
         self.connections = []  # List of TheoryConnection
         self.theory_graph = nx.DiGraph()
 
-        # Initialize with known astrophysical theories
+        # Initialize with known physical theories
         self._initialize_known_theories()
 
     def _initialize_known_theories(self):
-        """Initialize with well-known astrophysical theories"""
+        """Initialize with well-known physical theories"""
 
         # Fluid dynamics theories
         self.add_theory(TheoryFramework(
@@ -116,43 +116,6 @@ class TheorySpaceMapper:
             limitations=["Turbulence requires closure models"]
         ))
 
-        # Stellar structure
-        self.add_theory(TheoryFramework(
-            name="Polytropic_Model",
-            description="Polytropic equation of state for stars",
-            theory_type=TheoryType.ANALYTICAL,
-            domains=["stellar_structure", "astrophysics"],
-            key_equations=["P = Kρ^(1+1/n)"],
-            assumptions=["Polytropic relation", "Hydrostatic equilibrium"],
-            predictions=["Lane-Emden equation solutions"],
-            limitations=["Simplified EOS"]
-        ))
-
-        # Black hole physics
-        self.add_theory(TheoryFramework(
-            name="Schwarzschild_Metric",
-            description="Non-rotating black hole solution",
-            theory_type=TheoryType.FUNDAMENTAL,
-            domains=["general_relativity", "black_holes"],
-            key_equations=[
-                "ds² = -(1-2GM/rc²)dt² + (1-2GM/rc²)⁻¹dr² + r²dΩ²"
-            ],
-            assumptions=["Spherical symmetry", "No rotation", "Vacuum"],
-            predictions=["Event horizon at r=2GM/c²"],
-            limitations=["No spin, no charge"]
-        ))
-
-        self.add_theory(TheoryFramework(
-            name="Kerr_Metric",
-            description="Rotating black hole solution",
-            theory_type=TheoryType.FUNDAMENTAL,
-            domains=["general_relativity", "black_holes"],
-            key_equations=["Kerr line element with parameters a, M"],
-            assumptions=["Axisymmetry", "Stationary", "Vacuum"],
-            predictions=["Frame dragging", "Ergosphere"],
-            limitations=["No magnetic fields"]
-        ))
-
         # Establish known connections
         self.add_connection(TheoryConnection(
             theory_a="Euler_Equations",
@@ -160,14 +123,6 @@ class TheorySpaceMapper:
             relation_type=TheoryRelation.LIMITING_CASE,
             strength=0.95,
             description="Navier-Stokes reduces to Euler when μ → 0"
-        ))
-
-        self.add_connection(TheoryConnection(
-            theory_a="Schwarzschild_Metric",
-            theory_b="Kerr_Metric",
-            relation_type=TheoryRelation.LIMITING_CASE,
-            strength=0.9,
-            description="Schwarzschild is limit of Kerr as a → 0"
         ))
 
     def add_theory(self, theory: TheoryFramework):
@@ -489,10 +444,7 @@ class TheorySpaceMapper:
         query_lower = query.lower()
 
         domain_keywords = {
-            'fluid_dynamics': ['fluid', 'flow', 'turbulence', 'viscous', 'shock', 'accretion'],
-            'stellar_structure': ['star', 'stellar', 'main sequence', 'giant', 'dwarf'],
-            'black_holes': ['black hole', 'schwarzschild', 'kerr', 'event horizon'],
-            'general_relativity': ['gravitational', 'metric', 'curvature', 'relativ'],
+            'fluid_dynamics': ['fluid', 'flow', 'turbulence', 'viscous', 'shock'],
             'thermodynamics': ['temperature', 'heat', 'entropy', 'pressure'],
             'electromagnetism': ['magnetic', 'electric', 'radiation', 'field'],
             'quantum_mechanics': ['quantum', 'wave function', 'uncertainty'],
@@ -503,7 +455,7 @@ class TheorySpaceMapper:
             if any(kw in query_lower for kw in keywords):
                 domains.append(domain)
 
-        return domains if domains else ['astrophysics']
+        return domains if domains else ['general_physics']
 
     def _identify_theories_from_query(self, query: str) -> List[str]:
         """Identify relevant theories from query"""
@@ -513,9 +465,6 @@ class TheorySpaceMapper:
         theory_keywords = {
             'Euler_Equations': ['euler', 'inviscid', 'ideal fluid'],
             'Navier_Stokes': ['navier', 'stokes', 'viscous', 'viscosity'],
-            'Polytropic_Model': ['polytrope', 'lane-emden'],
-            'Schwarzschild_Metric': ['schwarzschild', 'non-rotating', 'static black hole'],
-            'Kerr_Metric': ['kerr', 'rotating black hole', 'spin'],
         }
 
         for theory, keywords in theory_keywords.items():

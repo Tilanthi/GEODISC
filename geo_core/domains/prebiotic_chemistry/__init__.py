@@ -1,5 +1,5 @@
 """
-Prebiotic Chemistry Domain Module for STAN-XI-ASTRO
+Prebiotic Chemistry Domain Module for GEODISC
 
 Complex organics in space, ISM chemistry, delivery to planets
 

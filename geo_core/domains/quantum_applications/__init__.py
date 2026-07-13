@@ -1,5 +1,5 @@
 """
-Quantum Applications Domain Module for STAN-XI-ASTRO
+Quantum Applications Domain Module for GEODISC
 
 Atomic structure, molecular processes, quantum optics in astrophysics
 

@@ -1,5 +1,5 @@
 """
-Physics curriculum learning system for STAN-XI-ASTRO
+Physics curriculum learning system for GEODISC
 
 Learns physics from simple to complex, building intuition progressively.
 Curriculum-based approach with stages from basic mechanics to expert-level physics.

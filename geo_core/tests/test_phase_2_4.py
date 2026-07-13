@@ -286,7 +286,7 @@ def test_enhanced_system():
 def main():
     """Run all validation tests"""
     print("=" * 70)
-    print("STAN-XI-ASTRO Phase 2-4 Enhancement Validation")
+    print("GEODISC Phase 2-4 Enhancement Validation")
     print("=" * 70)
 
     tests = [

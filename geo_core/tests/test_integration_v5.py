@@ -135,7 +135,6 @@ def test_dowhy_integration():
 
     from geo_core.reasoning.dowhy_causal_engine import (
         DoWhyCausalEngine,
-        AstrophysicalCausalInference,
         is_dowhy_available,
     )
 
@@ -148,18 +147,13 @@ def test_dowhy_integration():
     assert engine.available, "Engine should be available"
     print("✓ Created DoWhy causal engine")
 
-    # Test astrophysical causal inference
-    astro_engine = AstrophysicalCausalInference()
-    assert astro_engine.available, "Astrophysical engine should be available"
-    print("✓ Created astrophysical causal inference engine")
-
     # Test assumption validation (without data)
-    validation = astro_engine.validate_causal_assumptions("test_model")
+    validation = engine.validate_causal_assumptions("test_model")
     assert isinstance(validation, dict), "Validation should return dict"
     print(f"✓ Assumption validation: {validation}")
 
     # Test summary
-    summary = astro_engine.get_summary("test_model")
+    summary = engine.get_summary("test_model")
     assert summary is not None, "Summary should not be None"
     print(f"✓ Engine summary: {summary}")
 
@@ -279,9 +273,7 @@ def test_reasoning_module_exports():
 
     # Check DoWhy exports
     assert hasattr(reasoning, 'DoWhyCausalEngine'), "Should export DoWhyCausalEngine"
-    assert hasattr(reasoning, 'AstrophysicalCausalInference'), "Should export AstrophysicalCausalInference"
     assert hasattr(reasoning, 'create_dowhy_engine'), "Should export create_dowhy_engine"
-    assert hasattr(reasoning, 'create_astrophysical_causal_engine'), "Should export create_astrophysical_causal_engine"
     assert hasattr(reasoning, 'is_dowhy_available'), "Should export is_dowhy_available"
 
     print("✓ All DoWhy exports present in reasoning module")

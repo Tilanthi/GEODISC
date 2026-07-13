@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive Integration Check for STAN-XI-ASTRO
+Comprehensive Integration Check for GEODISC
 
 Tests all internal links, dependencies, and module interconnections:
 1. Import chain validation
@@ -39,7 +39,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 warnings.filterwarnings('ignore')
 
 print("=" * 80)
-print("STAN-XI-ASTRO COMPREHENSIVE INTEGRATION CHECK")
+print("GEODISC COMPREHENSIVE INTEGRATION CHECK")
 print("=" * 80)
 print()
 
@@ -134,18 +134,13 @@ def test_v47_causal_imports():
 def test_v47_physics_imports():
     """Test V47+ enhanced physics imports"""
     from geo_core.physics import (
-        RelativisticPhysics,
         QuantumMechanics,
         NuclearAstrophysics,
     )
-    print("  ✓ RelativisticPhysics imported")
     print("  ✓ QuantumMechanics imported")
     print("  ✓ NuclearAstrophysics imported")
 
     # Test actual functionality
-    rs = RelativisticPhysics.schwarzschild_radius(1.989e33)
-    print(f"  ✓ RelativisticPhysics.schwarzschild_radius works: {rs:.2e} cm")
-
     ef = QuantumMechanics.fermi_energy(1e30, 9.109e-28)
     print(f"  ✓ QuantumMechanics.fermi_energy works: {ef:.2e} erg")
 
@@ -202,17 +197,13 @@ def test_v47_metalearning_imports():
 @test_section("Cross-Module Function Calls: Physics")
 def test_physics_cross_module_calls():
     """Test that physics modules can be called from other modules"""
-    from geo_core.physics import UnifiedPhysicsEngine, RelativisticPhysics
+    from geo_core.physics import UnifiedPhysicsEngine
     from geo_core.domains import BaseDomainModule, DomainConfig
 
     # Test that physics can be used within domain context
     engine = UnifiedPhysicsEngine()
     result = engine.compute('blackbody', {'wavelength': 500e-7, 'temperature': 5778})
     print(f"  ✓ UnifiedPhysicsEngine.compute works within test context")
-
-    # Test relativistic physics
-    gamma = RelativisticPhysics.lorentz_factor(0.5 * 3e10)
-    print(f"  ✓ RelativisticPhysics.lorentz_factor callable: γ = {gamma:.3f}")
 
 
 @test_section("Cross-Module Function Calls: Causal to Physics")
@@ -427,15 +418,11 @@ def test_causal_graceful_degradation():
 def test_physics_graceful_degradation():
     """Test that physics modules handle missing dependencies gracefully"""
     from geo_core.physics import (
-        RelativisticPhysics,
         QuantumMechanics,
         NuclearAstrophysics,
     )
 
     # Test that individual functions work even if other components fail
-    gamma = RelativisticPhysics.lorentz_factor(0.1 * 3e10)
-    print(f"  ✓ RelativisticPhysics works independently")
-
     wavelength = QuantumMechanics.de_broglie_wavelength(1e-24)
     print(f"  ✓ QuantumMechanics works independently")
 
@@ -625,7 +612,7 @@ def run_all_tests():
 
     if failed == 0:
         print("\n🎉 ALL INTEGRATION TESTS PASSED!")
-        print("\nSTAN-XI-ASTRO is fully integrated with:")
+        print("\nGEODISC is fully integrated with:")
         print("  • V47+ Enhanced Causal Discovery")
         print("  • V47+ Enhanced Physics Curriculum")
         print("  • V47+ Enhanced Domain Modules")

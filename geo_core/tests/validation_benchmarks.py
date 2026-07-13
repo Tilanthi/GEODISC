@@ -1,5 +1,5 @@
 """
-Validation benchmarks for STAN-XI-ASTRO enhancements
+Validation benchmarks for GEODISC enhancements
 
 Tests:
 - Domain adaptation performance
@@ -44,7 +44,7 @@ class BenchmarkResult:
 
 class ValidationSuite:
     """
-    Validation suite for STAN-XI-ASTRO enhancements
+    Validation suite for GEODISC enhancements
 
     Comprehensive testing of new capabilities.
     """

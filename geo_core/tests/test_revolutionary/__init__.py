@@ -1,5 +1,5 @@
 """
-STAN-XI-ASTRO V4.0 Test Suite
+GEODISC V4.0 Test Suite
 
 Test suite for the four revolutionary V4.0 capabilities.
 

@@ -1,5 +1,5 @@
 """
-Statistical Mechanics Domain Module for STAN-XI-ASTRO
+Statistical Mechanics Domain Module for GEODISC
 
 Ensembles, distribution functions, thermodynamics
 

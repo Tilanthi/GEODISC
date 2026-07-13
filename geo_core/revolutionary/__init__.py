@@ -1,5 +1,5 @@
 """
-STAN-XI-ASTRO V4.0 Revolutionary Capabilities
+GEODISC V4.0 Revolutionary Capabilities
 
 This module exports the four revolutionary capabilities that represent
 a major step toward AGI, estimated to improve capability from ~57% (V3.0)

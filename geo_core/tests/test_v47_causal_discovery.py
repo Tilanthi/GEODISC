@@ -377,7 +377,7 @@ def test_module_interconnections():
 def run_all_tests():
     """Run all V47+ causal discovery tests"""
     print("\n" + "=" * 70)
-    print("STAN-XI-ASTRO V47+ Enhanced Causal Discovery Test Suite")
+    print("GEODISC V47+ Enhanced Causal Discovery Test Suite")
     print("=" * 70)
     print()
 

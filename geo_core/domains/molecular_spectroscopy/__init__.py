@@ -1,5 +1,5 @@
 """
-Molecular Spectroscopy Domain Module for STAN-XI-ASTRO
+Molecular Spectroscopy Domain Module for GEODISC
 
 Rotational/vibrational spectra, Einstein coefficients, line shapes
 

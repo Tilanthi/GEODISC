@@ -1,5 +1,5 @@
 """
-Fluid Dynamics & Turbulence Domain Module for STAN-XI-ASTRO
+Fluid Dynamics & Turbulence Domain Module for GEODISC
 
 Navier-Stokes, Reynolds decomposition, turbulence spectra
 

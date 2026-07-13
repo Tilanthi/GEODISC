@@ -1,5 +1,5 @@
 """
-Signal Processing Domain Module for STAN-XI-ASTRO
+Signal Processing Domain Module for GEODISC
 
 Time series analysis, periodograms, wavelets, filtering
 

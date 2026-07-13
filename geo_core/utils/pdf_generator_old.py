@@ -563,10 +563,10 @@ class PDFGenerator:
         """Get figure caption by number. Supports both V4.0 and legacy figures."""
         # V4.0 figure captions
         v40_captions = {
-            1: "STAN-XI-ASTRO V4.0 System Architecture showing the seven-layer structure: Semantic Grounding, Metacognitive Systems, Multi-Mind Orchestration, Meta-Context Engine, Integration, Memory/Knowledge, and Physical Foundation layers",
+            1: "GEODISC V4.0 System Architecture showing the seven-layer structure: Semantic Grounding, Metacognitive Systems, Multi-Mind Orchestration, Meta-Context Engine, Integration, Memory/Knowledge, and Physical Foundation layers",
             2: "V4.0 Revolutionary Capabilities: (A) Meta-Context Engine with temporal scales and cognitive frames, (B) Autocatalytic Self-Compiler cycle, (C) Cognitive-Relativity Navigator abstraction scale, (D) Multi-Mind Orchestration with seven specialized minds",
             3: "V95 Semantic Grounding Layer anti-hallucination system showing verification pipeline and performance metrics",
-            4: "STAN-XI-ASTRO Domain Expansion: Original 9 domains (blue), V1.0 expansion +14 domains (green), V4.0 expansion +48 astrophysics domains (orange). Total: 75 domains, all verified operational (100% pass rate)"
+            4: "GEODISC Domain Expansion: Original 9 domains (blue), V1.0 expansion +14 domains (green), V4.0 expansion +48 astrophysics domains (orange). Total: 75 domains, all verified operational (100% pass rate)"
         }
         # Legacy figure captions
         legacy_captions = {
@@ -911,7 +911,7 @@ def generate_stan_paper_with_figures(
         keywords=keywords or []
     )
 
-    generator.add_title_page(title, authors or ["STAN Team"], ["STAN-XI-ASTRO"], "March 2026")
+    generator.add_title_page(title, authors or ["STAN Team"], ["GEODISC"], "March 2026")
     if abstract:
         generator.add_abstract(abstract, keywords)
     generator.generate_from_markdown_with_figures(markdown_file, figures_dir)
@@ -954,7 +954,7 @@ def create_publication_pdf_from_markdown(
     generator = PDFGenerator(
         filename=output_pdf,
         title=title,
-        author=metadata.get('author', 'STAN-XI-ASTRO'),
+        author=metadata.get('author', 'GEODISC'),
         subject=metadata.get('subject', ''),
         keywords=metadata.get('keywords', [])
     )

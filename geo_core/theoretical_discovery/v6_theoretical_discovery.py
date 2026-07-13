@@ -297,15 +297,10 @@ class V6TheoreticalDiscovery:
         domain_mapping = {
             'fluid': PhysicsDomain.FLUID_DYNAMICS,
             'thermal': PhysicsDomain.THERMODYNAMICS,
-            'relativistic': PhysicsDomain.GENERAL_RELATIVITY,
             'quantum': PhysicsDomain.QUANTUM_MECHANICS,
             'stellar': PhysicsDomain.NUCLEAR_PHYSICS,
-            'galaxy': PhysicsDomain.GENERAL_RELATIVITY,
-            'astrophysics': PhysicsDomain.GENERAL_RELATIVITY,  # Default
             'mechanics': PhysicsDomain.MECHANICS,
             'electromagnetic': PhysicsDomain.ELECTROMAGNETISM,
-            'plasma': PhysicsDomain.PLASMA_PHYSICS,
-            'radiative': PhysicsDomain.RADIATIVE_PROCESSES,
         }
 
         physics_domains = []
@@ -313,12 +308,12 @@ class V6TheoreticalDiscovery:
             if d in domain_mapping:
                 physics_domains.append(domain_mapping[d])
             else:
-                # Default to general relativity for unknown astrophysics domains
-                physics_domains.append(PhysicsDomain.GENERAL_RELATIVITY)
+                # Default to thermodynamics for unknown domains
+                physics_domains.append(PhysicsDomain.THERMODYNAMICS)
 
         # Ensure we have at least one domain
         if not physics_domains:
-            physics_domains = [PhysicsDomain.GENERAL_RELATIVITY]
+            physics_domains = [PhysicsDomain.THERMODYNAMICS]
 
         # Create physical constraints
         constraints = []

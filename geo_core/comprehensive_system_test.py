@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive System Test for STAN-XI-ASTRO - V2
+Comprehensive System Test for GEODISC - V2
 
 Tests all advanced capabilities and their integration using actual module paths.
 """
@@ -39,7 +39,7 @@ class CapabilityTestResult:
 
 
 class ComprehensiveSystemTest:
-    """Comprehensive test suite for all STAN-XI-ASTRO capabilities"""
+    """Comprehensive test suite for all GEODISC capabilities"""
 
     def __init__(self):
         self.test_results: Dict[str, CapabilityTestResult] = {}
@@ -54,7 +54,6 @@ class ComprehensiveSystemTest:
 
             # Physics
             ("Unified Physics", "geo_core.physics", "UnifiedPhysicsEngine"),
-            ("Relativistic Physics", "geo_core.physics.relativistic_physics", "RelativisticPhysics"),
             ("Quantum Mechanics", "geo_core.physics.quantum_mechanics", "QuantumMechanics"),
 
             # Causal & Advanced Reasoning (actual file names)
@@ -74,7 +73,7 @@ class ComprehensiveSystemTest:
     def test_all(self):
         """Run all tests"""
         print("=" * 80)
-        print("STAN-XI-ASTRO COMPREHENSIVE SYSTEM TEST V2")
+        print("GEODISC COMPREHENSIVE SYSTEM TEST V2")
         print("=" * 80)
         print()
 
@@ -295,7 +294,7 @@ class ComprehensiveSystemTest:
             print()
             print("✓ ALL CAPABILITIES VERIFIED")
             print()
-            print("STAN-XI-ASTRO is ready with full integration of:")
+            print("GEODISC is ready with full integration of:")
             print("  - 75 Domain Modules")
             print("  - Memory Systems (MORK, Graph, Working, Episodic)")
             print("  - Physics Engine (Unified, Relativistic, Quantum, Nuclear)")

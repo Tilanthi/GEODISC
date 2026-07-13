@@ -1,5 +1,5 @@
 """
-Unified differentiable physics interface for STAN-XI-ASTRO
+Unified differentiable physics interface for GEODISC
 
 Integrates:
 - Differentiable physics (V42)
@@ -148,8 +148,6 @@ class UnifiedPhysicsEngine:
         """Initialize default physics models"""
         # Gravitational models
         self.register_model('newtonian_gravity', self._newtonian_gravity)
-        self.register_model('schwarzschild_metric', self._schwarzschild_metric)
-        self.register_model('orbital_velocity', self._orbital_velocity)
 
         # Radiative models
         self.register_model('blackbody', self._blackbody_spectrum)
@@ -158,7 +156,6 @@ class UnifiedPhysicsEngine:
 
         # Thermodynamic models
         self.register_model('ideal_gas', self._ideal_gas_law)
-        self.register_model('virial_theorem', self._virial_theorem)
 
     def _initialize_default_constraints(self):
         """Initialize default physical constraints"""
@@ -459,18 +456,6 @@ class UnifiedPhysicsEngine:
         G = self.constants['G']
         return G * mass / (distance ** 2)
 
-    def _schwarzschild_metric(self, mass: float, radius: float) -> float:
-        """Schwarzschild metric component g_tt"""
-        G = self.constants['G']
-        c = self.constants['c']
-        rs = 2 * G * mass / (c ** 2)
-        return 1 - rs / radius
-
-    def _orbital_velocity(self, mass: float, radius: float) -> float:
-        """Circular orbital velocity"""
-        G = self.constants['G']
-        return np.sqrt(G * mass / radius)
-
     def _blackbody_spectrum(self, wavelength: float, temperature: float) -> float:
         """Blackbody spectrum (Planck function)"""
         h = self.constants['h']
@@ -494,10 +479,6 @@ class UnifiedPhysicsEngine:
         """Ideal gas law: PV = nRT"""
         R = 8.314e7  # Gas constant in CGS
         return n_moles * R * temperature / volume
-
-    def _virial_theorem(self, kinetic_energy: float, potential_energy: float) -> float:
-        """Virial theorem check: 2K + U = 0"""
-        return 2 * kinetic_energy + potential_energy
 
     # Constraint check functions
 
@@ -534,11 +515,8 @@ except ImportError:
     logger.warning("PhysicalAnalogicalReasoner not available")
 
 # V47+ New physics modules
-try:
-    from .relativistic_physics import RelativisticPhysics
-except ImportError:
-    RelativisticPhysics = None
-    logger.warning("RelativisticPhysics not available")
+# RelativisticPhysics removed (GR/astronomy-specific; GEODISC is geochemistry).
+RelativisticPhysics = None
 
 try:
     from .quantum_mechanics import QuantumMechanics
