@@ -110,190 +110,6 @@ class SimulatorInterface(ABC):
         pass
 
 
-class AstrophysicsSimulator(SimulatorInterface):
-    """
-    Base class for scientific simulators
-
-    Wraps existing simulators in geo_core.theoretical_physics
-    """
-
-    def __init__(
-        self,
-        simulator_type: str,
-        simulator_fn: Callable,
-        parameter_names: List[str],
-        output_names: List[str],
-        parameter_bounds: List[Tuple[float, float]]
-    ):
-        """
-        Initialize scientific simulator
-
-        Args:
-            simulator_type: Type of simulator (MHD, radiation, etc.)
-            simulator_fn: Function to run simulation
-            parameter_names: Names of parameters
-            output_names: Names of outputs
-            parameter_bounds: Prior bounds for parameters
-        """
-        self.simulator_type = simulator_type
-        self.simulator_fn = simulator_fn
-        self.parameter_names = parameter_names
-        self.output_names = output_names
-        self.parameter_bounds = parameter_bounds
-
-    def simulate(self, parameters: np.ndarray, n_samples: int = 1) -> np.ndarray:
-        """Run simulation"""
-        return self.simulator_fn(parameters, n_samples)
-
-    def get_parameter_names(self) -> List[str]:
-        return self.parameter_names
-
-    def get_output_names(self) -> List[str]:
-        return self.output_names
-
-    def get_prior_bounds(self) -> List[Tuple[float, float]]:
-        return self.parameter_bounds
-
-
-class MHDSimulator(AstrophysicsSimulator):
-    """
-    Magnetohydrodynamics (MHD) simulator wrapper
-
-    Simulates plasma dynamics with magnetic fields.
-    """
-
-    def __init__(self):
-        # Initialize with MHD-specific parameters
-        parameter_names = ['magnetic_field_strength', 'plasma_beta', 'reynolds_number', 'resolution']
-        output_names = ['density', 'velocity', 'magnetic_field', 'temperature']
-        parameter_bounds = [
-            (1e-6, 1e-3),  # magnetic_field_strength (Gauss)
-            (0.1, 10),      # plasma_beta
-            (100, 1e6),     # reynolds_number
-            (16, 512)       # resolution
-        ]
-
-        # Placeholder: actual MHD simulator integration
-        def mhd_simulate(params, n_samples):
-            # Simplified MHD simulation
-            # In practice, would call geo_core.theoretical_physics.MHDSolver
-            B, beta, Re, res = params
-
-            outputs = []
-            for _ in range(n_samples):
-                # Simplified outputs
-                density = np.random.lognormal(0, 1) * beta
-                velocity = np.random.normal(0, 1) * np.sqrt(Re) / 1000
-                magnetic_field = B * (1 + 0.1 * np.random.randn())
-                temperature = 1e6 * (1 + 0.5 * np.random.randn())
-
-                outputs.append([density, velocity, magnetic_field, temperature])
-
-            return np.array(outputs)
-
-        super().__init__(
-            simulator_type="MHD",
-            simulator_fn=mhd_simulate,
-            parameter_names=parameter_names,
-            output_names=output_names,
-            parameter_bounds=parameter_bounds
-        )
-
-
-class StarFormationSimulator(AstrophysicsSimulator):
-    """
-    Star formation simulator wrapper
-
-    Simulates star formation in molecular clouds.
-    """
-
-    def __init__(self):
-        parameter_names = ['cloud_mass', 'metallicity', 'turbulence', 'magnetic_field']
-        output_names = ['star_formation_rate', 'imf_slope', 'cluster_mass', 'efficiency']
-        parameter_bounds = [
-            (1e3, 1e6),    # cloud_mass (solar masses)
-            (0.01, 2),     # metallicity (Z_sun)
-            (0.1, 10),     # turbulence (Mach number)
-            (1e-6, 1e-3)   # magnetic_field (Gauss)
-        ]
-
-        def star_formation_simulate(params, n_samples):
-            # Simplified star formation model
-            M_cloud, Z, Mach, B = params
-
-            outputs = []
-            for _ in range(n_samples):
-                # Star formation rate (Kennicutt-Schmidt type)
-                sfr = 1e-8 * (M_cloud / 1e5)**1.4 * np.exp(-Mach * 0.1)
-
-                # IMF slope (varies with turbulence)
-                imf_slope = 2.35 + 0.1 * (Mach - 1)
-
-                # Cluster mass
-                cluster_mass = M_cloud * 0.01 * np.random.uniform(0.5, 1.5)
-
-                # Efficiency (magnetic field suppresses efficiency)
-                efficiency = 0.01 * (1 + 0.1 * np.random.randn()) / (1 + B * 1e5)
-
-                outputs.append([sfr, imf_slope, cluster_mass, efficiency])
-
-            return np.array(outputs)
-
-        super().__init__(
-            simulator_type="star_formation",
-            simulator_fn=star_formation_simulate,
-            parameter_names=parameter_names,
-            output_names=output_names,
-            parameter_bounds=parameter_bounds
-        )
-
-
-class CosmologySimulator(AstrophysicsSimulator):
-    """
-    Cosmology simulator wrapper
-
-    Simulates large-scale structure formation.
-    """
-
-    def __init__(self):
-        parameter_names = ['omega_m', 'omega_lambda', 'hubble', 'sigma_8', 'ns']
-        output_names = ['power_spectrum', 'correlation_function', 'halo_mass_function']
-        parameter_bounds = [
-            (0.1, 0.5),    # omega_m
-            (0.5, 0.9),    # omega_lambda
-            (0.5, 0.9),    # hubble (H0/100)
-            (0.6, 1.0),    # sigma_8
-            (0.8, 1.2)     # ns (spectral index)
-        ]
-
-        def cosmology_simulate(params, n_samples):
-            # Simplified cosmological simulation
-            omega_m, omega_lambda, h, sigma8, ns = params
-
-            outputs = []
-            for _ in range(n_samples):
-                # Power spectrum amplitude (simplified)
-                ps_norm = sigma8**2
-
-                # Correlation length
-                corr_length = 100 / h * (1 + 0.1 * np.random.randn())
-
-                # Halo mass function normalization
-                hmf_norm = 1e-3 * (omega_m / 0.3)**2
-
-                outputs.append([ps_norm, corr_length, hmf_norm])
-
-            return np.array(outputs)
-
-        super().__init__(
-            simulator_type="cosmology",
-            simulator_fn=cosmology_simulate,
-            parameter_names=parameter_names,
-            output_names=output_names,
-            parameter_bounds=parameter_bounds
-        )
-
-
 class ApproximateBayesianComputation:
     """
     Approximate Bayesian Computation (ABC)
@@ -731,24 +547,13 @@ class SimulationBasedInferenceEngine:
         self._connect_existing_simulators()
 
     def _register_builtin_simulators(self) -> None:
-        """Register built-in simplified simulators"""
-        self.simulators['mhd'] = MHDSimulator()
-        self.simulators['star_formation'] = StarFormationSimulator()
-        self.simulators['cosmology'] = CosmologySimulator()
+        """Register built-in simplified simulators (none bundled; register via register_simulator)"""
+        pass
 
     def _connect_existing_simulators(self) -> None:
-        """Connect to existing geo_core simulators"""
-        try:
-            from ...theoretical_physics import MHDSolver, RadiationHydrodynamics
-
-            # Wrap existing MHD solver
-            if MHDSolver is not None:
-                # Create wrapper
-                pass  # Would implement wrapper here
-
-            logger.info("Connected to existing simulators")
-        except ImportError:
-            logger.warning("Could not connect to existing simulators, using built-in")
+        """Connect to existing geo_core simulators (no built-in ones bundled)"""
+        # Simulators are registered externally via register_simulator().
+        pass
 
     def register_simulator(
         self,
@@ -872,10 +677,6 @@ __all__ = [
     'SimulatorConfig',
     'SBIResult',
     'SimulatorInterface',
-    'AstrophysicsSimulator',
-    'MHDSimulator',
-    'StarFormationSimulator',
-    'CosmologySimulator',
     'ApproximateBayesianComputation',
     'SequentialNeuralPosteriorEstimation',
     'SimulationBasedInferenceEngine',

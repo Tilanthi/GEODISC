@@ -1,5 +1,5 @@
 """
-STAR-Learn: Self-Teaching Autonomous Recursive Learner for STAN_IX_ASTRO
+STAR-Learn: Self-Teaching Autonomous Recursive Learner for GEODISC
 
 A comprehensive autonomous self-teaching architecture that enables STAN to:
 1. Generate its own training problems

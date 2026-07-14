@@ -38,7 +38,6 @@ class TaskType(Enum):
     SCIENTIFIC_DISCOVERY = "scientific_discovery"
     CAUSAL_ANALYSIS = "causal_analysis"
     MARKET_ANALYSIS = "market_analysis"
-    ASTRONOMY = "astronomy"
     TRADING = "trading"
     MATHEMATICAL = "mathematical"
     CODE_GENERATION = "code_generation"

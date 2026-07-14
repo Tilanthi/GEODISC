@@ -132,16 +132,6 @@ class TestSimulation:
 
         assert len(trajectories) == 10
 
-    def test_astronomy_simulator(self):
-        """Test astronomy simulator."""
-        from geo_core.simulation.physics.simulator import AstronomySimulator
-
-        sim = AstronomySimulator()
-        sim.create_star_system(n_planets=3)
-
-        # Should have star + planets
-        assert len(sim.particles) == 4
-
 
 class TestNeuralTraining:
     """Test neural network training."""

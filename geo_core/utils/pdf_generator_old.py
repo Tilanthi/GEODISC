@@ -1,12 +1,12 @@
 """
-STAN_IX_ASTRO PDF Generator
+GEODISC PDF Generator
 ==========================
 
 Direct PDF generation module for creating PDF documents without intermediate HTML.
 This module provides a simple interface for generating professional PDFs with
 support for text, tables, code blocks, and structured sections.
 
-Author: STAN_IX_ASTRO
+Author: GEODISC
 Date: January 10, 2026
 Updated: March 19, 2026 - Fixed table widths, font issues, figure placement
 """
@@ -94,7 +94,7 @@ class PDFCodeBlock:
 
 class PDFGenerator:
     """
-    Direct PDF generator for STAN_IX_ASTRO.
+    Direct PDF generator for GEODISC.
 
     Creates professional PDF documents with support for:
     - Multi-level headings
@@ -109,8 +109,8 @@ class PDFGenerator:
         self,
         filename: str,
         format: PDFFormat = PDFFormat.A4,
-        title: str = "STAN_IX_ASTRO Document",
-        author: str = "STAN_IX_ASTRO",
+        title: str = "GEODISC Document",
+        author: str = "GEODISC",
         subject: str = "",
         keywords: List[str] = None
     ):

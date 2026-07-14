@@ -213,7 +213,6 @@ def test_routing_with_all_task_types(results: IntegrationTestResults):
         ("Discover new patterns", TaskType.DISCOVERY),
         ("Simulate physical system", TaskType.SIMULATION),
         ("Analyze trading signals", TaskType.TRADING),
-        ("Process astronomical data", TaskType.ASTRONOMY),
         ("Recall past experiences", TaskType.MEMORY),
         ("Evaluate confidence levels", TaskType.METACOGNITIVE),
         ("Generate creative analogy", TaskType.CREATIVE),

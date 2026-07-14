@@ -32,7 +32,6 @@ class Domain(Enum):
     BIOLOGY_MEDICINE = "Biology/Medicine"
     COMPUTER_SCIENCE_AI = "Computer Science/AI"
     ENGINEERING = "Engineering"
-    ASTRONOMY = "Astronomy"
     HUMANITIES_SOCIAL = "Humanities/Social Science"
     OTHER = "Other"
 
@@ -121,7 +120,6 @@ class ExpandedMORK:
         Domain.BIOLOGY_MEDICINE,
         Domain.COMPUTER_SCIENCE_AI,
         Domain.ENGINEERING,
-        Domain.ASTRONOMY,
         Domain.HUMANITIES_SOCIAL,
         Domain.OTHER
     ]
@@ -142,7 +140,6 @@ class ExpandedMORK:
         self._build_biology_concepts()
         self._build_cs_ai_concepts()
         self._build_engineering_concepts()
-        self._build_astronomy_concepts()
         self._build_humanities_concepts()
 
     def _add_concept(self, concept: MORKConcept):
@@ -470,65 +467,6 @@ class ExpandedMORK:
                 name=name,
                 domain=Domain.ENGINEERING,
                 keywords=keywords
-            ))
-
-    def _build_astronomy_concepts(self):
-        """Build Astronomy concepts (80+ concepts) - specialized for STAN"""
-        astro_concepts = [
-            # Solar System
-            ("astro_solar", "Solar System", ["solar system", "planet", "moon", "asteroid", "comet"]),
-            ("astro_sun", "Solar Physics", ["sun", "solar", "corona", "sunspot", "solar flare", "solar wind"]),
-
-            # Stellar Astrophysics
-            ("astro_stellar", "Stellar Structure", ["star", "stellar", "main sequence", "luminosity", "spectral type"]),
-            ("astro_stellar_evolution", "Stellar Evolution", ["stellar evolution", "protostar", "red giant", "white dwarf", "supernova"]),
-            ("astro_nuclear", "Nuclear Astrophysics", ["nucleosynthesis", "fusion", "CNO cycle", "pp chain"]),
-            ("astro_binary", "Binary Stars", ["binary star", "eclipsing binary", "mass transfer", "roche lobe"]),
-
-            # Galaxies
-            ("astro_galaxy", "Galaxies", ["galaxy", "spiral", "elliptical", "irregular", "morphology"]),
-            ("astro_milky_way", "Milky Way", ["milky way", "galactic center", "spiral arm", "bulge", "halo"]),
-            ("astro_agn", "Active Galactic Nuclei", ["AGN", "quasar", "black hole", "accretion", "jet"]),
-
-            # Cosmology
-            ("astro_cosmology", "Cosmology", ["cosmology", "big bang", "expansion", "hubble", "redshift"]),
-            ("astro_dark_matter", "Dark Matter", ["dark matter", "WIMP", "gravitational lensing", "rotation curve"]),
-            ("astro_dark_energy", "Dark Energy", ["dark energy", "cosmological constant", "acceleration", "lambda CDM"]),
-            ("astro_cmb", "Cosmic Microwave Background", ["CMB", "cosmic microwave", "temperature anisotropy", "planck"]),
-
-            # Observational
-            ("astro_spectroscopy", "Spectroscopy", ["spectroscopy", "spectrum", "emission line", "absorption line", "doppler"]),
-            ("astro_photometry", "Photometry", ["photometry", "magnitude", "color index", "flux"]),
-            ("astro_interferometry", "Interferometry", ["interferometry", "baseline", "resolution", "VLBI", "aperture synthesis"]),
-            ("astro_imaging", "Astronomical Imaging", ["imaging", "CCD", "telescope", "seeing", "adaptive optics"]),
-
-            # ISM & Molecular Clouds
-            ("astro_ism", "Interstellar Medium", ["ISM", "interstellar", "dust", "extinction", "reddening"]),
-            ("astro_molecular", "Molecular Clouds", ["molecular cloud", "GMC", "star formation", "core", "clump"]),
-            ("astro_hii", "HII Regions", ["HII region", "ionized hydrogen", "nebula", "emission nebula"]),
-            ("astro_turbulence", "Turbulence", ["turbulence", "kolmogorov", "structure function", "velocity dispersion"]),
-
-            # Gravitational Physics
-            ("astro_lensing", "Gravitational Lensing", ["gravitational lensing", "einstein ring", "magnification", "shear"]),
-            ("astro_gw", "Gravitational Waves", ["gravitational wave", "LIGO", "merger", "chirp mass"]),
-            ("astro_compact", "Compact Objects", ["compact object", "neutron star", "pulsar", "magnetar", "black hole"]),
-
-            # Astrochemistry
-            ("astro_chem", "Astrochemistry", ["astrochemistry", "molecule", "PDR", "ice", "grain"]),
-            ("astro_isotopes", "Isotopes", ["isotope", "isotopic ratio", "deuterium", "fractionation"]),
-
-            # Techniques
-            ("astro_radiative", "Radiative Transfer", ["radiative transfer", "optical depth", "LTE", "non-LTE"]),
-            ("astro_sed", "SED Fitting", ["SED", "spectral energy distribution", "photometric redshift"]),
-        ]
-
-        for cid, name, keywords in astro_concepts:
-            self._add_concept(MORKConcept(
-                concept_id=cid,
-                name=name,
-                domain=Domain.ASTRONOMY,
-                keywords=keywords,
-                importance=1.3  # Higher importance for STAN's astronomy focus
             ))
 
     def _build_humanities_concepts(self):

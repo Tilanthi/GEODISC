@@ -107,7 +107,6 @@ ASTRO_CAPABILITIES_AVAILABLE = False
 AstroSwarmSystem = None
 PhysicsEngine = None
 GravitationalLensModel = None
-AstrophysicalConstraints = None
 StatisticalEquilibriumSolver = None
 BayesianSwarmInference = None
 
@@ -126,15 +125,9 @@ class TaskType(Enum):
     COMPLEX_SYSTEM = "complex"
     ARBITRARY = "arbitrary"
 
-    # ASTRO-SPECIFIC TASK TYPES
-    ASTROPHYSICS = "astrophysics"
+    # GENERAL-PHYSICS / GEOCHEMISTRY TASK TYPES
     GRAVITATIONAL_PHYSICS = "gravitational_physics"
-    COSMOLOGY = "cosmology"
-    RADIATIVE_TRANSFER = "radiative_transfer"
-    INTERFEROMETRY = "interferometry"
     SPECTROSCOPY = "spectroscopy"
-    ISM_PHYSICS = "ism_physics"
-    MULTI_WAVELENGTH = "multi_wavelength"
 
 @dataclass
 class UnifiedConfig:
@@ -210,46 +203,14 @@ class TaskAnalyzer:
                 'think', 'reflect', 'conscious', 'aware', 'understand',
                 'meta', 'self', 'learning', 'improve', 'optimize'
             ],
-            # ASTRO-SPECIFIC TASK KEYWORDS
-            TaskType.ASTROPHYSICS: [
-                'astronomy', 'astrophysics', 'star', 'galaxy', 'planet', 'nebula',
-                'cosmic', 'stellar', 'supernova', 'black hole', 'quasar', ' pulsar',
-                'telescope', 'observatory', 'space', 'orbit', 'celestial'
-            ],
+            # GENERAL-PHYSICS / GEOCHEMISTRY TASK KEYWORDS
             TaskType.GRAVITATIONAL_PHYSICS: [
-                'gravity', 'gravitational', 'lensing', 'general relativity', 'spacetime',
-                'einstein', 'mass distribution', 'dark matter', 'dark energy', 'cosmological',
-                'expansion', 'universe', 'big bang', 'singularity', 'event horizon'
-            ],
-            TaskType.COSMOLOGY: [
-                'cosmology', 'universe', 'expansion', 'cosmic microwave', 'cmb',
-                'large scale structure', 'galaxy cluster', 'dark energy', 'dark matter',
-                'hubble', 'redshift', 'big bang', 'inflation', 'multiverse'
-            ],
-            TaskType.RADIATIVE_TRANSFER: [
-                'radiative transfer', 'spectroscopy', 'spectrum', 'spectral line',
-                'emission', 'absorption', 'optical depth', 'opacity', 'temperature',
-                'line formation', 'radiation', 'photon', 'luminosity', 'flux'
-            ],
-            TaskType.INTERFEROMETRY: [
-                'interferometry', 'interferometer', 'vla', 'alma', 'radio telescope',
-                'baseline', 'uv coverage', 'fourier transform', 'synthesis imaging',
-                'clean', 'deconvolution', 'resolution', 'fringe', 'phase'
+                'gravity', 'gravitational', 'mass', 'force', 'weight',
+                'attraction', 'potential', 'free fall', 'pressure', 'lithostatic'
             ],
             TaskType.SPECTROSCOPY: [
-                'spectroscopy', 'spectrum', 'spectral', 'doppler', 'redshift',
-                'blueshift', 'spectral line', 'wavelength', 'frequency', 'energy',
-                'absorption line', 'emission line', 'spectral classification'
-            ],
-            TaskType.ISM_PHYSICS: [
-                'interstellar medium', 'ism', 'molecular cloud', 'hi region', 'hii region',
-                'dust', 'gas', 'density', 'temperature', 'molecular', 'atomic',
-                'ionized', 'neutral', 'star formation', 'turbulence', 'magnetic field'
-            ],
-            TaskType.MULTI_WAVELENGTH: [
-                'multi-wavelength', 'x-ray', 'infrared', 'ultraviolet', 'radio',
-                'optical', 'gamma ray', 'observation', 'wavelength', 'band',
-                'multi-band', 'cross-correlation', 'combined analysis'
+                'spectroscopy', 'spectrum', 'spectral', 'wavelength', 'frequency',
+                'absorption', 'emission', 'spectral line', 'energy', 'band'
             ]
         }
 

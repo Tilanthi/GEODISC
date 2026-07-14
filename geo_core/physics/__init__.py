@@ -31,9 +31,6 @@ except ImportError:
     PhysicsModel = None
     logger.warning("Differentiable physics module not available, using fallbacks")
 
-# AstrophysicalConstraints removed (astro_physics deleted; GEODISC is geochemistry).
-AstrophysicalConstraints = None
-
 try:
     from ..reasoning.symbolic_math_engine import SymbolicMathEngine
 except ImportError:

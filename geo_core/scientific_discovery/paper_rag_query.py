@@ -6,7 +6,7 @@ Scientific Paper Library - RAG Query System
 Retrieval-Augmented Generation system for querying your paper library.
 Integrates with Claude/other LLMs for intelligent question-answering.
 
-Author: STAN_IX_ASTRO
+Author: GEODISC
 Date: January 10, 2026
 """
 

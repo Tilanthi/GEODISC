@@ -12,8 +12,8 @@ from pathlib import Path
 logging.basicConfig(level=logging.WARNING, format='%(levelname)s:%(name)s:%(message)s')
 
 # Add parent directory to path so geo_core can be imported
-# We need STAN_IX_ASTRO in the path, not geo_core
-project_root = Path(__file__).parent.parent.parent  # Go up from scientific_discovery to STAN_IX_ASTRO
+# We need GEODISC in the path, not geo_core
+project_root = Path(__file__).parent.parent.parent  # Go up from scientific_discovery to GEODISC
 sys.path.insert(0, str(project_root))
 
 def test_adaptive_reasoning_imports():
@@ -91,7 +91,7 @@ def test_rag_query_imports():
 def main():
     """Run all import tests"""
     print("\n" + "="*60)
-    print("STAN_IX_ASTRO Import Fix Verification")
+    print("GEODISC Import Fix Verification")
     print("="*60)
 
     results = {}

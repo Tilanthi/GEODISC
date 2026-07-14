@@ -263,8 +263,8 @@ class STANEnhanced:
                 if python_result.success:
                     results.append(python_result)
 
-        if domain in [Domain.PHYSICS, Domain.ASTRONOMY]:
-            # Also check arXiv for physics/astronomy
+        if domain in [Domain.PHYSICS]:
+            # Also check arXiv for physics
             if reasoning_type != ReasoningType.RESEARCH:
                 arxiv_result = self.tools.query(question, tool='arxiv')
                 if arxiv_result.success:

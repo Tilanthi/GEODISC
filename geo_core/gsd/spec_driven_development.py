@@ -39,7 +39,7 @@ class RequirementCategory(Enum):
     DATA_SOURCES = "data_sources"        # Data sources and formats
     DEPLOYMENT = "deployment"            # Deployment requirements
 
-    # Astronomy-specific (for STAN_IX_ASTRO)
+    # Astronomy-specific (for GEODISC legacy compat)
     ASTRONOMY_DATA = "astronomy_data"    # Astronomical data sources
     INSTRUMENTS = "instruments"          # Instruments/telescopes
     ANALYSIS_METHODS = "analysis_methods" # Analysis methods

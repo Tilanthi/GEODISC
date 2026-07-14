@@ -1,5 +1,5 @@
 """
-STAN_IX_ASTRO Mathematical Reasoning Module
+GEODISC Mathematical Reasoning Module
 
 This module contains enhanced mathematical reasoning capabilities for STAN,
 including the Aletheia-style 3-agent architecture for IMO-ProofBench problems.

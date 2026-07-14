@@ -596,15 +596,3 @@ def create_visualization_for_paper(
 """
 
     return tikz_code
-
-
-# Astrophysical domain knowledge for explanations
-
-ASTROPHYSICAL_MECHANISMS = {
-    "jeans_mass_sfr": "Gravitational instability: When Jeans mass falls below cloud mass, regions become gravitationally unstable and can collapse to form stars",
-    "magnetic_field_sfr": "Magnetic suppression: Strong magnetic fields provide additional pressure support against gravity, inhibiting gravitational collapse",
-    "turbulence_sfr": "Turbulent support: High turbulence (virial parameter > 1) provides kinetic pressure support against collapse",
-    "column_density_sfr": "Column density is correlated with SFR but is a proxy: it correlates with Jeans mass (both depend on density) but is not causally responsible",
-    "stellar_mass_sfr": "Stellar mass determines gravitational potential; more mass → deeper potential wells → more material for star formation",
-    "metallicity_sfr": "Metallicity affects cooling efficiency; higher metallicity enables more efficient cooling and fragmentation"
-}

@@ -8,7 +8,7 @@ Quick setup to initialize your paper library and add first papers.
 Usage:
     python setup_paper_library.py --help
 
-Author: STAN_IX_ASTRO
+Author: GEODISC
 Date: January 10, 2026
 """
 
@@ -49,7 +49,7 @@ def create_example_config():
         },
     }
 
-    config_path = Path.home() / '.stan_ix_astro' / 'paper_library_config.json'
+    config_path = Path.home() / '.geodisc_persistent' / 'paper_library_config.json'
     config_path.parent.mkdir(exist_ok=True)
 
     import json
@@ -91,7 +91,7 @@ def main():
         '--library-path',
         type=str,
         default=None,
-        help='Path to paper library (default: STAN_IX_ASTRO/data/paper_library)'
+        help='Path to paper library (default: GEODISC/data/paper_library)'
     )
 
     parser.add_argument(

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test and demonstration of MoE-inspired routing for STAN_IX_ASTRO
+Test and demonstration of MoE-inspired routing for GEODISC
 
 This script demonstrates:
 1. Task classification accuracy
@@ -65,7 +65,6 @@ def test_task_classification():
         ("Discover new patterns in the astronomical observations", TaskType.DISCOVERY),
         ("Simulate the orbital dynamics of this binary system", TaskType.SIMULATION),
         ("What trading signals can we derive from market data?", TaskType.TRADING),
-        ("Analyze this FITS file from the telescope", TaskType.ASTRONOMY),
         ("Remember what we discussed about the W3 region", TaskType.MEMORY),
         ("Evaluate my confidence in these predictions", TaskType.METACOGNITIVE),
         ("Generate an analogy for this quantum phenomenon", TaskType.CREATIVE),
@@ -278,7 +277,7 @@ def run_all_tests():
     """Run all tests."""
     print("\n")
     print("="*70)
-    print("MoE-Inspired Routing Test Suite for STAN_IX_ASTRO")
+    print("MoE-Inspired Routing Test Suite for GEODISC")
     print("="*70)
     print("\nThis test suite demonstrates the Mixture-of-Experts inspired")
     print("routing system for dynamic capability selection.")

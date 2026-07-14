@@ -32,7 +32,7 @@ except ImportError:
     _LLM_AVAILABLE = False
 
 # STAN advanced capabilities
-_V36_AVAILABLE = False  # V36 not available in STAN_IX_ASTRO (uses different structure)
+_V36_AVAILABLE = False  # V36 not available in GEODISC (uses different structure)
 
 
 class ProofStrategy(Enum):
@@ -116,7 +116,7 @@ class AletheiaSTANSystem:
         self.max_iterations = max_iterations
         self._llm_available = _LLM_AVAILABLE and llm_inference is not None
 
-        # V36 system not available in STAN_IX_ASTRO architecture
+        # V36 system not available in GEODISC architecture
         self.v36_system = None
 
         # Cross-problem learning memory

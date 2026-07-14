@@ -23,7 +23,6 @@ import json
 class DatasetType(Enum):
     """Types of scientific datasets"""
     PHYSICS = "physics"
-    ASTRONOMY = "astronomy"
     CHEMISTRY = "chemistry"
     BIOLOGY = "biology"
     EXPERIMENTAL = "experimental"
@@ -106,7 +105,7 @@ class PhysicsDataLibrary:
         kepler_data = np.array([[a, T] for _, a, T in planets])
         self.datasets['kepler_third_law'] = ScientificDataset(
             name="Kepler's Third Law - Planetary Orbital Data",
-            data_type=DatasetType.ASTRONOMY,
+            data_type=DatasetType.PHYSICS,
             variables=['semi_major_axis_AU', 'orbital_period_years'],
             observations=kepler_data,
             metadata={
@@ -230,7 +229,7 @@ class PhysicsDataLibrary:
 
         self.datasets['stefan_boltzmann'] = ScientificDataset(
             name="Stefan-Boltzmann Law - Stellar Luminosity",
-            data_type=DatasetType.ASTRONOMY,
+            data_type=DatasetType.PHYSICS,
             variables=['temperature_K', 'luminosity_solar'],
             observations=stefan_data,
             metadata={

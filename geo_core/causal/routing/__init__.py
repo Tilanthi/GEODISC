@@ -1,5 +1,5 @@
 """
-MoE-inspired Routing Module for STAN_IX_ASTRO
+MoE-inspired Routing Module for GEODISC
 
 This module implements Mixture-of-Experts (MoE) style routing for dynamic
 capability selection and conditional computation.

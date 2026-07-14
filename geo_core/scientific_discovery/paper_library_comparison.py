@@ -6,7 +6,7 @@ Scientific Paper Library - Comparison of Approaches
 Comprehensive comparison of different approaches to building
 a specialized knowledge base for scientific research.
 
-Author: STAN_IX_ASTRO
+Author: GEODISC
 Date: January 10, 2026
 """
 

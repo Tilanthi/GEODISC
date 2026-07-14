@@ -16,7 +16,7 @@ Advantages over web search or LLM training data:
 - Persistent knowledge that grows with you
 - Precise citation tracking
 
-Author: STAN_IX_ASTRO
+Author: GEODISC
 Date: January 10, 2026
 """
 

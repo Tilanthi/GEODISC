@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Mixture-of-Experts (MoE) Inspired Capability Router for STAN_IX_ASTRO
+Mixture-of-Experts (MoE) Inspired Capability Router for GEODISC
 
 This module implements a learned routing mechanism inspired by:
 "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Approach"
@@ -29,7 +29,6 @@ class TaskType(Enum):
     DISCOVERY = "discovery"
     SIMULATION = "simulation"
     TRADING = "trading"
-    ASTRONOMY = "astronomy"
     MEMORY = "memory"
     REASONING = "reasoning"
     METACOGNITIVE = "metacognitive"
@@ -138,7 +137,7 @@ class MoECapabilityRouter:
             Expert(
                 name="scientific_discovery",
                 module_path="geo_core.discovery.engine.DiscoveryEngine",
-                task_types=[TaskType.DISCOVERY, TaskType.ASTRONOMY],
+                task_types=[TaskType.DISCOVERY],
                 specialization_keywords=[
                     "discover", "hypothesis", "experiment", "theory",
                     "pattern", "novel", "innovation"
@@ -147,7 +146,7 @@ class MoECapabilityRouter:
             Expert(
                 name="data_analyzer",
                 module_path="geo_core.discovery.analysis.DataAnalyzer",
-                task_types=[TaskType.DISCOVERY, TaskType.ASTRONOMY, TaskType.TRADING],
+                task_types=[TaskType.DISCOVERY, TaskType.TRADING],
                 specialization_keywords=[
                     "analyze data", "statistics", "distribution", "correlation",
                     "regression", "fit", "model"
@@ -216,19 +215,10 @@ class MoECapabilityRouter:
             Expert(
                 name="physics_simulator",
                 module_path="geo_core.simulation.physics.PhysicsSimulator",
-                task_types=[TaskType.SIMULATION, TaskType.ASTRONOMY],
+                task_types=[TaskType.SIMULATION],
                 specialization_keywords=[
                     "physics", "simulate", "gravity", "force", "motion",
                     "dynamics", "trajectory"
-                ]
-            ),
-            Expert(
-                name="astronomy_simulator",
-                module_path="geo_core.simulation.astronomy.AstronomySimulator",
-                task_types=[TaskType.SIMULATION, TaskType.ASTRONOMY],
-                specialization_keywords=[
-                    "astronomy", "stellar", "galactic", "cosmic", "orbit",
-                    "observation", "telescope"
                 ]
             ),
             Expert(
@@ -258,17 +248,6 @@ class MoECapabilityRouter:
                 specialization_keywords=[
                     "backtest", "historical", "test strategy", "validate",
                     "performance"
-                ]
-            ),
-
-            # Astronomy experts
-            Expert(
-                name="astro_analysis",
-                module_path="geo_core.astronomy.analysis.Analyzer",
-                task_types=[TaskType.ASTRONOMY],
-                specialization_keywords=[
-                    "astronomical data", "fits", "spectral", "photometry",
-                    "analyze observation"
                 ]
             ),
 

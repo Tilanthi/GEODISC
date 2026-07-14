@@ -35,7 +35,6 @@ class ProblemDifficulty(Enum):
 class DomainTask(Enum):
     """Types of tasks by scientific domain"""
     CAUSAL_INFERENCE = "causal_inference"
-    ASTRONOMY = "astronomy"
     PHYSICS = "physics"
     MATHEMATICS = "mathematics"
     BIOLOGY = "biology"

@@ -1,2 +1,2 @@
 """Physics Simulation Package"""
-from .simulator import PhysicsSimulator, Particle, AstronomySimulator
+from .simulator import PhysicsSimulator, Particle
