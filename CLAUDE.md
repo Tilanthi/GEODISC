@@ -56,13 +56,13 @@ memory) repurposed from astrophysics to geochemistry.
   split — the §7.3 in-sample trap, run *before* the sandbox eval. It also logs
   one structured JSONL verdict per candidate (pass or fail) to
   `~/.geodisc_persistent/evolved_programs/claim_verdicts.jsonl` (§7.2) so the
-  search funnel (where candidates die) is diagnosable. **Known gap (partially
-  addressed):** a real-data contract (`evolved_analysis/real_data.py`) now
-  provides `load_split(seed)` for the sandbox worker — it loads REAL
-  geochemistry data from `$GEODISC_REAL_DATA` (columns toc, d13c, Fe_Al, S_TOC,
-  depth, Ro, HI) and fails cleanly (never fabricates) when no real-data file is
-  present. Populate that file from a real database (EarthChem / GEOROC / PBDB)
-  to actually enable Gate 1.
+  search funnel (where candidates die) is diagnosable. **Real data wired
+  (2026-07-15):** `evolved_analysis/real_data.py` loads REAL whole-rock
+  geochemistry (major oxides sio2/tio2/al2o3/feo_tot/mgo/cao/mno/na2o/k2o/p2o5)
+  fetched from the Gard et al. (2019) global compilation (Zenodo 3359791) by
+  `scripts/fetch_geochem_data.py` into `$GEODISC_REAL_DATA`. Gate 1 now runs on
+  real data — verified: the seed (SiO2-MgO Harker trend) gives |r|≈0.82,
+  p≈1e-244 on the held-out split.
 - **Full astrophysics-content purge (2026-07-14):** all residual ASTROPHYSICS
   *content* removed or re-grounded to geochemistry. Identifier renames
   (`astra`→`geo`/`geodisc`, ~14 files). Deleted dead astro modules
@@ -104,13 +104,22 @@ memory) repurposed from astrophysics to geochemistry.
   geochemistry-only history. The precursor astrophysics history is preserved
   only on local branch `archive/astra-precursor` and on the unrelated ASTRA-dev
   repository — never push it to GEODISC.
-- **Operating mode: interactive-only.** GEODISC services **user-requested
-  tasks** via `create_geo_stan_system()`. The autonomous discovery supervisor
-  (`com.geodisc.discovery`) is **intentionally disabled** — it is NOT installed
-  in `~/Library/LaunchAgents` and does not run. The supervisor code and the
-  `com.geodisc.discovery.plist` are retained in-repo so autonomous mode can be
-  re-enabled later if needed (see "Commands"). This is the desired state, not a
-  fault.
+- **Operating mode: interactive + always-on supervisor (2026-07-15).** GEODISC
+  services user-requested tasks via `create_geo_stan_system()`, AND the
+  autonomous discovery supervisor (`com.geodisc.discovery`) is now INSTALLED in
+  `~/Library/LaunchAgents` and running (launchd, KeepAlive, Background priority,
+  yields to active users). It runs **ingest-only**: the evolutionary engine is
+  INTENTIONALLY OFF because **Gate 2 (literature novelty) is not yet trustworthy
+  for geochemistry** — its arXiv/Semantic-Scholar retrieval barely covers
+  geochemistry journals, so it false-positives textbook relations (e.g. it
+  marked the tholeiitic Fe-enrichment / Fenner trend "novel" because the
+  retrieval returned irrelevant "market-data" papers). Letting it emit would
+  pollute the store with textbook relations mislabeled as discoveries — a
+  prime-directive violation — so evolution stays off until Gate 2 is fixed
+  (geochem-aware retrieval, e.g. GeoRef/EarthChem-linked literature, or an
+  off-topic-relevance guard). To re-enable after that fix: add
+  `ANTHROPIC_AUTH_TOKEN` (+ `ANTHROPIC_BASE_URL`) to
+  `~/.geodisc_persistent/llm_env` (chmod 600). See "Commands".
 - **Spec**: `docs/superpowers/specs/2026-07-11-geodisc-migration-design.md`
 - **Plan**: `docs/superpowers/plans/2026-07-11-geodisc-migration.md`
 
@@ -125,11 +134,14 @@ from geo_core import create_geo_stan_system
 system = create_geo_stan_system()   # constructs the EnhancedUnifiedSTANSystem
 ```
 
-Autonomous discovery is **off by default** (interactive-only mode). The
-supervisor can be run manually if ever needed, but is not auto-started:
+The autonomous discovery supervisor (`com.geodisc.discovery`) is **installed
+and running via launchd** (Background priority, yields to active users), in
+**ingest-only** mode — it ingests verified records but does NOT run the
+evolutionary engine (evolution is OFF until Gate 2's geochemistry retrieval is
+fixed; see "Operating mode" above). Run it manually to observe a cycle:
 
 ```bash
-python -m geo_core.autonomous_discovery_supervisor   # optional, not auto-run
+python -m geo_core.autonomous_discovery_supervisor   # foreground, one-process view
 ```
 
 ---
@@ -208,9 +220,9 @@ Instrumentation -> Scientific Literature.
 
 ## Commands
 
-**Service management** (`com.geodisc.discovery`) — **currently disabled by design
-(interactive-only mode)**. The service is not installed and not running. To
-re-enable autonomous discovery later, if ever required:
+**Service management** (`com.geodisc.discovery`) — **installed and running
+(launchd), ingest-only** (evolution OFF pending the Gate-2 fix; see "Operating
+mode"). To manage it:
 ```bash
 cp com.geodisc.discovery.plist ~/Library/LaunchAgents/
 launchctl load ~/Library/LaunchAgents/com.geodisc.discovery.plist

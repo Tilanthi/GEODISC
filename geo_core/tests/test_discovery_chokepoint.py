@@ -147,10 +147,10 @@ def test_claim_parse_handles_apostrophes():
     from geo_core.scientific_discovery.evolved_analysis.claim_task import (
         parse_claim, NAIVE_CLAIM_SEED)
     claim = parse_claim(NAIVE_CLAIM_SEED)
-    assert claim and "sample" in claim and "TOC" in claim, \
+    assert claim and "sample" in claim and "SiO2" in claim, \
         f"claim truncated: {claim!r}"
     # the apostrophe-bearing claim must include content PAST the apostrophe
-    assert "d13c" in claim or "isotope" in claim, f"lost content after apostrophe: {claim!r}"
+    assert "MgO" in claim or "Harker" in claim, f"lost content after apostrophe: {claim!r}"
 
 
 def test_gate1_significance_logic():

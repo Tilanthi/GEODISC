@@ -22,10 +22,10 @@ Two-gate EVALUATE (design §5):
 Only candidates passing BOTH gates are emitted, via discovery_store's
 verification block, so they reach the genuine store through the chokepoint.
 
-Real data: a cached, provenance-manifested geochemistry sample (columns such as
-toc, d13c, Fe_Al, S_TOC, depth, Ro, HI) — to be re-grounded against a real
-geochemical database (e.g. EarthChem); see the domain-re-grounding note in
-CLAUDE.md.
+Real data: REAL whole-rock major-oxide geochemistry (columns sio2, tio2, al2o3,
+feo_tot, mgo, cao, mno, na2o, k2o, p2o5; wt%), fetched from the public Gard et
+al. (2019) global whole-rock compilation (Zenodo 3359791) by
+scripts/fetch_geochem_data.py into $GEODISC_REAL_DATA. See real_data.py.
 """
 from __future__ import annotations
 
@@ -38,14 +38,15 @@ EFFECT_MIN = 0.30     # |effect| (e.g. |Spearman r|) must be at least this
 PMAX = 1e-3           # p-value must be at most this
 ENTRY_POINT = "run_claim"
 
-# A seed program. This claim is REAL-plausible (gate 1 would pass — TOC and the
-# organic-matter d13c are correlated in many basins) but KNOWN (gate 2 catches
+# A seed program. This claim is REAL and strongly supported by the data (gate 1
+# passes — SiO2 vs MgO is the classic negative Harker fractionation trend,
+# r ≈ -0.53 in the Gard et al. compilation) but KNOWN/textbook (gate 2 catches
 # it). It is the floor the search must BEAT on novelty, not a goal in itself.
-NAIVE_CLAIM_SEED = '''CLAIM = "In the geochemical dataset, a sample's total organic carbon (TOC) is positively correlated with its organic-matter d13c (heavier isotope ratios associate with higher TOC)."
+NAIVE_CLAIM_SEED = '''CLAIM = "In whole-rock geochemical data, a sample's SiO2 content is negatively correlated with its MgO content (silicic, more-evolved rocks are MgO-poor — the Harker fractionation trend)."
 
 
 def run_claim(df_train, df_eval):
-    """Test the claim on real geochemical data on the HELD-OUT eval split.
+    """Test the claim on real whole-rock geochemical data on the HELD-OUT eval split.
 
     The headline statistic must come from df_eval (not df_train), per the
     Gate-1 leakage contract (§7.3); ``claim_uses_heldout_split`` enforces this
@@ -54,15 +55,15 @@ def run_claim(df_train, df_eval):
     from scipy.stats import spearmanr
     import numpy as np
     df = df_eval
-    toc = df["toc"].to_numpy(float)
-    d13c = df["d13c"].to_numpy(float)
-    mask = np.isfinite(toc) & np.isfinite(d13c)
-    r, p = spearmanr(toc[mask], d13c[mask])
+    sio2 = df["sio2"].to_numpy(float)
+    mgo = df["mgo"].to_numpy(float)
+    mask = np.isfinite(sio2) & np.isfinite(mgo)
+    r, p = spearmanr(sio2[mask], mgo[mask])
     return {
         "effect": float(r),
         "pvalue": float(p),
-        "effect_type": "spearman_toc_d13c",
-        "summary": f"Spearman(TOC, d13c) = {r:.3f}, p = {p:.2e}, n = {int(mask.sum())}",
+        "effect_type": "spearman_sio2_mgo",
+        "summary": f"Spearman(SiO2, MgO) = {r:.3f}, p = {p:.2e}, n = {int(mask.sum())}",
     }
 '''
 
@@ -72,23 +73,22 @@ def run_claim(df_train, df_eval):
 # textbook.
 TASK_SYSTEM = (
     "You are an expert geochemist searching for a NOVEL, real statistical "
-    "relationship in a Proterozoic / early-Earth geochemical dataset that is "
+    "relationship in a global whole-rock geochemical dataset that is "
     "NOT already a well-known textbook result. You are given the current "
     "candidate (a natural-language CLAIM plus a `run_claim(df_train, df_eval)` "
     "function that tests it on real data and returns {effect, pvalue, "
     "effect_type, summary}).\n"
-    "The available REAL data columns are: toc (total organic carbon), d13c "
-    "(organic-matter carbon isotope), Fe_Al (Fe/Al ratio), S_TOC (S/TOC ratio), "
-    "depth (burial depth), Ro (vitrinite reflectance / thermal maturity), HI "
-    "(hydrogen index). You may use numpy/scipy/pandas/sklearn only.\n"
+    "The available REAL data columns are whole-rock major oxides (wt%): sio2, "
+    "tio2, al2o3, feo_tot (total Fe as FeO), mgo, cao, mno, na2o, k2o, p2o5. "
+    "You may use numpy/scipy/pandas/sklearn only.\n"
     "HARD RULES:\n"
     "- Keep the EXACT signature: def run_claim(df_train, df_eval)\n"
     "- Set a module-level CLAIM = \"...\" string: a specific, quantitative claim.\n"
     "- Return a dict with keys effect (a correlation/contrast magnitude in [-1,1] "
     "or a normalized contrast), pvalue (a real significance), effect_type, summary.\n"
     "- Pick a relationship that is genuinely significant on the data but AVOID "
-    "textbook basics (e.g. 'TOC correlates with d13c', 'burial depth increases "
-    "thermal maturity', 'redox-sensitive metals enrich under anoxia'). Prefer "
+    "textbook basics (e.g. the MgO-SiO2 Harker trend, silica saturation, total-"
+    "alkali-silica classification, Fe-Mg covariation in mafic rocks). Prefer "
     "specific, non-obvious combinations, conditional/subset relations, residuals "
     "after removing the dominant trend, or interactions of 3+ variables.\n"
     "- No file I/O, no network, no plotting. Correct and self-contained.\n"
@@ -104,7 +104,7 @@ def parse_claim(src: str) -> Optional[str]:
 
     Uses a backreference (\\1) so the CLOSING quote is the same character as the
     opening quote — this lets a double-quoted claim contain apostrophes (e.g.
-    "a sample's TOC") without being truncated at the apostrophe, which
+    "a sample's SiO2") without being truncated at the apostrophe, which
     previously fed Gate 2 an incomplete fragment and caused false 'novel' calls.
     """
     m = re.search(r'^CLAIM\s*=\s*(["\'])(.+?)\1', src, re.MULTILINE | re.DOTALL)

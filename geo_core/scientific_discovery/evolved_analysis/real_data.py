@@ -4,24 +4,22 @@ Provides ``load_split(seed) -> {"train": df, "eval": df}`` for the sandboxed
 Gate-1 workers (``claim_eval_worker``, ``eval_worker``). The DataFrames carry
 the geochemistry columns the engine contracts on:
 
-    toc    — total organic carbon (wt %)
-    d13c   — organic-matter δ¹³C (per mil VPDB)
-    Fe_Al  — Fe/Al ratio (redox / detrital proxy)
-    S_TOC  — S/TOC ratio
-    depth  — burial depth (km)
-    Ro     — vitrinite reflectance (thermal maturity)
-    HI     — hydrogen index
+    sio2, tio2, al2o3, feo_tot, mgo, cao, mno, na2o, k2o, p2o5
+        — whole-rock major oxides (wt %) from the real Gard et al. (2019)
+          global whole-rock compilation
 
 GEODISC's prime directive is **NO FICTIONAL / SYNTHETIC DATA**. This loader
 therefore reads REAL data only — from a CSV/Parquet at ``$GEODISC_REAL_DATA``
-(or the default path below), which the user populates from a real geochemical
-database (e.g. EarthChem, GEOROC, PBDB). If no real-data file is present it
+(or the default path below), populated by ``scripts/fetch_geochem_data.py`` from
+the real Gard et al. (2019) global whole-rock compilation (Zenodo 3359791). If
+no real-data file is present it
 raises a clear error rather than synthesising rows, so the engine fails loudly
 instead of grading fiction. (The two-gate EVALUATE is meaningless on made-up
 data — that is the whole point of Gate 1.)
 
-To enable Gate 1: export a real geochemistry table (columns above, one sample
-per row) to the path below — or set ``GEODISC_REAL_DATA`` — then run the search.
+To enable Gate 1: run ``python scripts/fetch_geochem_data.py`` (fetches + cleans
+the real compilation to the default path), or point ``GEODISC_REAL_DATA`` at your
+own real geochemistry table with the columns above.
 """
 from __future__ import annotations
 
@@ -30,10 +28,9 @@ from pathlib import Path
 
 DEFAULT_DATA_PATH = Path.home() / ".geodisc_persistent" / "geochem_real.csv"
 
-# Columns the geochem engine (claim_task seed + Phase-1 estimate_toc) reads.
-# At minimum the headline target `toc` and one feature must be present; the
-# others let the proposer explore richer relationships.
-_REQUIRED_COLUMNS = ("toc", "d13c", "Fe_Al", "S_TOC", "depth", "Ro", "HI")
+# Real whole-rock major-oxide columns (wt %) the engine contracts on. The seed
+# claim uses sio2/mgo; the proposer may explore the rest.
+_REQUIRED_COLUMNS = ("sio2", "tio2", "al2o3", "feo_tot", "mgo", "cao", "mno", "na2o", "k2o", "p2o5")
 
 
 def _data_path() -> Path:
