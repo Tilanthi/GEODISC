@@ -92,7 +92,7 @@ class TheorySpaceMapper:
             name="Euler_Equations",
             description="Inviscid fluid equations",
             theory_type=TheoryType.FUNDAMENTAL,
-            domains=["fluid_dynamics", "astrophysics"],
+            domains=["fluid_dynamics", "geochemistry"],
             key_equations=[
                 "∂ρ/∂t + ∇·(ρv) = 0",
                 "ρ(∂v/∂t + v·∇v) = -∇P"

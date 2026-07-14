@@ -241,7 +241,7 @@ class ParallelRAGOrchestrator:
 
         # Check for domain-specific queries (use sharded)
         if self.shards and any(kw in query_lower for kw in
-                               ['astronomy', 'telescope', 'star', 'trading', 'stock', 'market']):
+                               ['geochemistry', 'isotope', 'strata', 'trading', 'stock', 'market']):
             if self.config.use_sharded_retrieval:
                 return RetrievalMode.SHARDED
 
@@ -402,9 +402,9 @@ def _demo_parallel_rag():
             metadata={"source": "errors.log", "domain": "technical"}
         ),
         Document(
-            "The James Webb Space Telescope uses a 6.5m primary mirror for "
-            "infrared observations of distant galaxies and exoplanets.",
-            metadata={"source": "jwst.md", "domain": "astronomy"}
+            "Banded iron formations record the Great Oxidation Event through "
+            "alternating iron-rich and silica-rich layers deposited in Precambrian basins.",
+            metadata={"source": "bif.md", "domain": "geochemistry"}
         ),
         Document(
             "Mean reversion strategies profit when prices return to their historical "
@@ -464,7 +464,7 @@ def _demo_parallel_rag():
 
     queries = [
         "power saving initiatives",           # General -> Hybrid
-        "telescope mirror specifications",    # Astronomy -> Sharded (if shards available)
+        "chert silica precipitation",         # Geochemistry -> Sharded (if shards available)
         "how to improve model performance",   # Technical -> Expanded
     ]
 

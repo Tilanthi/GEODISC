@@ -360,11 +360,11 @@ class RelativisticConstraintsChecker:
 class ObservationalConstraintsChecker:
     """Checks against observational data"""
 
-    ASTROPHYSICAL_CONSTANTS = {
-        'Hubble_constant': (70, 10),  # km/s/Mpc with uncertainty
-        'matter_density': (0.3, 0.1),  # Omega_m
-        'dark_energy_density': (0.7, 0.1),  # Omega_Lambda
-        'CMB_temperature': (2.725, 0.001),  # K
+    GEOCHEMICAL_CONSTANTS = {
+        'GOE_atmospheric_O2': (1e-5, 5e-6),  # Fraction of PAL at Great Oxidation Event
+        'Archean_seawater_sulfate': (0.2, 0.1),  # mM (pre-GOE, very low)
+        'modern_seawater_sulfate': (28.0, 1.0),  # mM
+        'TOC_preservation_threshold': (0.5, 0.1),  # Weight percent TOC
     }
 
     @classmethod
@@ -375,7 +375,7 @@ class ObservationalConstraintsChecker:
         """Check if theory constants match observations"""
         violations = []
 
-        for const_name, (value, uncertainty) in cls.ASTROPHYSICAL_CONSTANTS.items():
+        for const_name, (value, uncertainty) in cls.GEOCHEMICAL_CONSTANTS.items():
             if const_name in theory_constants:
                 theory_value = theory_constants[const_name]
                 sigma = abs(theory_value - value) / uncertainty

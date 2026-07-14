@@ -4,7 +4,7 @@ V98 FCI Causal Discovery - For Latent Confounders
 
 PROBLEM: The PC algorithm assumes causal sufficiency - no unmeasured common
 causes. In real scientific data, this is almost always violated. For example,
-stellar mass and environment both depend on halo mass (latent confounder).
+TOC and kerogen type both depend on burial depth (latent confounder).
 
 SOLUTION: Implement the FCI (Fast Causal Inference) algorithm which:
 1. Handles latent confounders explicitly
@@ -27,15 +27,15 @@ USAGE:
     pag.visualize()  # Shows circles for uncertain edges
 
 EXAMPLE APPLICATIONS (from Referee3):
-1. Stellar mass, environment, and halo mass:
-   - Mass and environment appear correlated
-   - But both depend on latent halo mass
+1. TOC, kerogen type, and burial depth:
+   - TOC and kerogen type appear correlated
+   - But both depend on latent burial depth
    - FCI correctly identifies bidirected edge with latent
 
-2. Star formation threshold problem:
-   - N(H2) correlates with star formation
-   - But is N(H2) causal or just a proxy?
-   - FCI can test for latent confounding (Jeans instability, magnetic field)
+2. Redox-preservation threshold problem:
+   - TOC correlates with fossil preservation
+   - But is TOC causal or just a proxy?
+   - FCI can test for latent confounding (depositional redox, microbial activity)
 
 Date: 2026-04-01
 Referee: Referee3 - Latent Confounder Causal Inference
@@ -496,10 +496,10 @@ def generate_latent_confounder_data(n_samples=1000):
     Generate data with known latent confounder structure.
 
     Structure:
-    L (latent halo mass) -> M (stellar mass)
-    L -> E (environment density)
-    M -> Z (metallicity)
-    E -> SFR
+    L (latent burial depth) -> M (TOC)
+    L -> E (kerogen type)
+    M -> Z (d13C)
+    E -> redox
 
     Key: M and E are correlated only because of L.
     PC will infer M -> E or E -> M (incorrect)
@@ -507,27 +507,27 @@ def generate_latent_confounder_data(n_samples=1000):
     """
     np.random.seed(42)
 
-    # Latent variable: halo mass (log M_halo)
-    L = np.random.normal(12.0, 0.5, n_samples)
+    # Latent variable: burial depth (km)
+    L = np.random.normal(3.0, 1.0, n_samples)
 
-    # M depends on L: M = a*L + noise
-    M = 0.7 * L + np.random.normal(10.0, 0.3, n_samples)
+    # M depends on L: M = a*L + noise (TOC in wt%)
+    M = 0.7 * L + np.random.normal(2.0, 0.3, n_samples)
 
-    # E depends on L: E = b*L + noise
-    E = 0.5 * L + np.random.normal(0.0, 0.5, n_samples)
+    # E depends on L: E = b*L + noise (kerogen type index)
+    E = 0.5 * L + np.random.normal(1.5, 0.5, n_samples)
 
-    # Z depends on M: Z = c*M + noise
-    Z = 0.15 * M + np.random.normal(8.8, 0.1, n_samples)
+    # Z depends on M: Z = c*M + noise (d13C in per mil)
+    Z = 0.15 * M + np.random.normal(-25.0, 0.1, n_samples)
 
-    # SFR depends on E and M
-    SFR = -0.3 * E + 0.1 * M + np.random.normal(0.0, 0.3, n_samples)
+    # redox depends on E and M (redox proxy index)
+    redox = -0.3 * E + 0.1 * M + np.random.normal(0.0, 0.3, n_samples)
 
     return {
-        'halo_mass': L,  # Latent (unobserved)
-        'stellar_mass': M,
-        'environment': E,
-        'metallicity': Z,
-        'sfr': SFR
+        'burial_depth': L,  # Latent (unobserved)
+        'toc': M,
+        'kerogen_type': E,
+        'd13c': Z,
+        'redox': redox
     }
 
 
@@ -541,16 +541,16 @@ if __name__ == "__main__":
     print("TEST 1: Known Latent Confounder Structure")
     print("-"*70)
     print("True structure:")
-    print("  L (halo_mass) -> M (stellar_mass)")
-    print("  L -> E (environment)")
-    print("  M -> Z (metallicity)")
-    print("  E -> SFR")
+    print("  L (burial_depth) -> M (toc)")
+    print("  L -> E (kerogen_type)")
+    print("  M -> Z (d13c)")
+    print("  E -> redox")
     print("\nKey: M and E correlate only due to latent L")
 
     data = generate_latent_confounder_data(n_samples=500)
 
     # Variables we observe (L is latent/unobserved)
-    observed_vars = ['stellar_mass', 'environment', 'metallicity', 'sfr']
+    observed_vars = ['toc', 'kerogen_type', 'd13c', 'redox']
     observed_data = {var: data[var] for var in observed_vars}
 
     # Run FCI
@@ -578,10 +578,10 @@ if __name__ == "__main__":
 
     comparison = CausalComparison()
     results = comparison.compare_algorithms(
-        test_case="galaxy_evolution_mass_environment",
+        test_case="basin_analysis_toc_kerogen",
         data=observed_data,
         variables=observed_vars,
-        known_latent="halo_mass"
+        known_latent="burial_depth"
     )
 
     print(f"\nPC Algorithm (assumes no latent confounders):")
@@ -593,57 +593,57 @@ if __name__ == "__main__":
     print(f"  {results['fci'].interpretation}")
 
     # Check if FCI correctly identified the M <-> E bidirected edge
-    me_edge = pag.get_edge('stellar_mass', 'environment')
+    me_edge = pag.get_edge('toc', 'kerogen_type')
     if me_edge and me_edge.is_bidirected():
         print("\n✓ SUCCESS: FCI correctly identified bidirected edge")
-        print("  between stellar_mass and environment,")
-        print("  indicating latent confounder (halo_mass)!")
+        print("  between toc and kerogen_type,")
+        print("  indicating latent confounder (burial_depth)!")
     else:
         print("\n✗ FCI did not identify the expected latent confounding")
 
-    # Test with star formation threshold problem (from Referee3)
+    # Test with redox-preservation threshold problem (from Referee3)
     print("\n" + "-"*70)
-    print("TEST 3: Star Formation Threshold Problem")
+    print("TEST 3: Redox-Preservation Threshold Problem")
     print("-"*70)
-    print("Does N(H2) threshold cause star formation, or is there")
-    print("latent confounding (Jeans instability, magnetic field)?")
+    print("Does TOC threshold drive pyritization, or is there")
+    print("latent confounding (microbial sulfate reduction)?")
 
     # Generate synthetic data for this problem
     np.random.seed(43)
-    n_clouds = 200
+    n_samples = 200
 
-    # Latent: Jeans instability
-    jeans_instability = np.random.normal(0, 1, n_clouds)
+    # Latent: microbial sulfate reduction intensity
+    sulfate_reduction = np.random.normal(0, 1, n_samples)
 
-    # N(H2) depends on Jeans instability (among other things)
-    column_density = 2.0 + 0.8 * jeans_instability + np.random.normal(0, 0.3, n_clouds)
+    # TOC depends on sulfate reduction (among other things)
+    toc = 2.0 + 0.8 * sulfate_reduction + np.random.normal(0, 0.3, n_samples)
 
-    # Star formation also depends on Jeans instability
-    # (above some threshold of instability)
-    sfr_tracer = np.where(jeans_instability > 0.5,
-                          np.random.normal(1.0, 0.3, n_clouds),
-                          np.random.normal(0.2, 0.2, n_clouds))
+    # Pyritization also depends on sulfate reduction
+    # (above some threshold of reduction intensity)
+    degree_pyritization = np.where(sulfate_reduction > 0.5,
+                          np.random.normal(1.0, 0.3, n_samples),
+                          np.random.normal(0.2, 0.2, n_samples))
 
-    sf_data = {
-        'column_density': column_density,
-        'sfr_tracer': sfr_tracer,
-        'jeans_instability': jeans_instability  # Latent
+    pres_data = {
+        'toc': toc,
+        'degree_pyritization': degree_pyritization,
+        'sulfate_reduction': sulfate_reduction  # Latent
     }
 
-    sf_observed = {k: v for k, v in sf_data.items() if k != 'jeans_instability'}
+    pres_observed = {k: v for k, v in pres_data.items() if k != 'sulfate_reduction'}
 
-    fci_sf = FCIDiscovery(alpha=0.05)
-    pag_sf = fci_sf.discover_pag(sf_observed, ['column_density', 'sfr_tracer'])
+    fci_pres = FCIDiscovery(alpha=0.05)
+    pag_pres = fci_pres.discover_pag(pres_observed, ['toc', 'degree_pyritization'])
 
-    print("\nFCI Results for SF threshold problem:")
-    print(pag_sf.summarize())
+    print("\nFCI Results for preservation threshold problem:")
+    print(pag_pres.summarize())
 
-    sf_edge = pag_sf.get_edge('column_density', 'sfr_tracer')
-    if sf_edge:
-        print(f"\nN(H2) - SFR relation: {sf_edge}")
-        if sf_edge.is_bidirected():
+    pres_edge = pag_pres.get_edge('toc', 'degree_pyritization')
+    if pres_edge:
+        print(f"\nTOC - pyritization relation: {pres_edge}")
+        if pres_edge.is_bidirected():
             print("  → Bidirected edge suggests latent confounding!")
-            print("  → (Jeans instability may be the true causal variable)")
+            print("  → (Microbial sulfate reduction may be the true causal variable)")
 
     print("\n" + "="*70)
     print("V98 TESTS COMPLETE")

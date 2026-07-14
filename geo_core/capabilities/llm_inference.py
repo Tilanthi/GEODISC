@@ -611,7 +611,7 @@ Always show rigorous proofs and verify your answers."""
             'physics': "classical mechanics, quantum mechanics, thermodynamics, electromagnetism, relativity",
             'chemistry': "organic chemistry, inorganic chemistry, biochemistry, physical chemistry",
             'biology': "molecular biology, genetics, ecology, evolution, physiology",
-            'astronomy': "astrophysics, cosmology, planetary science, stellar evolution",
+            'geochemistry': "geochemistry, stratigraphy, sedimentology, taphonomy, early-Earth atmospheric evolution",
             'general': "physics, chemistry, biology, and interdisciplinary sciences"
         }
 

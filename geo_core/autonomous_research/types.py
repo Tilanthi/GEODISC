@@ -130,7 +130,7 @@ class Experiment:
 class DataSource(Enum):
     """Types of data sources"""
     ARCHIVE = "archive"
-    TELESCOPE = "telescope"
+    ICP_MS = "icp_ms"
     SIMULATION = "simulation"
     LABORATORY = "laboratory"
     DATABASE = "database"

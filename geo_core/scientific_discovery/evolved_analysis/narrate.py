@@ -25,15 +25,15 @@ def template_narrate(facts: dict) -> dict:
     task = facts["task"]
     title = (f"Evolved {task} pipeline ({facts.get('method_family','ML')}) — "
              f"{facts['metric_name']}={facts['metric_value']}")
-    eta = facts.get("eta")
-    eta_clause = f", outlier fraction {eta}" if eta is not None else ""
+    r2 = facts.get("r2")
+    r2_clause = f", R-squared {r2}" if r2 is not None else ""
     abstract = (
         f"An analysis pipeline for {task} ({facts.get('method','an evolvable ML model')}) "
         f"was evolved and machine-graded on REAL {facts['data_source']}: "
         f"{facts['metric_name']}={facts['metric_value']} on {facts['n_eval']} held-out eval "
-        f"objects (independent held-out TEST={facts['held_out_value']}{eta_clause}), "
+        f"samples (independent held-out TEST={facts['held_out_value']}{r2_clause}), "
         f"cross-validated (split {facts['n_train']}/{facts['n_eval']}/{facts['n_test']} "
-        f"train/eval/test). Verified by code execution on real archival data, not by "
+        f"train/eval/test). Verified by code execution on real geochemical data, not by "
         f"LLM self-judgment — the {facts['metric_name']} value is computed, not asserted.")
     return {"title": title, "abstract": abstract,
             "discovery_type": "machine_verified_analysis", "stan_used": False}

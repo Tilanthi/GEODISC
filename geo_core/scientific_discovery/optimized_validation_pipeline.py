@@ -352,10 +352,11 @@ async def test_optimized_pipeline():
 
     # Test discovery
     test_discovery = (
-        "Molecular clouds exhibit a characteristic filament width of approximately 0.1 parsecs, "
-        "as observed in Herschel surveys (Arzoumanian et al., 2011). This width is consistent "
-        "across diverse environments with p < 0.001, suggesting a fundamental physical process "
-        "regulating filament structure (n=150 clouds, correlation r=0.87)."
+        "Proterozoic black shales exhibit a characteristic pyrite framboid diameter of "
+        "approximately 5 micrometers, as observed in drill-core samples (Wilkin et al., 1996). "
+        "This diameter is consistent across diverse euxinic basins with p < 0.001, suggesting "
+        "a fundamental redox process regulating framboid formation (n=150 samples, "
+        "correlation r=0.87 between diameter and degree of pyritization)."
     )
 
     print("=== Optimized Validation Pipeline Test ===")
@@ -363,7 +364,7 @@ async def test_optimized_pipeline():
     # Test with early exit
     report = await pipeline.validate_optimized(
         discovery_claim=test_discovery,
-        domains=["ism", "molecular_clouds"],
+        domains=["geochemistry", "taphonomy"],
         discovery_type="pattern_discovery",
         enable_early_exit=True,
         enable_progressive_depth=True

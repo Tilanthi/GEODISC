@@ -278,7 +278,7 @@ class DiscoveryOrchestrator:
         # Test 2: Physics-Grounded Analogy
         print("\n[Test 2] Physics-Grounded Analogical Reasoning")
         try:
-            analogy = self.analogy.validate_analogy('molecular_cloud', 'protoplanetary_disk')
+            analogy = self.analogy.validate_analogy('sedimentary_basin', 'diagenetic_system')
 
             test_results['components_tested'].append('physics_grounded_analogy')
             if analogy.physical_grounding > 0.5:
@@ -347,8 +347,8 @@ class DiscoveryOrchestrator:
             )
 
             targets = [{'name': 'test_target', 'observability': 0.8,
-                        'required_instruments': ['TEL'], 'base_duration': 1.0}]
-            instruments = {'TEL': {'sensitivity': 0.9, 'efficiency': 0.8, 'hourly_cost': 100}}
+                        'required_instruments': ['ICPMS'], 'base_duration': 1.0}]
+            instruments = {'ICPMS': {'sensitivity': 0.9, 'efficiency': 0.8, 'hourly_cost': 100}}
 
             experiment = self.experimentation.design_optimal_experiment(
                 hypothesis, targets, instruments
@@ -445,11 +445,11 @@ def demo_discovery_orchestrator():
     context = {
         'compare_to_known_systems': True,
         'available_targets': [
-            {'name': 'source_A', 'observability': 0.8,
-             'required_instruments': ['ALMA'], 'base_duration': 2.0}
+            {'name': 'sample_A', 'observability': 0.8,
+             'required_instruments': ['XRF'], 'base_duration': 2.0}
         ],
         'instrument_caps': {
-            'ALMA': {'sensitivity': 0.9, 'efficiency': 0.8, 'hourly_cost': 100}
+            'XRF': {'sensitivity': 0.9, 'efficiency': 0.8, 'hourly_cost': 100}
         }
     }
 

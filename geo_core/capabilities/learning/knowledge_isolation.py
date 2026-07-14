@@ -282,11 +282,11 @@ class KnowledgeIsolatedAnalyzer:
 
         # Placeholder: some physically-motivated expectations
         known_relations = [
-            ('stellar_mass', 'metallicity'),
-            ('stellar_mass', 'sfr'),
-            ('velocity_dispersion', 'mass_per_length'),
-            ('luminosity', 'temperature'),
-            ('distance', 'apparent_magnitude')
+            ('toc', 'd13c'),
+            ('toc', 'redox'),
+            ('burial_depth', 'thermal_maturity'),
+            ('kerogen_type', 'redox'),
+            ('depositional_age', 'd13c')
         ]
 
         for rel in known_relations:
@@ -423,11 +423,11 @@ class HypothesisCompetitionEngine:
         """
         Generate multiple competing hypotheses for an observation.
 
-        For example, for "stellar mass correlates with metallicity":
-        - H1: Mass-metallicity relation is causal (more massive stars retain metals)
-        - H2: Both correlate with a third variable (e.g., halo mass, age)
-        - H3: Selection effect (only detecting certain galaxy types)
-        - H4: Measurement bias (metallicity measurements easier for massive galaxies)
+        For example, for "TOC correlates with d13C":
+        - H1: TOC-d13C relation is causal (higher organic carbon drives isotopic fractionation)
+        - H2: Both correlate with a third variable (e.g., burial depth, depositional redox)
+        - H3: Selection effect (only sampling certain facies types)
+        - H4: Measurement bias (d13C measurements easier in TOC-rich samples)
         """
         hypotheses = []
 
@@ -520,18 +520,18 @@ if __name__ == "__main__":
     n_samples = 100
 
     test_data = {
-        'mass_per_length': np.random.lognormal(2.5, 0.6, n_samples),
-        'velocity_dispersion': np.random.lognormal(0.5, 0.3, n_samples),
-        'width_pc': np.random.normal(0.1, 0.02, n_samples),
-        'stellar_mass': np.random.lognormal(10.5, 0.5, n_samples),
-        'metallicity': np.random.normal(8.8, 0.15, n_samples)
+        'burial_depth': np.random.lognormal(1.5, 0.6, n_samples),
+        'thermal_maturity': np.random.lognormal(0.5, 0.3, n_samples),
+        'kerogen_type': np.random.normal(2.0, 0.3, n_samples),
+        'toc': np.random.lognormal(1.0, 0.5, n_samples),
+        'd13c': np.random.normal(-25.0, 1.5, n_samples)
     }
 
-    # Add correlation: velocity ∝ sqrt(M/L)
-    test_data['velocity_dispersion'] = np.sqrt(test_data['mass_per_length']) * 0.3 + np.random.normal(0, 0.05, n_samples)
+    # Add correlation: thermal maturity ∝ sqrt(burial depth)
+    test_data['thermal_maturity'] = np.sqrt(test_data['burial_depth']) * 0.3 + np.random.normal(0, 0.05, n_samples)
 
-    # Add correlation: mass-metallicity
-    test_data['metallicity'] += 0.15 * (test_data['stellar_mass'] - 10.5)
+    # Add correlation: TOC-d13C
+    test_data['d13c'] += 0.5 * (test_data['toc'] - 1.0)
 
     # Test blind mode
     print("\n" + "-"*70)
@@ -591,9 +591,9 @@ if __name__ == "__main__":
 
     engine = HypothesisCompetitionEngine()
     hypotheses = engine.generate_competing_hypotheses(
-        observation="stellar_mass correlates with metallicity",
-        variables=['stellar_mass', 'metallicity'],
-        domain_context="galaxy_evolution"
+        observation="toc correlates with d13c",
+        variables=['toc', 'd13c'],
+        domain_context="organic_geochemistry"
     )
 
     print(f"Generated {len(hypotheses)} competing hypotheses:")

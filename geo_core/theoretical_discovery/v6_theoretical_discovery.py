@@ -146,12 +146,12 @@ class V6TheoreticalDiscovery:
         """Parse query into structured problem"""
         # Extract domains from query
         domain_keywords = {
-            'fluid': ['fluid', 'hydro', 'mhd', 'turbulence', 'accretion'],
+            'fluid': ['fluid', 'hydro', 'mhd', 'turbulence', 'advection'],
             'thermal': ['temperature', 'heat', 'entropy', 'thermodynamic'],
-            'relativistic': ['relativistic', 'general relativity', 'metric', 'curvature'],
+            'redox': ['redox', 'oxidation', 'reduction', 'goe', 'sulfate'],
             'quantum': ['quantum', 'uncertainty', 'wave function'],
-            'stellar': ['star', 'stellar', 'main sequence', 'giant'],
-            'galaxy': ['galaxy', 'galactic', 'morphology', 'evolution'],
+            'sedimentological': ['sediment', 'basin', 'depositional', 'stratigraphic'],
+            'taphonomic': ['taphonomy', 'fossil', 'preservation', 'decay'],
         }
 
         domains = []
@@ -162,7 +162,7 @@ class V6TheoreticalDiscovery:
 
         # Default to general science
         if not domains:
-            domains = ['astrophysics']
+            domains = ['geochemistry']
 
         # Extract variables (simplified)
         variables = self._extract_variables(query)
@@ -196,10 +196,10 @@ class V6TheoreticalDiscovery:
             'velocity': 'velocity',
             'pressure': 'pressure',
             'magnetic_field': 'magnetic field',
-            'luminosity': 'luminosity',
+            'TOC': 'organic carbon',
             'radius': 'radius',
-            'SFR': 'star formation',
-            'metallicity': 'metallicity'
+            'burial_flux': 'burial flux',
+            'isotope_ratio': 'isotope ratio'
         }
 
         variables = []
@@ -240,9 +240,9 @@ class V6TheoreticalDiscovery:
         domain_theories = {
             'fluid': ['Navier_Stokes', 'Euler_Equations'],
             'thermal': ['Thermodynamics', 'Heat_Equation'],
-            'relativistic': ['Schwarzschild_Metric', 'Kerr_Metric'],
-            'stellar': ['Polytropic_Model', 'Stellar_Structure'],
-            'galaxy': ['Galaxy_Formation']
+            'redox': ['Redox_Zoning', 'Sulfate_Reduction'],
+            'sedimentological': ['Compaction_Theory', 'Sedimentation_Model'],
+            'taphonomic': ['Taphonomic_Model', 'Preservation_Potential']
         }
 
         for domain in domains:
@@ -298,9 +298,11 @@ class V6TheoreticalDiscovery:
             'fluid': PhysicsDomain.FLUID_DYNAMICS,
             'thermal': PhysicsDomain.THERMODYNAMICS,
             'quantum': PhysicsDomain.QUANTUM_MECHANICS,
-            'stellar': PhysicsDomain.NUCLEAR_PHYSICS,
+            'sedimentological': PhysicsDomain.FLUID_DYNAMICS,
             'mechanics': PhysicsDomain.MECHANICS,
             'electromagnetic': PhysicsDomain.ELECTROMAGNETISM,
+            'redox': PhysicsDomain.THERMODYNAMICS,
+            'taphonomic': PhysicsDomain.THERMODYNAMICS,
         }
 
         physics_domains = []
@@ -606,7 +608,7 @@ class V6TheoreticalDiscovery:
         literature_insights = []
         if existing_literature:
             insights = self.literature_synthesizer.discover_theoretical_gaps(
-                requirements.get('domain', 'astrophysics')
+                requirements.get('domain', 'geochemistry')
             )
             literature_insights = insights
 

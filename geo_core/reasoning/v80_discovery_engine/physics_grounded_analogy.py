@@ -82,93 +82,93 @@ class PhysicsGroundedAnalogy:
 
     def _build_systems_database(self):
         """Build database of known physical systems."""
-        # Molecular cloud collapse
-        self.systems_db['molecular_cloud'] = PhysicalSystem(
-            name='Molecular Cloud Collapse',
-            variables={'mass': 'kg', 'radius': 'm', 'velocity': 'm/s', 'temperature': 'K',
-                       'magnetic_field': 'T', 'density': 'kg/m^3'},
+        # Sedimentary basin (organic-matter accumulation and burial)
+        self.systems_db['sedimentary_basin'] = PhysicalSystem(
+            name='Sedimentary Basin',
+            variables={'mass': 'kg', 'depth': 'm', 'sedimentation_rate': 'm/s', 'temperature': 'K',
+                       'porosity': 'dimensionless', 'density': 'kg/m^3'},
             governing_equations=[
-                'Jeans instability: d²ρ/dt² = (c_s² + v_A²)∇²ρ + 4πGρρ',
-                'Virial theorem: 2K + U + M = 0'
+                'Compaction: dφ/dz = -α(φ - φ_min)',
+                'Heat advection-diffusion: ρc(∂T/∂t + v·∇T) = k∇²T + Q'
             ],
-            conservation_laws=['mass', 'momentum', 'energy', 'magnetic_flux'],
-            characteristic_scales={'jeans_mass': 1e30, 'jeans_length': 1e16, 'temperature': 10},
+            conservation_laws=['mass', 'momentum', 'energy'],
+            characteristic_scales={'basin_depth': 1e4, 'sedimentation_rate': 1e-11, 'temperature': 350},
             causal_structure={
-                'density': ['temperature', 'magnetic_field'],
-                'temperature': ['heating_rate', 'cooling_rate'],
-                'collapse': ['density', 'temperature', 'magnetic_field']
+                'porosity': ['depth', 'cementation'],
+                'temperature': ['burial_depth', 'heat_flux'],
+                'toc_preservation': ['sedimentation_rate', 'temperature', 'redox_state']
             }
         )
 
-        # Protoplanetary disk
-        self.systems_db['protoplanetary_disk'] = PhysicalSystem(
-            name='Protoplanetary Disk',
-            variables={'mass': 'kg', 'radius': 'm', 'angular_velocity': 'rad/s',
-                       'viscosity': 'm^2/s', 'temperature': 'K'},
+        # Diagenetic system (mineral reactions during burial)
+        self.systems_db['diagenetic_system'] = PhysicalSystem(
+            name='Diagenetic System',
+            variables={'mass': 'kg', 'depth': 'm', 'reaction_rate': 'mol/s',
+                       'porewater_velocity': 'm/s', 'temperature': 'K'},
             governing_equations=[
-                'Disk diffusion: ∂Σ/∂t = (3/r)∂/∂r[√(r)∂(νΣ√r)/∂r]',
-                'Radial drift: v_r = -2ν/(3r)'
+                'Reaction-diffusion: ∂C/∂t = D∇²C + R(C, T)',
+                'Mass transport: ∂(φC)/∂t + ∇·(vC) = D∇²C + R'
             ],
             conservation_laws=['mass', 'angular_momentum', 'energy'],
-            characteristic_scales={'disk_radius': 1e11, 'accretion_rate': 1e-8, 'temperature': 100},
+            characteristic_scales={'reaction_length': 1e2, 'reaction_rate': 1e-12, 'temperature': 350},
             causal_structure={
-                'accretion': ['viscosity', 'mass'],
-                'temperature': ['accretion_rate', 'irradiation'],
-                'gap_formation': ['planet_mass', 'disk_viscosity']
+                'cementation': ['porewater_chemistry', 'temperature'],
+                'porosity': ['cementation', 'pressure'],
+                'mineral_transformation': ['temperature', 'porewater_chemistry']
             }
         )
 
-        # Stellar atmosphere
-        self.systems_db['stellar_atmosphere'] = PhysicalSystem(
-            name='Stellar Atmosphere',
+        # Porewater fluid system
+        self.systems_db['porewater_fluid'] = PhysicalSystem(
+            name='Porewater Fluid System',
             variables={'temperature': 'K', 'pressure': 'Pa', 'density': 'kg/m^3',
-                       'optical_depth': 'dimensionless'},
+                       'salinity': 'dimensionless'},
             governing_equations=[
-                'Radiative transfer: dI/dτ = -I + S',
-                'Hydrostatic equilibrium: dP/dτ = g/κ'
+                'Darcy flow: v = -k/μ (∇P - ρg)',
+                'Hydrostatic equilibrium: dP/dz = ρg'
             ],
-            conservation_laws=['energy', 'momentum'],
-            characteristic_scales={'pressure': 1e4, 'temperature': 1e4, 'optical_depth': 1},
+            conservation_laws=['mass', 'momentum'],
+            characteristic_scales={'pressure': 1e7, 'temperature': 350, 'salinity': 0.035},
             causal_structure={
-                'temperature': ['optical_depth', 'heating'],
-                'pressure': ['temperature', 'gravity'],
-                'line_formation': ['temperature', 'pressure', 'optical_depth']
+                'pressure': ['depth', 'fluid_density'],
+                'temperature': ['geothermal_gradient', 'depth'],
+                'dissolution': ['temperature', 'pressure', 'salinity']
             }
         )
 
-        # Accretion disk
-        self.systems_db['accretion_disk'] = PhysicalSystem(
-            name='Accretion Disk',
-            variables={'mass': 'kg', 'accretion_rate': 'kg/s', 'radius': 'm',
-                       'magnetic_field': 'T', 'viscosity': 'm^2/s'},
+        # Hydrothermal vent system
+        self.systems_db['hydrothermal_vent'] = PhysicalSystem(
+            name='Hydrothermal Vent System',
+            variables={'mass': 'kg', 'flow_rate': 'kg/s', 'depth': 'm',
+                       'temperature': 'K', 'permeability': 'm^2'},
             governing_equations=[
-                'Shakura-Sunyaev: ν = αc_sH',
-                'Energy balance: Q_vis = Q_adv + Q_rad'
+                'Convective heat transport: Nu = cRa^0.33',
+                'Energy balance: Q_adv = Q_cond + Q_reaction'
             ],
-            conservation_laws=['mass', 'angular_momentum', 'energy'],
-            characteristic_scales={'inner_radius': 1e8, 'accretion_rate': 1e18, 'temperature': 1e7},
+            conservation_laws=['mass', 'momentum', 'energy'],
+            characteristic_scales={'vent_depth': 1e3, 'flow_rate': 1e3, 'temperature': 600},
             causal_structure={
-                'luminosity': ['accretion_rate', 'efficiency'],
-                'temperature': ['accretion_rate', 'radius', 'viscosity'],
-                'jet_formation': ['magnetic_field', 'accretion_rate']
+                'mineral_precipitation': ['flow_rate', 'temperature'],
+                'temperature': ['flow_rate', 'heat_source', 'depth'],
+                'silica_dep': ['temperature', 'pressure', 'flow_rate']
             }
         )
 
-        # Interstellar medium
-        self.systems_db['interstellar_medium'] = PhysicalSystem(
-            name='Interstellar Medium',
+        # Early ocean (Archean/Proterozoic seawater chemistry)
+        self.systems_db['early_ocean'] = PhysicalSystem(
+            name='Early Ocean',
             variables={'density': 'kg/m^3', 'temperature': 'K', 'pressure': 'Pa',
-                       'magnetic_field': 'T', 'cosmic_ray_flux': 'm^-2s^-1'},
+                       'dissolved_oxygen': 'mol/L', 'iron_concentration': 'mol/L'},
             governing_equations=[
-                'MHD equations: ∂ρ/∂t + ∇·(ρv) = 0',
-                'Energy equation: ρ(∂e/∂t + v·∇e) = -P∇·v + heating - cooling'
+                'Advection-diffusion: ∂C/∂t + v·∇C = D∇²C + R(C)',
+                'Redox equilibrium: Fe²⁺ ⇌ Fe³⁺ + e⁻'
             ],
-            conservation_laws=['mass', 'momentum', 'energy', 'magnetic_flux'],
-            characteristic_scales={'density': 1e-21, 'temperature': 100, 'magnetic_field': 1e-10},
+            conservation_laws=['mass', 'momentum', 'energy'],
+            characteristic_scales={'density': 1e3, 'temperature': 288, 'iron_concentration': 1e-5},
             causal_structure={
-                'temperature': ['cosmic_ray_flux', 'heating', 'cooling'],
-                'ionization': ['cosmic_ray_flux', 'uv_flux'],
-                'turbulence': ['supernova_rate', 'shear']
+                'iron_oxidation': ['dissolved_oxygen', 'temperature'],
+                'bif_formation': ['iron_concentration', 'dissolved_oxygen'],
+                'carbon_burial': ['dissolved_oxygen', 'sedimentation_rate']
             }
         )
 
@@ -608,9 +608,9 @@ def demo_physics_grounded_analogy():
     # Initialize
     analogy_engine = PhysicsGroundedAnalogy()
 
-    # Test analogy between molecular cloud and protoplanetary disk
-    print("\nValidating analogy: molecular_cloud -> protoplanetary_disk")
-    analogy = analogy_engine.validate_analogy('molecular_cloud', 'protoplanetary_disk')
+    # Test analogy between sedimentary basin and diagenetic system
+    print("\nValidating analogy: sedimentary_basin -> diagenetic_system")
+    analogy = analogy_engine.validate_analogy('sedimentary_basin', 'diagenetic_system')
 
     print(f"\nSimilarity Score: {analogy.similarity_score:.2f}")
     print(f"Physical Grounding: {analogy.physical_grounding:.2f}")
@@ -622,10 +622,10 @@ def demo_physics_grounded_analogy():
 
     # Find best analogies
     print("\n" + "=" * 60)
-    print("Finding best analogies for accretion_disk:")
+    print("Finding best analogies for hydrothermal_vent:")
     print("=" * 60)
 
-    best_analogies = analogy_engine.find_best_analogies('accretion_disk', top_k=3)
+    best_analogies = analogy_engine.find_best_analogies('hydrothermal_vent', top_k=3)
 
     for i, analogy in enumerate(best_analogies, 1):
         print(f"\n{i}. {analogy.source_system} -> {analogy.target_system}")

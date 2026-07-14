@@ -658,37 +658,37 @@ class AdaptiveDecisionEngine:
         behaviors = []
 
         # Domain-specific novel behaviors
-        if domain == 'astrophysics':
+        if domain == 'geochemistry':
             behaviors = [
                 {
-                    'description': 'Apply machine learning to filament structure classification',
+                    'description': 'Apply machine learning to redox proxy classification in Proterozoic strata',
                     'novelty': 0.8,
                     'value': 0.7,
                     'feasibility': 0.6
                 },
                 {
-                    'description': 'Investigate non-MHD effects in molecular clouds',
+                    'description': 'Investigate non-equilibrium effects in early-Earth diagenesis',
                     'novelty': 0.7,
                     'value': 0.8,
                     'feasibility': 0.5
                 },
                 {
-                    'description': 'Explore connection between filaments and star formation efficiency',
+                    'description': 'Explore connection between TOC and preservation fidelity in silicified microbiota',
                     'novelty': 0.6,
                     'value': 0.9,
                     'feasibility': 0.7
                 }
             ]
-        elif domain == 'astronomy':
+        elif domain == 'taphonomy':
             behaviors = [
                 {
-                    'description': 'Develop new periodicity detection algorithm',
+                    'description': 'Develop new taphonomic indicator detection algorithm',
                     'novelty': 0.8,
                     'value': 0.7,
                     'feasibility': 0.6
                 },
                 {
-                    'description': 'Apply graph theory to galaxy clustering analysis',
+                    'description': 'Apply graph theory to fossil preservation network analysis',
                     'novelty': 0.7,
                     'value': 0.8,
                     'feasibility': 0.5

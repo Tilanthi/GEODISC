@@ -134,13 +134,13 @@ class ImpactScoringEngine:
 
         # Domain-specific value multipliers
         self.domain_value_multipliers = {
-            "star_formation": 1.2,      # High impact field
-            "exoplanets": 1.3,          # Very high impact
-            "high_energy": 1.1,
-            "cosmology": 1.2,
-            "ism_structure": 1.0,
-            "time_domain": 1.15,        # Growing field
-            "galactic_archaeology": 1.0
+            "taphonomy": 1.2,              # High impact field
+            "precambrian_geology": 1.3,    # Very high impact
+            "organic_geochemistry": 1.1,
+            "stratigraphy": 1.2,
+            "sedimentology": 1.0,
+            "isotope_geochemistry": 1.15,  # Growing field
+            "paleoclimatology": 1.0
         }
 
     def calculate_impact_scores(
@@ -710,10 +710,10 @@ class DiscoveryTriageSystem:
             collaborators.append("Statistician")
 
         if discovery.get('simulations'):
-            collaborators.append("Computational astrophysicist")
+            collaborators.append("Computational geochemist")
 
         if discovery.get('observations'):
-            collaborators.append("Observational astronomer")
+            collaborators.append("Field geologist")
 
         return collaborators[:5]  # Limit to 5
 

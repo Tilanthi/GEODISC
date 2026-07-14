@@ -127,7 +127,7 @@ def create_full_autonomous_system(
     # Create autonomy configuration
     config = create_autonomy_config(
         autonomy_level=autonomy_level,
-        primary_domains=domains or ["astrophysics", "astronomy"]
+        primary_domains=domains or ["geochemistry", "mineralogy"]
     )
 
     # Initialize orchestrator

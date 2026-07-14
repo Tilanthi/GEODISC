@@ -6,7 +6,7 @@ PROBLEM: Traditional discovery systems process static datasets. They cannot:
 1. Detect discoveries as data arrives in real-time
 2. Adapt to changing relationships over time
 3. Alert researchers to emerging patterns immediately
-4. Handle streaming data from surveys (LSST, SKA)
+4. Handle streaming data from geochemical databases (EarthChem) and sample suites
 
 SOLUTION: Real-Time Streaming Discovery with:
 1. Online Causal Discovery - Update PAGs as new data arrives
@@ -22,9 +22,9 @@ INTEGRATION:
 - Works with V4.0 MCE for context-aware streaming
 
 USE CASES:
-- Real-time transient discovery (LSST alerts)
-- Streaming time-series causality (SKA pulsar data)
-- Adaptive causal monitoring (observatory operations)
+- Real-time anomaly detection (geochemical database updates)
+- Streaming time-series causality (geochemical time-series across a stratigraphic section)
+- Adaptive causal monitoring (core-scanning operations)
 - Early warning for unexpected patterns
 
 Date: 2026-04-14

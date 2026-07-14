@@ -200,19 +200,8 @@ except ImportError:
     register_domain = None
     DomainsRegistry = None
 
-# Available domain modules
-try:
-    from .domains.exoplanets import ExoplanetDomain
-    from .domains.gravitational_waves import GravitationalWavesDomain
-    from .domains.cosmology import CosmologyDomain
-    from .domains.solar_system import SolarSystemDomain
-    from .domains.time_domain import TimeDomainDomain
-except ImportError:
-    ExoplanetDomain = None
-    GravitationalWavesDomain = None
-    CosmologyDomain = None
-    SolarSystemDomain = None
-    TimeDomainDomain = None
+# (Astrophysics domain modules — exoplanets, gravitational_waves, cosmology,
+#  solar_system, time_domain — removed in the geochemistry purge.)
 
 # -----------------------------------------------------------------------------
 # Cross-Domain Meta-Learning (Phase 2): Rapid domain adaptation
@@ -470,16 +459,16 @@ try:
         AutonomousGEODISCSystem,
         AutonomousMode,
         AutonomousSystemConfig,
-        create_autonomous_astra,
-        initialize_astra_with_autonomy
+        create_autonomous_geo,
+        initialize_geo_with_autonomy
     )
     AUTONOMOUS_AVAILABLE = True
 except ImportError:
     AutonomousGEODISCSystem = None
     AutonomousMode = None
     AutonomousSystemConfig = None
-    create_autonomous_astra = None
-    initialize_astra_with_autonomy = None
+    create_autonomous_geo = None
+    initialize_geo_with_autonomy = None
     AUTONOMOUS_AVAILABLE = False
     logging.warning("Autonomous capabilities not available")
 

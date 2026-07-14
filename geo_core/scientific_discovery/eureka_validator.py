@@ -382,20 +382,20 @@ async def test_eureka_enhanced_validator():
 
     # Test case 1: Genuine advance in active field
     genuine_advance = """
-    Analysis of 500 filamentary structures in molecular clouds reveals that
-    filament widths are NOT constant at 0.1 pc as previously established, but
-    instead vary systematically from 0.08±0.02 pc in high-density regions to
-    0.15±0.03 pc in low-density regions. This variation strongly correlates
-    with local turbulent velocity dispersion (r=0.82, p<0.001), contradicting
-    the fixed-width hypothesis of Arzoumanian et al. (2011). We propose that
-    filament width is regulated by sonic Mach number rather than being a
-    universal constant.
+    Analysis of 500 pyrite framboid measurements across a Proterozoic shale
+    succession reveals that framboid mean diameters are NOT constant at ~5 μm
+    as previously established, but instead vary systematically from 3.2±0.8 μm
+    in siderite-cemented intervals to 7.4±1.1 μm in pyrite-rich layers. This
+    variation strongly correlates with the degree of pyritization (r=0.82,
+    p<0.001), contradicting the uniform-size hypothesis of Wilkin et al.
+    (1996). We propose that framboid diameter is regulated by porewater
+    sulfide activity rather than being a universal redox indicator.
     """
 
     print("=== Test Case 1: Genuine Advance in Active Field ===")
     report1 = await validator.validate_genuine_advance(
         discovery_claim=genuine_advance,
-        domains=["ism", "molecular_clouds"],
+        domains=["geochemistry", "taphonomy"],
         discovery_type="pattern_discovery"
     )
 
@@ -412,16 +412,16 @@ async def test_eureka_enhanced_validator():
 
     # Test case 2: Known result in active field
     known_result = """
-    Molecular cloud filaments exhibit a characteristic width of approximately
-    0.1 parsecs, as observed in Herschel surveys. This width is consistent
-    across diverse environments and represents a fundamental scale in
-    the interstellar medium.
+    Pyrite framboids in modern euxinic sediments exhibit a characteristic mean
+    diameter of approximately 5 micrometers, as observed in Black Sea sediments.
+    This size is consistent across diverse anoxic basins and represents a
+    fundamental redox indicator for the diagenetic environment.
     """
 
     print("\n\n=== Test Case 2: Known Result in Active Field ===")
     report2 = await validator.validate_genuine_advance(
         discovery_claim=known_result,
-        domains=["ism", "molecular_clouds"],
+        domains=["geochemistry", "taphonomy"],
         discovery_type="pattern_discovery"
     )
 

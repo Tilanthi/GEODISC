@@ -79,10 +79,9 @@ class PhysicalAnalogicalReasoner:
     def _register_common_phenomena(self):
         """Register common physical phenomena.
 
-        Astrophysical phenomena (accretion disks, stellar oscillations,
-        planetary rings) were removed during the geochemistry migration.
-        Geochemistry-specific phenomena will be registered here as domain
-        training proceeds.
+        Geochemistry-specific phenomena (e.g., silicification fronts, redox
+        zoning, diagenetic reaction networks) will be registered here as
+        domain training proceeds.
         """
         pass
 

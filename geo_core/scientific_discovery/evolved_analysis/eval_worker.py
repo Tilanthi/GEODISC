@@ -3,9 +3,10 @@
 Invoked by the evaluator as:
     python -m evolved_analysis.eval_worker <source_file> [seed] [split]
 
-It loads the program source, calls estimate_redshift(df_train, df_eval) on REAL
-SDSS data, computes the photo-z metrics on the requested split (eval by default;
-'train' or 'test' for final reporting), and prints ONE line of JSON to stdout.
+It loads the program source, calls estimate_toc(df_train, df_eval) on REAL
+geochemical data, computes the TOC-prediction metrics on the requested split
+(eval by default; 'train' or 'test' for final reporting), and prints ONE line of
+JSON to stdout.
 
 Runs in its own process so that LLM-generated code which hangs, crashes, or
 allocates wildly is contained and can be hard-killed on timeout. It never writes
@@ -47,9 +48,9 @@ def run_cv(fn, pool_df: "pandas.DataFrame", K: int, seed: int,
         tr = pool_df.iloc[tr_idx].reset_index(drop=True)
         val = pool_df.iloc[val_idx].reset_index(drop=True)
         pred = np.asarray(fn(tr, val), dtype=float)
-        return metrics(pred, val["z_spec"].to_numpy(float))
+        return metrics(pred, val["toc"].to_numpy(float))
     # full out-of-fold
-    ztrue = np.zeros(n); pred = np.zeros(n)
+    toctrue = np.zeros(n); pred = np.zeros(n)
     for i in range(K):
         val_idx = folds[i]
         tr_idx = np.concatenate([folds[j] for j in range(K) if j != i])
@@ -57,42 +58,44 @@ def run_cv(fn, pool_df: "pandas.DataFrame", K: int, seed: int,
         val = pool_df.iloc[val_idx].reset_index(drop=True)
         p = np.asarray(fn(tr, val), dtype=float)
         pred[val_idx] = p
-        ztrue[val_idx] = val["z_spec"].to_numpy(float)
-    m = metrics(pred, ztrue)
+        toctrue[val_idx] = val["toc"].to_numpy(float)
+    m = metrics(pred, toctrue)
     # per-fold spread (stability signal for selection)
-    fold_sigmas = []
+    fold_rmses = []
     for i in range(K):
         vi = folds[i]
-        fold_sigmas.append(float(1.4826 * np.median(np.abs(pred[vi] - ztrue[vi]))))
-    m["cv_sigma_std"] = float(np.std(fold_sigmas))
+        fold_rmses.append(float(np.sqrt(np.mean((pred[vi] - toctrue[vi]) ** 2))))
+    m["cv_rmse_std"] = float(np.std(fold_rmses))
     m["cv_K"] = K
     return m
 
 
-def metrics(pred: np.ndarray, z_true: np.ndarray) -> dict:
-    """Photo-z metrics + a coarse residual error profile (binned in z_true).
+def metrics(pred: np.ndarray, toc_true: np.ndarray) -> dict:
+    """TOC-prediction metrics + a coarse residual error profile (binned in toc_true).
 
     The binned profile is the 'rendered evaluation result' fed back to the LLM
     proposer (AlphaEvolve §1.1): it tells the proposer WHERE the current program
     is systematically wrong, not just an aggregate score."""
-    delta = pred - z_true
+    delta = pred - toc_true
+    ss_res = float(np.sum(delta ** 2))
+    ss_tot = float(np.sum((toc_true - np.mean(toc_true)) ** 2))
     out = {
-        "sigma_nmad": float(1.4826 * np.median(np.abs(delta))),
-        "eta": float(np.mean(np.abs(delta) / (1.0 + z_true) > 0.15)),
+        "rmse": float(np.sqrt(np.mean(delta ** 2))),
+        "r2": float(1.0 - ss_res / ss_tot) if ss_tot > 0 else 0.0,
         "bias": float(np.median(delta)),
     }
-    # 4 quantile bins in z_true; per-bin median residual + count + bin centre
-    qs = np.quantile(z_true, [0.25, 0.5, 0.75])
-    edges = [z_true.min(), *qs, z_true.max()]
+    # 4 quantile bins in toc_true; per-bin median residual + count + bin centre
+    qs = np.quantile(toc_true, [0.25, 0.5, 0.75])
+    edges = [toc_true.min(), *qs, toc_true.max()]
     bins = []
     for i in range(4):
         lo, hi = edges[i], edges[i + 1]
-        mask = (z_true >= lo) & (z_true <= hi if i == 3 else z_true < hi)
+        mask = (toc_true >= lo) & (toc_true <= hi if i == 3 else toc_true < hi)
         if mask.sum() > 0:
             bins.append({
-                "z": round(float(0.5 * (lo + hi)), 3),
+                "toc": round(float(0.5 * (lo + hi)), 3),
                 "n": int(mask.sum()),
-                "med_dz": round(float(np.median(delta[mask])), 4),
+                "med_dtoc": round(float(np.median(delta[mask])), 4),
             })
     out["profile"] = bins
     return out
@@ -132,14 +135,14 @@ def main():
         from .safety import check_source
         ok, reason = check_source(src)
         if not ok:
-            print(json.dumps({"sigma_nmad": 9.99, "eta": 1.0,
+            print(json.dumps({"rmse": 9.99, "r2": -1.0,
                               "error": f"blocked:{reason}"}))
             return
         ns: dict = {}
         exec(compile(src, src_path, "exec"), ns)   # trusted-libs sandbox
-        fn = ns.get("estimate_redshift")
+        fn = ns.get("estimate_toc")
         if not callable(fn):
-            raise RuntimeError("source does not define estimate_redshift(df_train, df_eval)")
+            raise RuntimeError("source does not define estimate_toc(df_train, df_eval)")
 
         if split.startswith("cv:"):                # K-fold CV over TRAIN+EVAL pool
             parts = split.split(":")
@@ -153,14 +156,14 @@ def main():
             if split not in splits:
                 raise ValueError(f"bad split {split!r}")
             pred = np.asarray(fn(splits["train"], splits[split]), dtype=float)
-            z_true = splits[split]["z_spec"].to_numpy(float)
-            if pred.shape != z_true.shape or not np.all(np.isfinite(pred)):
+            toc_true = splits[split]["toc"].to_numpy(float)
+            if pred.shape != toc_true.shape or not np.all(np.isfinite(pred)):
                 raise RuntimeError(f"bad prediction: shape={pred.shape}, "
                                    f"finite={np.isfinite(pred).all()}")
-            print(json.dumps(metrics(pred, z_true)))
+            print(json.dumps(metrics(pred, toc_true)))
     except Exception as e:                          # any failure -> structured -inf
         print(json.dumps({
-            "sigma_nmad": 9.99, "eta": 1.0, "bias": 0.0,
+            "rmse": 9.99, "r2": -1.0, "bias": 0.0,
             "error": f"{type(e).__name__}: {str(e)[:160]}",
             "trace": traceback.format_exc(limit=2),
         }))

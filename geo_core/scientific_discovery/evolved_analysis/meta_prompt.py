@@ -32,13 +32,13 @@ class HintSet:
 
 _SEED_SETS = [
     ("none", []),
-    ("colors", ["Add all four SDSS colours (u-g, g-r, r-i, i-z) as features."]),
+    ("features", ["Add all geochemical features (depth, Ro, Fe_Al, S_TOC, d13c, HI) as inputs."]),
     ("scale", ["Apply feature scaling (StandardScaler or RobustScaler) before fitting."]),
     ("ensemble", ["Use a regularised or ensemble model (Ridge, GradientBoosting or RandomForest)."]),
-    ("biasfix", ["The residual profile shows z-dependent bias; add colour-colour "
+    ("biasfix", ["The residual profile shows TOC-dependent bias; add feature-feature "
                  "interaction or polynomial terms to correct the slope."]),
-    ("robust", ["Reduce outliers (eta): use a robust or quantile-based model, or "
-                "clip extreme colour outliers before fitting."]),
+    ("robust", ["Improve r2 / lower rmse: use a robust or ensemble model, or "
+                "clip extreme feature outliers before fitting."]),
 ]
 
 
@@ -96,7 +96,7 @@ class HintSetPopulation:
             cur = "\n".join(f"- {h}" for h in best.hints) or "(none)"
             r = self.proposer.client.messages.create(
                 model=self.proposer.model, max_tokens=80,
-                system=("You advise on improving a photometric-redshift pipeline. "
+                system=("You advise on improving a TOC-prediction pipeline. "
                         "Reply with ONE concrete, novel strategy hint as a single "
                         "sentence. It should COMPLEMENT, not repeat, the hints below. "
                         "No preamble."),

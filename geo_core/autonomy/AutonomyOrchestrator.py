@@ -55,7 +55,7 @@ class AutonomyConfig:
     idle_threshold_seconds: int = 300  # 5 minutes
 
     # Domain boundaries
-    primary_domains: List[str] = field(default_factory=lambda: ["astrophysics", "astronomy"])
+    primary_domains: List[str] = field(default_factory=lambda: ["geochemistry", "taphonomy"])
     related_domains: List[str] = field(default_factory=lambda: ["physics", "mathematics", "computational"])
 
     # Safety constraints
@@ -353,15 +353,15 @@ class AutonomyOrchestrator:
     def _generate_exploration_objective(self, domain: str) -> Optional[Dict]:
         """Generate exploration objective for a domain"""
         objectives = {
-            'astrophysics': [
-                'Explore filament structure variations in different molecular clouds',
-                'Investigate magnetic field correlations in star formation',
-                'Analyze turbulent cascade properties in ISM'
+            'geochemistry': [
+                'Explore redox condition variations across Proterozoic sedimentary basins',
+                'Investigate TOC preservation correlations with depositional environments',
+                'Analyze isotopic signature changes across the Great Oxidation Event'
             ],
-            'astronomy': [
-                'Search for periodic signals in time-domain data',
-                'Investigate exoplanet atmosphere correlations',
-                'Explore galaxy evolution patterns'
+            'taphonomy': [
+                'Search for preservation mode transitions in early-Earth fossil assemblages',
+                'Investigate silicification controls on microbial fossil preservation',
+                'Explore diagenetic alteration patterns in Precambrian cherts'
             ]
         }
 
@@ -692,5 +692,5 @@ def create_autonomy_config(
         autonomy_level=autonomy_level,
         enable_idle_exploration=enable_idle_exploration,
         enable_sub_agent_spawning=enable_sub_agent_spawning,
-        primary_domains=primary_domains or ["astrophysics", "astronomy"]
+        primary_domains=primary_domains or ["geochemistry", "taphonomy"]
     )

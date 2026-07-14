@@ -251,18 +251,18 @@ class DomainRegistry:
             # Try multiple naming conventions to handle plural/singular variations
             possible_class_names = []
 
-            # 1. Standard: words capitalized + 'Domain' (e.g., 'black_holes' -> 'BlackHolesDomain')
+            # 1. Standard: words capitalized + 'Domain' (e.g., 'microbialites' -> 'MicrobialitesDomain')
             class_name = ''.join(word.capitalize() for word in domain_name.split('_')) + 'Domain'
             possible_class_names.append(class_name)
 
-            # 2. Simple capitalization + 'Domain' (e.g., 'cmb' -> 'CmbDomain')
+            # 2. Simple capitalization + 'Domain' (e.g., 'mineral' -> 'MineralDomain')
             possible_class_names.append(domain_name.capitalize() + 'Domain')
 
             # 3. Common plural-to-singular mappings
             # Remove trailing 's' from last word if plural
             words = domain_name.split('_')
             if words[-1].endswith('s') and len(words[-1]) > 1:
-                # Try singular form (e.g., 'exoplanets' -> 'exoplanet')
+                # Try singular form (e.g., 'cherts' -> 'chert')
                 singular_words = words[:-1] + [words[-1][:-1]]
                 singular_name = ''.join(word.capitalize() for word in singular_words) + 'Domain'
                 possible_class_names.append(singular_name)

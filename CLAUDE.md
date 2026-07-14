@@ -60,6 +60,31 @@ memory) repurposed from astrophysics to geochemistry.
   sandbox worker still cannot load real data — `real_data.load_split` was purged
   with the astrophysics data, so Gate 1 currently always fails; re-grounding it
   in geochemistry data (EarthChem / PBDB) is the remaining domain task.
+- **Full astrophysics-content purge (2026-07-14):** all residual ASTROPHYSICS
+  *content* removed or re-grounded to geochemistry. Identifier renames
+  (`astra`→`geo`/`geodisc`, ~14 files). Deleted dead astro modules
+  (`advanced_analysis` [GalaxyClassifier/photo-z], `theoretical_physics`
+  [MHD/plasma stubs], `genuine_discovery_validator`, `data_repositories`
+  [ALMA/NASA/ESO], the `autotunnel_viz` orphan, 3 `.backup`/`.broken` files,
+  `test_phase_2_4` [exoplanet test]). Removed astrophysics-only domain packages
+  (`atomic_physics`, `quantum_applications`) + 5 dead astro-domain imports
+  (exoplanets/gravitational_waves/cosmology/solar_system/time_domain). The
+  Phase-1 photo-z evolutionary engine was re-grounded to a **geochemistry
+  TOC-prediction** task (`estimate_toc`, rmse/r² metrics); the MORK concept
+  graph de-astro'd (Schwarzschild/Black-Hole/Cosmology/stellar-Fusion removed);
+  the `astronomy` operating mode and astro examples (stellar/halo causal,
+  planetary-nebulae demos, molecular-cloud prior knowledge) replaced with
+  geochemistry (TOC / δ¹³C / redox / pyrite-framboid / taphonomy) across
+  reasoning / capabilities / theoretical_discovery / autonomy / self_teaching /
+  autonomous_research / retrieval. **Retained intentionally (not astrophysics
+  domain content):** NASA ADS + arXiv `astro-ph` literature-retrieval
+  infrastructure (also indexes geochemistry papers), the migration-spec path
+  reference, the `STAN` identifier, and domain-neutral foundational-physics
+  taxonomy (e.g. the cosmological length-scale tier, gravitational-physics task
+  type). The unrelated `arc_agi/` / `arc_reasoning/` subsystem has pre-existing
+  syntax errors, untouched and out of scope. Gates green throughout: 19 tests,
+  smoke, capability, 16 domains; `python -m compileall geo_core` clean except
+  the pre-existing arc_* errors.
 - **Public repo**: https://github.com/Tilanthi/GEODISC (`main` branch; git
   remotes `origin` and `geodisc` both point here). Published as a clean
   geochemistry-only history. The precursor astrophysics history is preserved

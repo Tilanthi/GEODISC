@@ -1057,39 +1057,38 @@ class NestedSampler:
 # Domain-Specific Helpers
 # ============================================================================
 
-def create_lens_parameter_bounds() -> Dict[str, Tuple[float, float]]:
-    """Standard bounds for gravitational lens parameters."""
+def create_redox_parameter_bounds() -> Dict[str, Tuple[float, float]]:
+    """Standard bounds for geochemical redox proxy parameters."""
     return {
-        "einstein_radius": (0.1, 5.0),      # arcsec
-        "ellipticity": (0.0, 0.9),
-        "position_angle": (0.0, 180.0),     # degrees
-        "center_x": (-1.0, 1.0),            # arcsec
-        "center_y": (-1.0, 1.0),            # arcsec
-        "shear_strength": (0.0, 0.3),
-        "shear_angle": (0.0, 180.0)         # degrees
+        "fe_al_ratio": (0.1, 2.0),          # Fe/Al enrichment
+        "mo_concentration": (0.1, 500.0),   # Mo (ppm)
+        "u_concentration": (0.1, 100.0),    # U (ppm)
+        "delta_34s_pyrite": (-50.0, 50.0),  # d34S (per mil VCDT)
+        "ce_anomaly": (-2.0, 2.0),          # Ce/Ce* anomaly
+        "euxinia_indicator": (0.0, 1.0)     # water-column euxinia proxy
     }
 
 
-def create_stellar_parameter_bounds() -> Dict[str, Tuple[float, float]]:
-    """Standard bounds for stellar parameters."""
+def create_organic_parameter_bounds() -> Dict[str, Tuple[float, float]]:
+    """Standard bounds for organic geochemistry / thermal maturity parameters."""
     return {
-        "effective_temperature": (3000.0, 50000.0),  # K
-        "surface_gravity": (0.0, 6.0),               # log g [cgs]
-        "metallicity": (-4.0, 0.5),                  # [Fe/H]
-        "mass": (0.1, 100.0),                        # solar masses
-        "radius": (0.1, 1000.0)                      # solar radii
+        "toc": (0.01, 50.0),                # Total organic carbon (wt %)
+        "vitrinite_reflectance": (0.1, 5.0),# Ro (thermal maturity)
+        "burial_depth": (0.1, 10.0),        # km
+        "geothermal_gradient": (15.0, 80.0),# deg C / km
+        "max_temperature": (50.0, 350.0)    # deg C
     }
 
 
-def create_cosmology_parameter_bounds() -> Dict[str, Tuple[float, float]]:
-    """Standard bounds for cosmological parameters."""
+def create_stratigraphy_parameter_bounds() -> Dict[str, Tuple[float, float]]:
+    """Standard bounds for Proterozoic stratigraphy / age parameters."""
     return {
-        "H0": (50.0, 100.0),                # km/s/Mpc
-        "omega_m": (0.1, 0.5),              # matter density
-        "omega_lambda": (0.5, 0.9),         # dark energy density
-        "omega_b": (0.01, 0.1),             # baryon density
-        "sigma_8": (0.5, 1.2),              # clustering amplitude
-        "n_s": (0.8, 1.1)                   # scalar spectral index
+        "depositional_age": (0.5, 4.0),     # Ga
+        "sedimentation_rate": (0.1, 100.0),  # m / Myr
+        "paleolatitude": (-90.0, 90.0),      # degrees
+        "sea_level": (-200.0, 200.0),        # m relative to present
+        "basin_subsidence": (0.01, 5.0),     # km / Myr
+        "weathering_flux": (0.01, 10.0)      # relative chemical weathering intensity
     }
 
 

@@ -141,7 +141,7 @@ class RewardConfig:
 
     # Domain-specific modifiers
     domain_multipliers: Dict[str, float] = field(default_factory=lambda: {
-        'astrophysics': 1.2,
+        'geochemistry': 1.2,
         'causality': 1.1,
         'mathematics': 1.0,
         'physics': 1.1,

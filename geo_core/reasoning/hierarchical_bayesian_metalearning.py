@@ -366,22 +366,21 @@ class TaskSimilarityComputer:
     def _build_domain_hierarchy(self) -> Dict[str, List[str]]:
         """Build domain hierarchy for science domains"""
         return {
-            "astrophysics": ["astrophysics"],
-            "gravitational_lensing": ["astrophysics", "gravitational_lensing"],
-            "strong_lensing": ["astrophysics", "gravitational_lensing", "strong_lensing"],
-            "weak_lensing": ["astrophysics", "gravitational_lensing", "weak_lensing"],
-            "stellar": ["astrophysics", "stellar"],
-            "stellar_evolution": ["astrophysics", "stellar", "stellar_evolution"],
-            "stellar_atmospheres": ["astrophysics", "stellar", "stellar_atmospheres"],
-            "galactic": ["astrophysics", "galactic"],
-            "galaxy_dynamics": ["astrophysics", "galactic", "galaxy_dynamics"],
-            "galaxy_morphology": ["astrophysics", "galactic", "galaxy_morphology"],
-            "cosmology": ["astrophysics", "cosmology"],
-            "dark_matter": ["astrophysics", "cosmology", "dark_matter"],
-            "dark_energy": ["astrophysics", "cosmology", "dark_energy"],
-            "molecular_clouds": ["astrophysics", "interstellar_medium", "molecular_clouds"],
-            "radiative_transfer": ["astrophysics", "radiative_transfer"],
-            "spectroscopy": ["astrophysics", "spectroscopy"],
+            "geochemistry": ["geochemistry"],
+            "sedimentology": ["geochemistry", "sedimentology"],
+            "taphonomy": ["geochemistry", "taphonomy"],
+            "organic_geochemistry": ["geochemistry", "organic_geochemistry"],
+            "mineralogy": ["geochemistry", "mineralogy"],
+            "general_geochemistry": ["geochemistry", "general_geochemistry"],
+            "precambrian_geology": ["geochemistry", "precambrian_geology"],
+            "microbial_ecology": ["geochemistry", "microbial_ecology"],
+            "evolution": ["geochemistry", "evolution"],
+            "isotope_geochemistry": ["geochemistry", "isotope_geochemistry"],
+            "redox_geochemistry": ["geochemistry", "redox_geochemistry"],
+            "stratigraphy": ["geochemistry", "stratigraphy"],
+            "earth_system_science": ["geochemistry", "earth_system_science"],
+            "thermodynamics": ["geochemistry", "thermodynamics"],
+            "spectroscopy": ["geochemistry", "spectroscopy"],
         }
 
     def _get_domain_path(self, domain: str) -> List[str]:
@@ -531,12 +530,12 @@ class PriorLearner:
         """Create a weakly informative prior"""
         # Domain-specific defaults
         defaults = {
-            "einstein_radius": (1.0, 2.0, (0.1, 10.0)),
-            "velocity_dispersion": (200.0, 100.0, (50.0, 500.0)),
-            "redshift": (1.0, 0.5, (0.0, 10.0)),
-            "mass": (1e12, 1e12, (1e8, 1e16)),
-            "temperature": (5000.0, 2000.0, (100.0, 50000.0)),
-            "metallicity": (0.0, 0.5, (-3.0, 1.0)),
+            "toc": (1.0, 2.0, (0.01, 50.0)),              # Total organic carbon (wt %)
+            "delta_13c": (-5.0, 5.0, (-50.0, 10.0)),       # d13C organic (per mil VPDB)
+            "delta_34s_pyrite": (0.0, 15.0, (-50.0, 50.0)),# d34S pyrite (per mil VCDT)
+            "fe_al_ratio": (0.5, 0.2, (0.01, 2.0)),        # Fe/Al enrichment ratio
+            "depositional_age": (2.0, 0.5, (0.5, 4.0)),    # Depositional age (Ga)
+            "burial_depth": (2.0, 1.5, (0.1, 10.0)),       # Burial depth (km)
         }
 
         # Check for known parameter

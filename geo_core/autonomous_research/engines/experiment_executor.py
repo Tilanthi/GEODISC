@@ -29,11 +29,11 @@ class ExperimentExecutor:
     def __init__(self):
         """Initialize experiment executor"""
         self.archive_access = {
-            'Herschel': 'http://archives.esac.esa.int/hsa/',
-            'ALMA': 'https://almascience.eso.org/',
-            'Gaia': 'https://gea.esac.esa.int/archive/',
-            'SDSS': 'https://data.sdss.org/',
-            'DES': 'https://www.darkenergysurvey.org/'
+            'EarthChem': 'https://earthchem.org/',
+            'GEOROC': 'https://georoc.eu/',
+            'PetDB': 'https://search.earthchem.org/',
+            'IODP': 'https://www.iodp.org/',
+            'SedDB': 'https://www.earthchem.org/seddb'
         }
         self.hpc_queue = []
         self.active_jobs = []
@@ -97,7 +97,7 @@ class ExperimentExecutor:
             source=DataSource.SIMULATION,
             success=True,
             data=simulation_data,
-            metadata={'cpu_hours': 1000, 'resolution': '1000 AU'},
+            metadata={'cpu_hours': 1000, 'resolution': '1 cm grid'},
             errors=[],
             execution_time=72.0,  # hours
             success_rate=0.90,

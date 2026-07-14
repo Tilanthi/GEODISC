@@ -440,9 +440,10 @@ class LiteratureTheorySynthesizer:
         if known_concepts is None:
             # Default scientific concepts
             known_concepts = {
-                'turbulence', 'magnetic field', 'rotation', 'radiation',
-                'relativity', 'quantum effects', 'viscosity', 'shock',
-                'accretion', 'outflows', 'feedback'
+                'redox conditions', 'diagenesis', 'organic matter burial',
+                'silicification', 'pyritization', 'microbial mats',
+                'oxygen levels', 'TOC preservation', 'isotope fractionation',
+                'weathering', 'sedimentation rate', 'porewater chemistry'
             }
 
         # Generate insights about potential gaps
@@ -450,20 +451,20 @@ class LiteratureTheorySynthesizer:
 
         insights.append(TheoreticalInsight(
             insight_type=InsightType.GAP,
-            description=f"Limited work combining turbulence and magnetic fields"
+            description=f"Limited work combining redox conditions and diagenesis"
                         f" in {domain}",
             sources=["Literature gap analysis"],
             confidence=0.7,
-            suggested_action="Investigate MHD turbulence in this domain"
+            suggested_action="Investigate redox-diagenesis interactions in this domain"
         ))
 
         insights.append(TheoreticalInsight(
             insight_type=InsightType.GAP,
-            description=f"Few theoretical treatments including both radiation"
-                        f" and relativistic effects in {domain}",
+            description=f"Few theoretical treatments linking organic-matter burial"
+                        f" and silicification in {domain}",
             sources=["Literature gap analysis"],
             confidence=0.8,
-            suggested_action="Develop radiative relativistic theory"
+            suggested_action="Develop coupled burial-silicification model"
         ))
 
         self.discovered_insights.extend(insights)

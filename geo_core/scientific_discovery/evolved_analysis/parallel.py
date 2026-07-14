@@ -86,7 +86,7 @@ class ParallelEvolutionEngine(EvolutionEngine):
         self._elitist_merge(children)
         best = max(self.population, key=lambda c: c.fitness)
         m = best.metadata.get("metrics", {})
-        row = {"best_fitness": best.fitness, "best_sigma": m.get("sigma_nmad"),
+        row = {"best_fitness": best.fitness, "best_rmse": m.get("rmse"),
                "n_children": len(children), "proposals": self.stats["proposals"]}
         self.history.append(row)
         return row

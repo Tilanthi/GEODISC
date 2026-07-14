@@ -44,7 +44,7 @@ try:
     _SANDBOX_EXEC = shutil.which("sandbox-exec")
 except Exception:
     _SANDBOX_EXEC = None
-_PROFILE = Path(__file__).resolve().parent / "astra_worker.sb"
+_PROFILE = Path(__file__).resolve().parent / "geo_worker.sb"
 
 
 def _program_hash(src: str) -> str:

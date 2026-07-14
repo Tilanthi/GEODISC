@@ -144,7 +144,7 @@ class ContinuousAutonomousProcess:
         self.last_reflection = 0
 
         # Domain configuration
-        self.active_domains: List[str] = ["astrophysics", "astronomy"]
+        self.active_domains: List[str] = ["geochemistry", "taphonomy"]
 
         # Statistics
         self.stats = {
@@ -269,7 +269,7 @@ class ContinuousAutonomousProcess:
             activity_id=f"literature_{int(time.time())}",
             activity_type=ActivityType.LITERATURE_MONITORING,
             description="Monitor recent literature for new developments",
-            domain="astrophysics",
+            domain="geochemistry",
             priority=Priority.MEDIUM,
             estimated_duration=600.0,
             expected_value=0.8

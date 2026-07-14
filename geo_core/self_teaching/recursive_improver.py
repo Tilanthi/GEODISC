@@ -542,7 +542,7 @@ class RecursiveImprover:
         current_domain = problem.get('domain', 'unknown')
 
         # Get alternative domains
-        alternative_domains = ['astrophysics', 'causality', 'mathematics', 'physics']
+        alternative_domains = ['geochemistry', 'causality', 'mathematics', 'physics']
         alternative_domains = [d for d in alternative_domains if d != current_domain]
 
         if alternative_domains:

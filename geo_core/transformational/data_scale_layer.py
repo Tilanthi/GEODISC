@@ -134,7 +134,7 @@ class DataScaleLayer:
         Args:
             base_data_dir: Base directory for data storage
         """
-        self.base_data_dir = base_data_dir or Path.home() / '.astra_data_scale_layer'
+        self.base_data_dir = base_data_dir or Path.home() / '.geodisc_data_scale_layer'
         self.base_data_dir.mkdir(parents=True, exist_ok=True)
 
         # Data storage

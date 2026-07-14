@@ -2,7 +2,7 @@
 
 This is the first layer of defence-in-depth for the GEODISC evolutionary discovery
 loop. The eval worker takes an LLM-generated source string defining
-``estimate_redshift(df_train, df_eval)`` and runs it on REAL SDSS data. Before
+``run_claim(df_train, df_eval)`` and runs it on REAL geochemical data. Before
 that string is ever compiled and executed, this module confirms that it only
 uses a small allowlist of import roots and does not call (or attribute-reach
 into) the Python builtins / stdlib modules that touch the OS, network, process
@@ -11,7 +11,7 @@ tree, or interpreter internals.
 Combined with:
   * ``resource.setrlimit`` caps applied in ``eval_worker.py`` (CPU, file size,
     fork count), and
-  * the macOS ``sandbox-exec`` profile (``astra_worker.sb``) that denies network
+  * the macOS ``sandbox-exec`` profile (``geo_worker.sb``) that denies network
     and restricts writes,
 this gate bounds what untrusted LLM code can do even when the proposer is
 adversarial or buggy.
@@ -21,7 +21,7 @@ no claim to defeat truly obfuscated source, but it does catch the obvious
 escape hatches (``open``, ``eval``, ``os.system``, ``subprocess.run``,
 ``__import__``). The sandbox + rlimit layers backstop anything subtler.
 
-Public API: ``check_source(src, entry_point="estimate_redshift") -> (ok, reason)``.
+Public API: ``check_source(src, entry_point="run_claim") -> (ok, reason)``.
 It NEVER raises: any internal failure returns ``(False, "check-failed: ...")`` so
 the caller (the worker) can fail the candidate safely rather than crash.
 """
@@ -87,7 +87,7 @@ def _attr_root_and_path(node: "ast.Attribute"):
     return None, None
 
 
-def check_source(src: str, entry_point: str = "estimate_redshift") -> tuple[bool, str]:
+def check_source(src: str, entry_point: str = "run_claim") -> tuple[bool, str]:
     """Statically vet a candidate program before it is exec()'d.
 
     Returns ``(True, "ok")`` if the source is acceptable, else

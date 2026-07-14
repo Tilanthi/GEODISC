@@ -5,7 +5,7 @@ Invoked as:
     python -m evolved_analysis.claim_eval_worker <source_file> [seed]
 
 It loads the candidate (a module-level CLAIM + a ``run_claim(df_train, df_eval)``
-function), runs it on REAL SDSS data, and prints ONE line of JSON to stdout:
+function), runs it on REAL geochemical data, and prints ONE line of JSON to stdout:
     {"effect": ..., "pvalue": ..., "effect_type": ..., "summary": ..., "claim": ...}
 
 Defence-in-depth (identical to eval_worker): ``resource`` caps + the AST safety

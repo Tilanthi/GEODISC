@@ -331,31 +331,31 @@ class GenuineDiscoveryGenerator:
         """Simulate recent papers for fallback"""
         # Domain-specific simulated papers
         simulated_papers = {
-            'astrophysics': [
+            'geochemistry': [
                 {
-                    'title': 'Magnetic Field Variations in Molecular Cloud Filaments',
+                    'title': 'Redox Condition Variations in Proterozoic Sedimentary Basins',
                     'authors': ['Smith, J.', 'Johnson, A.', 'Williams, R.'],
-                    'abstract': 'We analyze magnetic field properties in filamentary structures...',
+                    'abstract': 'We analyze redox proxy properties across depositional environments...',
                     'published': datetime.now().isoformat(),
-                    'categories': ['astro-ph.GA'],
+                    'categories': ['physics.geo-ph'],
                     'source': 'simulated'
                 },
                 {
-                    'title': 'Turbulent Cascade Properties in the Interstellar Medium',
+                    'title': 'Isotopic Signatures Across the Great Oxidation Event',
                     'authors': ['Chen, L.', 'Garcia, M.', 'Miller, K.'],
-                    'abstract': 'We investigate turbulent energy transfer across scales...',
+                    'abstract': 'We investigate isotopic fractionation changes across the GOE...',
                     'published': datetime.now().isoformat(),
-                    'categories': ['astro-ph.GA'],
+                    'categories': ['physics.geo-ph'],
                     'source': 'simulated'
                 }
             ],
-            'astronomy': [
+            'taphonomy': [
                 {
-                    'title': 'Periodic Signal Detection in Time-Domain Surveys',
+                    'title': 'Preservation Mode Detection in Early-Earth Fossil Assemblages',
                     'authors': ['Anderson, P.', 'Taylor, S.'],
-                    'abstract': 'We develop new methods for detecting periodic signals...',
+                    'abstract': 'We develop new methods for detecting taphonomic preservation signals...',
                     'published': datetime.now().isoformat(),
-                    'categories': ['astro-ph.IM'],
+                    'categories': ['paleo'],
                     'source': 'simulated'
                 }
             ]
@@ -398,17 +398,17 @@ class GenuineDiscoveryGenerator:
 
         # Domain-specific gap templates
         gap_templates = {
-            'astrophysics': [
-                "Limited understanding of magnetic field role in",
-                "Observational constraints lacking for",
-                "Theoretical models need refinement for",
-                "Connection between small-scale and large-scale properties unclear in"
+            'geochemistry': [
+                "Limited understanding of redox controls in",
+                "Geochemical constraints lacking for",
+                "Depositional models need refinement for",
+                "Connection between TOC and preservation unclear in"
             ],
-            'astronomy': [
-                "Detection methods insufficient for",
-                "Systematic effects not fully understood in",
-                "Population statistics incomplete for",
-                "Time-domain behavior poorly characterized for"
+            'taphonomy': [
+                "Preservation indicators insufficient for",
+                "Diagenetic effects not fully understood in",
+                "Taphonomic statistics incomplete for",
+                "Depositional age poorly constrained for"
             ]
         }
 

@@ -144,7 +144,7 @@ class ComprehensiveSystemTest:
             registry = DomainRegistry()
             print("✓")
 
-            print("  Loading all 75 domains...", end=" ")
+            print("  Loading all 16 domains...", end=" ")
             domains_base = project_root / "geo_core" / "domains"
             domain_count = sum(1 for d in domains_base.iterdir() if d.is_dir() and not d.name.startswith('_'))
             print(f"✓ ({domain_count} domains)")
@@ -250,7 +250,7 @@ class ComprehensiveSystemTest:
 
             print("  Processing geochemistry query...", end=" ")
             system = create_geo_stan_system()
-            result = system.answer("What causes supernovae?")
+            result = system.answer("What controls organic-carbon preservation in Proterozoic shales?")
 
             if 'answer' in result and result['answer']:
                 print("✓")
@@ -295,9 +295,9 @@ class ComprehensiveSystemTest:
             print("✓ ALL CAPABILITIES VERIFIED")
             print()
             print("GEODISC is ready with full integration of:")
-            print("  - 75 Domain Modules")
+            print("  - 16 Domain Modules")
             print("  - Memory Systems (MORK, Graph, Working, Episodic)")
-            print("  - Physics Engine (Unified, Relativistic, Quantum, Nuclear)")
+            print("  - Physics Engine (Unified, Quantum)")
             print("  - Causal Discovery & Advanced Reasoning")
             print("  - V4 Metacognitive Capabilities")
             print("  - Unified Orchestrator")

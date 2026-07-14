@@ -32,8 +32,8 @@ INTEGRATION:
 - Links with V106 (explainable reasoning from evidence)
 
 USE CASES:
-- Validate star formation threshold with images + data + literature
-- Cross-validate AGN feedback claims across wavelengths
+- Validate organic-matter preservation threshold with images + geochemical data + literature
+- Cross-validate redox-state claims across sample suites
 - Combine simulation code with observational constraints
 
 Date: 2026-04-14

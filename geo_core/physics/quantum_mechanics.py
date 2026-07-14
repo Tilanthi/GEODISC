@@ -5,12 +5,12 @@ Implements:
 - Wave-particle duality and uncertainty principle
 - Atomic structure and energy levels
 - Quantum statistics (Fermi-Dirac, Bose-Einstein)
-- Degenerate matter and compact objects
+- Degenerate matter and quantum states in condensed phases
 - Quantum tunneling
 
 This provides the quantum physics foundation needed for understanding
-atomic spectra, stellar interiors, white dwarfs, neutron stars, and
-high-energy physical phenomena.
+atomic spectra, mineral structures, isotope fractionation, electron
+behavior in condensed matter, and high-energy physical phenomena.
 
 Date: 2025-12-23
 Version: 47.0
@@ -219,12 +219,12 @@ class QuantumMechanics:
                     "analyze_degenerate_objects",
                     "calculate_critical_temperature",
                     "compute_electron_specific_heat",
-                    "analyze_white_dwarf_structure"
+                    "analyze_degenerate_matter_structure"
                 ],
                 problems=[
                     {
                         "type": "fermi_energy",
-                        "description": "Calculate Fermi energy in white dwarf",
+                        "description": "Calculate Fermi energy in degenerate matter",
                         "parameters": {"density": 1e6}
                     },
                     {
@@ -250,51 +250,51 @@ class QuantumMechanics:
                     "gravitational_physics"
                 ],
                 concepts=[
-                    # Compact objects
-                    "white_dwarfs",
-                    "chandrasekhar_limit",
+                    # Degenerate matter in condensed phases
+                    "degenerate_electron_gas",
+                    "electron_degeneracy_limit",
                     "electron_degeneracy_pressure",
                     "relativistic_degeneracy",
-                    "neutron_stars",
+                    "degenerate_neutron_matter",
                     "neutron_degeneracy_pressure",
                     "nuclear_equation_of_state",
-                    "tolman_oppenheimer_volkoff",
-                    "neutron_star_limit",
-                    "pulsars",
-                    "magnetars",
-                    "compact_object_cooling",
-                    "neutrino_cooling",
-                    "photon_cooling",
+                    "mass_radius_relation",
+                    "maximum_mass_limit",
+                    "electron_pressure_in_metals",
+                    "magnetic_field_effects",
+                    "thermal_evolution",
+                    "neutrino_emission",
+                    "photon_emission",
                     "degenerate_cores",
-                    "brown_dwarfs",
-                    "gas_giant_interiors"
+                    "high_pressure_mineral_phases",
+                    "planetary_interiors"
                 ],
                 skills=[
                     # Analysis skills
                     "compute_chandrasekhar_limit",
-                    "analyze_white_dwarf_structure",
+                    "analyze_degenerate_matter_structure",
                     "calculate_electron_degeneracy_pressure",
-                    "compute_neutron_star_radius",
-                    "analyze_tov_equation",
-                    "calculate_pulsar_period",
-                    "analyze_magnetar_fields",
+                    "compute_degenerate_matter_radius",
+                    "analyze_mass_radius_relation",
+                    "calculate_rotation_period",
+                    "analyze_magnetic_field_effects",
                     "compute_cooling_timescales",
                     "analyze_degenerate_core_structure"
                 ],
                 problems=[
                     {
                         "type": "chandrasekhar",
-                        "description": "Calculate Chandrasekhar mass limit",
+                        "description": "Calculate Chandrasekhar mass limit for degenerate matter",
                         "parameters": {"mu_e": 2}
                     },
                     {
                         "type": "white_dwarf_radius",
-                        "description": "Compute white dwarf radius from mass",
+                        "description": "Compute radius of degenerate object from mass",
                         "parameters": {"mass": 0.6}
                     },
                     {
                         "type": "neutron_star",
-                        "description": "Calculate neutron star structure",
+                        "description": "Calculate structure of neutron-degenerate matter",
                         "parameters": {"mass": 1.4}
                     }
                 ],
@@ -607,7 +607,7 @@ class QuantumMechanics:
     @staticmethod
     def chandrasekhar_limit(mu_e: float = 2) -> float:
         """
-        Calculate Chandrasekhar mass limit
+        Calculate Chandrasekhar mass limit for electron-degenerate matter
 
         Args:
             mu_e: Mean molecular weight per electron
@@ -648,7 +648,7 @@ class QuantumMechanics:
     @staticmethod
     def white_dwarf_radius(mass: float, mu_e: float = 2) -> float:
         """
-        Calculate white dwarf radius from mass (mass-radius relation)
+        Calculate radius of electron-degenerate object from mass (mass-radius relation)
 
         Args:
             mass: Mass (solar masses)
@@ -670,7 +670,7 @@ class QuantumMechanics:
     @staticmethod
     def neutron_star_radius(mass: float, equation_of_state: str = "polytrope") -> float:
         """
-        Calculate neutron star radius (approximate)
+        Calculate radius of neutron-degenerate object (approximate)
 
         Args:
             mass: Mass (solar masses)

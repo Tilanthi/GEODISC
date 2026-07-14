@@ -154,12 +154,12 @@ class PriorKnowledgeBase:
         Initialize prior knowledge base.
 
         Args:
-            config_path: Path to YAML config file (default: astra_priors.yaml)
+            config_path: Path to YAML config file (default: geo_priors.yaml)
         """
         if config_path is None:
             # Default to project root config
             project_root = Path(__file__).parent.parent.parent
-            config_path = project_root / 'astra_priors.yaml'
+            config_path = project_root / 'geo_priors.yaml'
 
         self.config_path = config_path
         self.relations: Dict[str, ScientificRelation] = {}
@@ -217,80 +217,80 @@ class PriorKnowledgeBase:
 
     def _load_default_relations(self):
         """Load default set of established relations"""
-        # Larson's Law 1: Velocity-size relation
-        larson1 = ScientificRelation(
-            relation_id="larson_law_velocity_size",
-            name="Larson's Law 1: Velocity-size relation",
+        # Athy's compaction law: porosity decays exponentially with burial depth
+        compaction_law = ScientificRelation(
+            relation_id="athy_porosity_depth",
+            name="Athy's compaction law (porosity vs burial depth)",
             relation_type=RelationType.SCALING_LAW,
-            expected_value=0.38,  # Power-law index
-            uncertainty=0.05,
-            variables=["velocity_dispersion", "cloud_size"],
-            units="dimensionless",
-            power_law_index=0.38,
-            citation="Larson 1981, MNRAS, 74, 19",
-            confidence_level=0.95,
-            domain="molecular_clouds"
+            expected_value=0.45,  # porosity decay constant (per km)
+            uncertainty=0.10,
+            variables=["porosity", "burial_depth"],
+            units="1/km",
+            power_law_index=0.45,
+            citation="Athy 1930, AAPG Bull., 14, 1-24",
+            confidence_level=0.9,
+            domain="sedimentology"
         )
 
-        # Universal filament width
-        filament_width = ScientificRelation(
-            relation_id="universal_filament_width",
-            name="Universal filament width in molecular clouds",
+        # Typical pyrite framboid diameter in euxinic sediments
+        framboid_diameter = ScientificRelation(
+            relation_id="pyrite_framboid_diameter_euxinic",
+            name="Mean pyrite framboid diameter in euxinic sediments",
             relation_type=RelationType.CONSTANT_VALUE,
-            expected_value=0.1,  # parsecs
-            uncertainty=0.03,
-            variables=["filament_width"],
-            units="pc",
-            citation="Arzoumanian et al. 2011, A&A, 529, L6",
-            confidence_level=0.95,
-            domain="molecular_clouds"
+            expected_value=5.0,  # micrometres
+            uncertainty=1.5,
+            variables=["framboid_diameter"],
+            units="um",
+            citation="Wilkin et al. 1996, Geochim. Cosmochim. Acta, 60, 3887",
+            confidence_level=0.9,
+            domain="taphonomy"
         )
 
-        # Salpeter IMF slope
-        salpeter_imf = ScientificRelation(
-            relation_id="salpeter_imf_slope",
-            name="Salpeter IMF slope",
+        # Organic carbon / pyrite-sulfur weight ratio (normal marine)
+        cs_relation = ScientificRelation(
+            relation_id="organic_carbon_sulfur_ratio",
+            name="Organic carbon to pyrite-sulfur weight ratio (normal marine)",
             relation_type=RelationType.CONSTANT_VALUE,
-            expected_value=2.35,  # Power-law index
-            uncertainty=0.1,
-            variables=["mass_function_slope"],
-            units="dimensionless",
-            citation="Salpeter 1955, ApJ, 121, 161",
-            confidence_level=0.95,
-            domain="stellar_formation"
-        )
-
-        # Larson's Law 2: Mass-size relation
-        larson2 = ScientificRelation(
-            relation_id="larson_law_mass_size",
-            name="Larson's Law 2: Mass-size relation",
-            relation_type=RelationType.SCALING_LAW,
-            expected_value=2.0,  # Power-law index
-            uncertainty=0.2,
-            variables=["cloud_mass", "cloud_size"],
-            units="dimensionless",
-            power_law_index=2.0,
-            citation="Larson 1981, MNRAS, 74, 19",
-            confidence_level=0.95,
-            domain="molecular_clouds"
-        )
-
-        # Virial parameter (typical value)
-        virial_parameter = ScientificRelation(
-            relation_id="virial_parameter_molecular_clouds",
-            name="Virial parameter for molecular clouds",
-            relation_type=RelationType.CONSTANT_VALUE,
-            expected_value=1.5,  # Near virial equilibrium
+            expected_value=2.8,  # C/S weight ratio (Berner)
             uncertainty=0.5,
-            variables=["virial_parameter"],
+            variables=["toc", "pyrite_sulfur"],
+            units="weight_ratio",
+            citation="Berner 1984, Geochim. Cosmochim. Acta, 48, 1205",
+            confidence_level=0.9,
+            domain="organic_geochemistry"
+        )
+
+        # Easy%Ro vitrinite reflectance vs maximum temperature
+        easy_ro = ScientificRelation(
+            relation_id="easy_ro_vitrinite_reflectance",
+            name="Easy%Ro vitrinite reflectance vs maximum burial temperature",
+            relation_type=RelationType.SCALING_LAW,
+            expected_value=1.0,  # %Ro near oil-window onset (~140 C)
+            uncertainty=0.2,
+            variables=["vitrinite_reflectance", "max_temperature"],
             units="dimensionless",
-            citation="Bertoldi & McKee 1992, ApJ, 395, 140",
-            confidence_level=0.95,
-            domain="molecular_clouds"
+            power_law_index=1.0,
+            citation="Sweeney & Burnham 1990, AAPG Bull., 74, 1559",
+            confidence_level=0.9,
+            domain="organic_geochemistry"
+        )
+
+        # Degree of pyritization threshold for anoxic deposition
+        dop_anoxia = ScientificRelation(
+            relation_id="dop_anoxia_threshold",
+            name="Degree of pyritization threshold indicating anoxic deposition",
+            relation_type=RelationType.CONSTANT_VALUE,
+            expected_value=0.7,  # DOP above ~0.7 indicates anoxia
+            uncertainty=0.1,
+            variables=["degree_of_pyritization"],
+            units="dimensionless",
+            citation="Raiswell & Berner 1985, Phil. Trans. R. Soc. A, 315, 1",
+            confidence_level=0.85,
+            domain="redox_geochemistry"
         )
 
         # Add all relations
-        for relation in [larson1, filament_width, salpeter_imf, larson2, virial_parameter]:
+        for relation in [compaction_law, framboid_diameter, cs_relation, easy_ro, dop_anoxia]:
             self.add_relation(relation)
 
         logger.info("[PriorKB] Loaded default relations")

@@ -50,7 +50,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('.astra_validated_discovery.log'),
+        logging.FileHandler('.geodisc_validated_discovery.log'),
         logging.StreamHandler()
     ]
 )
@@ -81,7 +81,7 @@ class ValidatedDiscoveryPipeline:
             enable_validation_gates: If True, all validation gates are enforced
         """
         self.enable_validation_gates = enable_validation_gates
-        self.astra_system = None
+        self.geo_system = None
         self.discovery_generator = None
 
         logger.info(f"ValidatedDiscoveryPipeline initialized (validation gates: {enable_validation_gates})")
@@ -94,15 +94,15 @@ class ValidatedDiscoveryPipeline:
                 return False
 
             logger.info("Creating GEODISC enhanced unified system...")
-            self.astra_system = create_geo_stan_system()
+            self.geo_system = create_geo_stan_system()
 
-            if self.astra_system is None:
+            if self.geo_system is None:
                 logger.error("Failed to create GEODISC system")
                 return False
 
             logger.info("Creating genuine discovery generator...")
             self.discovery_generator = create_genuine_discovery_generator(
-                astra_system=self.astra_system
+                geo_system=self.geo_system
             )
 
             if self.discovery_generator is None:
@@ -123,7 +123,7 @@ class ValidatedDiscoveryPipeline:
         Returns:
             Tuple of (success, discovery_output, validation_report)
         """
-        if self.astra_system is None:
+        if self.geo_system is None:
             error_msg = "GEODISC system not initialized"
             logger.error(error_msg)
             return False, None, error_msg
@@ -166,7 +166,7 @@ class ValidatedDiscoveryPipeline:
                 logger.info("Using genuine discovery generator...")
                 discovery = generate_contemporary_discovery(
                     self.discovery_generator,
-                    domain="astrophysics"
+                    domain="geochemistry"
                 )
 
                 if discovery and hasattr(discovery, 'title'):
@@ -174,9 +174,9 @@ class ValidatedDiscoveryPipeline:
 
             # Fallback: Direct query to GEODISC system
             logger.info("Using direct GEODISC query approach...")
-            query = "Analyze stellar evolution for 1.0 solar mass stars and identify any novel insights"
+            query = "Analyze Proterozoic pyrite framboid size distributions as a redox proxy and identify any novel insights"
 
-            response = self.astra_system.answer(query)
+            response = self.geo_system.answer(query)
             if response:
                 return self._format_basic_output(response, query)
 

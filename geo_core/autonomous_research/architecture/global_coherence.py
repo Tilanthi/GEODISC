@@ -79,38 +79,38 @@ class GlobalCoherenceLayer:
 
 class HierarchicalUnderstanding:
     """
-    Maintains understanding across all physical scales.
+    Maintains understanding across all Earth-science scales.
 
     Scales:
-    - Nuclear (10^-15 m): Nuclear reactions
-    - Atomic (10^-10 m): Atomic processes
-    - Molecular (10^-9 m): Molecules and dust
-    - Micro (10^-6 m): Dust grains, chemistry
-    - Local (10^0 m): Stars, planets
-    - Stellar (10^12 m): Stellar systems
-    - Galactic (10^20 m): Galaxies
-    - Cosmological (10^26 m): Large-scale structure
+    - Molecular (10^-9 m): Atomic and molecular structure, isotopes
+    - Mineral (10^-4 m): Mineral grains, crystal chemistry
+    - Rock (10^-2 m): Hand sample, rock fabric and texture
+    - Outcrop (10^0 m): Outcrop features, sedimentary structures
+    - Formation (10^3 m): Stratigraphic formation, facies
+    - Basin (10^5 m): Sedimentary basin
+    - Stratigraphic (10^6 m): Regional stratigraphy, depositional systems
+    - Tectonic (10^7 m): Plate tectonics, global cycles
     """
 
     def __init__(self):
         """Initialize hierarchical understanding"""
         self.scales = [
-            'nuclear', 'atomic', 'molecular', 'micro',
-            'local', 'stellar', 'galactic', 'cosmological'
+            'molecular', 'mineral', 'rock', 'outcrop',
+            'formation', 'basin', 'stratigraphic', 'tectonic'
         ]
         self.scale_connections = self._build_scale_connections()
 
     def _build_scale_connections(self) -> Dict[str, List[str]]:
         """Build connections between scales"""
         connections = {
-            'nuclear': ['atomic', 'stellar'],
-            'atomic': ['nuclear', 'molecular'],
-            'molecular': ['atomic', 'micro', 'local'],
-            'micro': ['molecular', 'local'],
-            'local': ['micro', 'stellar'],
-            'stellar': ['local', 'galactic'],
-            'galactic': ['stellar', 'cosmological'],
-            'cosmological': ['galactic']
+            'molecular': ['mineral'],
+            'mineral': ['molecular', 'rock'],
+            'rock': ['mineral', 'outcrop'],
+            'outcrop': ['rock', 'formation'],
+            'formation': ['outcrop', 'basin'],
+            'basin': ['formation', 'stratigraphic'],
+            'stratigraphic': ['basin', 'tectonic'],
+            'tectonic': ['stratigraphic']
         }
         return connections
 
@@ -119,10 +119,10 @@ class HierarchicalUnderstanding:
         print(f"[Hierarchical Understanding] Bridging {scale1} → {scale2}")
 
         return {
-            'coupling_mechanism': 'gravitational',
+            'coupling_mechanism': 'chemical mass balance',
             'effective_theory': f'Effective theory at {scale2} scale',
-            'coarse_graining': 'Renormalization group methods',
-            'examples': ['Stellar structure ↔ Nuclear reaction rates']
+            'coarse_graining': 'Upscaling and homogenisation methods',
+            'examples': ['Basin subsidence ↔ Organic-matter burial']
         }
 
     def understand_at_scale(self, scale: str, phenomenon: str) -> Dict[str, Any]:
@@ -138,28 +138,28 @@ class HierarchicalUnderstanding:
     def _get_governing_physics(self, scale: str) -> List[str]:
         """Get governing physics at scale"""
         physics_map = {
-            'nuclear': ['Strong force', 'Weak force', 'Quantum mechanics'],
-            'atomic': ['Electromagnetism', 'Quantum mechanics'],
-            'molecular': ['Quantum chemistry', 'Electromagnetism'],
-            'micro': ['Solid state physics', 'Chemistry'],
-            'local': ['Fluid dynamics', 'Radiation transfer', 'Nuclear fusion'],
-            'stellar': ['Gravity', 'Hydrodynamics', 'Radiation'],
-            'galactic': ['Gravity', 'Gas dynamics', 'Stellar populations'],
-            'cosmological': ['Gravity', 'Dark energy', 'Inflation']
+            'molecular': ['Quantum chemistry', 'Thermodynamics', 'Isotope fractionation'],
+            'mineral': ['Crystal chemistry', 'Thermodynamics', 'Solid-state physics'],
+            'rock': ['Petrology', 'Diagenesis', 'Fluid chemistry'],
+            'outcrop': ['Sedimentology', 'Stratigraphy', 'Diagenesis'],
+            'formation': ['Sequence stratigraphy', 'Basin analysis', 'Depositional processes'],
+            'basin': ['Basin subsidence', 'Fluid flow', 'Burial history'],
+            'stratigraphic': ['Regional geology', 'Sea-level change', 'Provenance'],
+            'tectonic': ['Plate tectonics', 'Geodynamics', 'Heat flow']
         }
         return physics_map.get(scale, ['Physics'])
 
     def _get_characteristic_scales(self, scale: str) -> Dict[str, float]:
         """Get characteristic scales at physical scale"""
         scales = {
-            'nuclear': {'length': 1e-15, 'energy': 1e6, 'time': 1e-23},
-            'atomic': {'length': 1e-10, 'energy': 1e0, 'time': 1e-16},
-            'molecular': {'length': 1e-9, 'energy': 0.1, 'time': 1e-13},
-            'micro': {'length': 1e-6, 'energy': 0.01, 'time': 1e-10},
-            'local': {'length': 1e0, 'energy': 1e-37, 'time': 1e0},
-            'stellar': {'length': 1e12, 'energy': 1e44, 'time': 1e8},
-            'galactic': {'length': 1e20, 'energy': 1e60, 'time': 1e16},
-            'cosmological': {'length': 1e26, 'energy': 1e70, 'time': 1e18}
+            'molecular': {'length': 1e-9, 'energy': 0.1, 'time': 1e-12},
+            'mineral': {'length': 1e-4, 'energy': 0.01, 'time': 1e6},
+            'rock': {'length': 1e-2, 'energy': 1e-3, 'time': 1e10},
+            'outcrop': {'length': 1e1, 'energy': 1e-6, 'time': 1e12},
+            'formation': {'length': 1e3, 'energy': 1e-8, 'time': 1e13},
+            'basin': {'length': 1e5, 'energy': 1e-10, 'time': 1e14},
+            'stratigraphic': {'length': 1e6, 'energy': 1e-11, 'time': 1e15},
+            'tectonic': {'length': 1e7, 'energy': 1e-12, 'time': 1e16}
         }
         return scales.get(scale, {})
 
@@ -183,11 +183,11 @@ class AnalogicalReasoning:
     def _build_analogy_database(self) -> Dict[str, List[str]]:
         """Build database of known analogies"""
         return {
-            'accretion': ['black hole accretion', 'stellar accretion', 'galaxy accretion'],
-            'jets': ['AGN jets', 'protostellar jets', 'pulsar jets'],
-            'instabilities': ['Rayleigh-Taylor', 'Kelvin-Helmholtz', 'gravitational'],
-            'reconnection': ['solar flares', 'pulsar magnetospheres', 'magnetospheres'],
-            'turbulence': ['ISM turbulence', 'ocean turbulence', 'atmospheric turbulence']
+            'diffusion': ['isotope diffusion in minerals', 'solute diffusion in porewater', 'heat diffusion in basins'],
+            'fractionation': ['isotopic fractionation', 'trace-element partitioning', 'redox fractionation'],
+            'diagenesis': ['early marine diagenesis', 'burial diagenesis', 'meteoric diagenesis'],
+            'fluid_flow': ['porewater advection', 'basinal fluid migration', 'hydrothermal circulation'],
+            'turbulence': ['sediment gravity currents', 'ocean turbulence', 'atmospheric turbulence']
         }
 
     def find_analogies(self, domain1: str, domain2: str) -> List[Dict]:
@@ -213,8 +213,8 @@ class AnalogicalReasoning:
     def _find_shared_mechanisms(self, domain1: str, domain2: str) -> List[str]:
         """Find shared mechanisms between domains"""
         # Common mechanisms
-        common = ['gravitational instability', 'magnetic reconnection',
-                  'shock waves', 'accretion', 'outflows']
+        common = ['chemical diffusion', 'density-driven flow',
+                  'redox gradients', 'isotopic fractionation', 'diagenetic alteration']
 
         return common
 
@@ -250,7 +250,7 @@ class ContinuousLearning:
     Monitors:
     1. arXiv daily preprints
     2. ADS bibliographic updates
-    3. Major survey data releases
+    3. Major geochemical database releases (EarthChem)
     4. Conference proceedings
     """
 
@@ -339,16 +339,16 @@ class ScientificTaste:
         """Train model to assess importance"""
         return {
             'nobel_prize_topics': [
-                'Dark energy', 'Gravitational waves', 'Exoplanets',
-                'Cosmic inflation', 'Neutrino oscillations'
+                'Great Oxidation', 'Radiometric dating', 'Carbon isotope chemostratigraphy',
+                'Mass extinctions', 'Early Earth atmosphere'
             ],
             'high_citation_topics': [
-                'Star formation', 'Galaxy formation', 'Black holes',
-                'ISM physics', 'High-energy astrophysics'
+                'Redox geochemistry', 'Isotope fractionation', 'Organic matter burial',
+                'Diagenesis', 'Banded iron formations'
             ],
             'active_areas': [
-                'Time-domain astronomy', 'Multi-messenger',
-                'Machine learning applications', 'Big data'
+                'Proterozoic geochemistry', 'Isotope proxies',
+                'Machine learning in geochemistry', 'Big geochemical data'
             ]
         }
 

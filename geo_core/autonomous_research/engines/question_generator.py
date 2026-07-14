@@ -43,104 +43,104 @@ class QuestionGenerator:
     def _initialize_gap_database(self) -> Dict[str, List[Dict]]:
         """Initialize known knowledge gaps by domain"""
         gaps = {
-            'star_formation': [
+            'redox_geochemistry': [
                 {
-                    'gap': 'Origin of universal filament width (~0.1 pc)',
-                    'type': 'unknown',
-                    'importance': 5,
-                    'references': ['arXiv:1812.06479', 'arXiv:2001.03654']
-                },
-                {
-                    'gap': 'Initial mass function origin and universality',
-                    'type': 'unknown',
-                    'importance': 5,
-                    'references': ['arXiv:astro-ph/0101302', 'Salpeter 1955']
-                },
-                {
-                    'gap': 'Star formation efficiency variation with environment',
-                    'type': 'incomplete',
-                    'importance': 4,
-                    'references': ['arXiv:1309.7859']
-                }
-            ],
-            'galaxies': [
-                {
-                    'gap': 'Galaxy quenching mechanisms',
+                    'gap': 'Timing and structure of the Great Oxidation Event',
                     'type': 'incomplete',
                     'importance': 5,
-                    'references': ['arXiv:1103.2075', 'arXiv:1402.3135']
+                    'references': ['Holland 2006', 'Lyons et al. 2014']
                 },
                 {
-                    'gap': 'Dark matter halo occupation distribution',
+                    'gap': 'Extent of Proterozoic ocean euxinia',
                     'type': 'incomplete',
-                    'importance': 4,
-                    'references': ['arXiv:astro-ph/0106135']
+                    'importance': 5,
+                    'references': ['Canfield 1998', 'Poulton & Canfield 2011']
                 },
                 {
-                    'gap': 'Cores vs cusps in dark matter profiles',
-                    'type': 'tension',
-                    'importance': 5,
-                    'references': ['arXiv:astro-ph/0402164', 'arXiv:astro-ph/0505177']
-                }
-            ],
-            'cosmology': [
-                {
-                    'gap': 'Hubble tension between early and late universe',
-                    'type': 'tension',
-                    'importance': 5,
-                    'references': ['arXiv:1804.10655', 'arXiv:1811.00537']
-                },
-                {
-                    'gap': 'Nature of dark energy',
-                    'type': 'unknown',
-                    'importance': 5,
-                    'references': ['arXiv:astro-ph/0206512']
-                },
-                {
-                    'gap': 'Primordial non-Gaussianity',
+                    'gap': 'Redox sensitivity of rare earth element proxies',
                     'type': 'untested',
                     'importance': 4,
-                    'references': ['arXiv:0805.0110']
+                    'references': ['Planavsky et al. 2010']
                 }
             ],
-            'exoplanets': [
+            'organic_geochemistry': [
                 {
-                    'gap': 'Ultra-short period planets origin',
-                    'type': 'unknown',
-                    'importance': 4,
-                    'references': ['arXiv:1802.05277']
-                },
-                {
-                    'gap': 'Super-Earth composition diversity',
+                    'gap': 'Controls on organic carbon burial across the Proterozoic',
                     'type': 'incomplete',
-                    'importance': 4,
-                    'references': ['arXiv:1503.07866']
-                },
-                {
-                    'gap': 'Hot Jupiter formation mechanisms',
-                    'type': 'incomplete',
-                    'importance': 3,
-                    'references': ['arXiv:astro-ph/0301257']
-                }
-            ],
-            'high_energy': [
-                {
-                    'gap': 'Fast radio burst progenitors',
-                    'type': 'unknown',
                     'importance': 5,
-                    'references': ['arXiv:1707.04248', 'arXiv:2007.13248']
+                    'references': ['Berner 2004', 'Des Marais et al. 1992']
                 },
                 {
-                    'gap': 'Gamma-ray burst central engines',
-                    'type': 'incomplete',
-                    'importance': 4,
-                    'references': ['arXiv:astro-ph/0010181']
+                    'gap': 'Biomarker preservation in Archean rocks',
+                    'type': 'tension',
+                    'importance': 5,
+                    'references': ['Brocks et al. 2003', 'French et al. 2015']
                 },
                 {
-                    'gap': 'Ultra-high-energy cosmic ray sources',
+                    'gap': 'Origin of kerogen molecular structure',
                     'type': 'unknown',
                     'importance': 4,
-                    'references': ['arXiv:1305.5537']
+                    'references': ['Vandenbroucke & Largeau 2007']
+                }
+            ],
+            'taphonomy': [
+                {
+                    'gap': 'Role of silicification in Proterozoic fossil preservation',
+                    'type': 'incomplete',
+                    'importance': 5,
+                    'references': ['Knoll 1985', 'Wacey et al. 2011']
+                },
+                {
+                    'gap': 'Redox controls on soft-tissue preservation',
+                    'type': 'incomplete',
+                    'importance': 4,
+                    'references': ['Canfield et al. 2010']
+                },
+                {
+                    'gap': 'Decay rate versus mineral encapsulation timing',
+                    'type': 'unknown',
+                    'importance': 4,
+                    'references': ['Briggs & McMahon 2016']
+                }
+            ],
+            'isotope_geochemistry': [
+                {
+                    'gap': 'Carbon isotope chemostratigraphy across the GOE',
+                    'type': 'incomplete',
+                    'importance': 5,
+                    'references': ['Schidlowski 2001', 'Karhu & Holland 1996']
+                },
+                {
+                    'gap': 'Multiple sulfur isotope mass-independent fractionation demise',
+                    'type': 'incomplete',
+                    'importance': 5,
+                    'references': ['Farquhar et al. 2000', 'Farquhar & Wing 2003']
+                },
+                {
+                    'gap': 'Iron isotope fractionation as a redox proxy',
+                    'type': 'untested',
+                    'importance': 4,
+                    'references': ['Johnson et al. 2008']
+                }
+            ],
+            'sedimentology': [
+                {
+                    'gap': 'Origin of Proterozoic banded iron formations',
+                    'type': 'incomplete',
+                    'importance': 5,
+                    'references': ['Bekker et al. 2010', 'Klein 2005']
+                },
+                {
+                    'gap': 'Microbialite decline through the Proterozoic',
+                    'type': 'incomplete',
+                    'importance': 4,
+                    'references': ['Grotzinger & Knoll 1999']
+                },
+                {
+                    'gap': 'Diagenetic controls on chert nodule formation',
+                    'type': 'unknown',
+                    'importance': 3,
+                    'references': ['Maliva et al. 2005']
                 }
             ]
         }
@@ -150,38 +150,38 @@ class QuestionGenerator:
     def _initialize_tension_database(self) -> Dict[str, List[Dict]]:
         """Initialize known tensions by domain"""
         tensions = {
-            'cosmology': [
+            'redox_geochemistry': [
                 {
-                    'tension': 'H0 tension (67.4 vs 73.0 km/s/Mpc)',
+                    'tension': 'Lomagundi carbon isotope excursion vs atmospheric O2 models',
                     'type': 'contradiction',
-                    'evidence': ['Planck 2018', 'SH0ES 2020'],
+                    'evidence': ['Karhu & Holland 1996', 'Bekker & Holland 2012'],
                     'importance': 5,
-                    'resolutions': ['Systematic error', 'New physics']
+                    'resolutions': ['Carbon burial flux revision', 'Weathering feedback']
                 },
                 {
-                    'tension': 'σ8 tension (growth rate)',
+                    'tension': 'MIF sulfur isotope record vs late Archean oxygen whiffs',
                     'type': 'contradiction',
-                    'evidence': ['Planck CMB', 'weak lensing'],
+                    'evidence': ['Farquhar et al. 2000', 'Anbar et al. 2007'],
                     'importance': 4,
-                    'resolutions': ['Neutrino properties', 'Modified gravity']
+                    'resolutions': ['Localised oxygen oases', 'Photochemical modelling']
                 }
             ],
-            'star_formation': [
+            'organic_geochemistry': [
                 {
-                    'tension': 'Star formation rate vs IMF',
+                    'tension': 'Archean biomarker syngeneity vs contamination',
+                    'type': 'contradiction',
+                    'evidence': ['Brocks et al. 2003', 'Rasmussen et al. 2008'],
+                    'importance': 5,
+                    'resolutions': ['Improved extraction protocols', 'In-situ analysis']
+                }
+            ],
+            'taphonomy': [
+                {
+                    'tension': 'Silicification vs redox as the dominant preservation control',
                     'type': 'inconsistency',
-                    'evidence': ['Resolved populations', 'Integrated light'],
+                    'evidence': ['Wacey et al. 2011', 'Canfield et al. 2010'],
                     'importance': 4,
-                    'resolutions': ['Variable IMF', 'Sampling effects']
-                }
-            ],
-            'galaxies': [
-                {
-                    'tension': 'Missing satellites problem',
-                    'type': 'contradiction',
-                    'evidence': ['ΛCDM prediction', 'Observed satellites'],
-                    'importance': 4,
-                    'resolutions': ['Baryonic effects', 'Warm dark matter']
+                    'resolutions': ['Dual-control model', 'Environmental context']
                 }
             ]
         }
@@ -244,11 +244,11 @@ class QuestionGenerator:
     def _match_domain(self, domain: str) -> List[str]:
         """Match domain to known domain categories"""
         domain_map = {
-            'star_formation': ['star_formation', 'star formation', 'ism', 'molecular_clouds'],
-            'galaxies': ['galaxies', 'galaxy', 'galaxy_formation', 'galaxy_evolution'],
-            'cosmology': ['cosmology', 'early_universe', 'large_scale', 'cmb'],
-            'exoplanets': ['exoplanets', 'exoplanet', 'planetary', 'planet_formation'],
-            'high_energy': ['high_energy', 'agn', 'gamma_ray', 'frb', 'cosmic_ray', 'xray']
+            'redox_geochemistry': ['redox_geochemistry', 'redox', 'oxygen', 'goe', 'euxinic'],
+            'organic_geochemistry': ['organic_geochemistry', 'organic', 'kerogen', 'biomarker', 'toc'],
+            'taphonomy': ['taphonomy', 'preservation', 'fossil', 'silicification'],
+            'isotope_geochemistry': ['isotope_geochemistry', 'isotope', 'chemostratigraphy', 'fractionation'],
+            'sedimentology': ['sedimentology', 'bif', 'chert', 'microbialite', 'diagenesis']
         }
 
         matched = []
@@ -256,7 +256,7 @@ class QuestionGenerator:
             if any(variant in domain for variant in variants):
                 matched.append(key)
 
-        return matched if matched else ['cosmology']  # Default
+        return matched if matched else ['sedimentology']  # Default
 
     def _gap_to_question(self, gap_info: Dict, domain: str) -> ResearchQuestion:
         """Convert a gap to a research question"""
@@ -451,17 +451,17 @@ class QuestionGenerator:
 
         # Define cross-domain connections
         cross_connections = {
-            'star_formation': ['galaxies', 'cosmology'],
-            'galaxies': ['star_formation', 'cosmology', 'high_energy'],
-            'cosmology': ['star_formation', 'galaxies', 'high_energy'],
-            'high_energy': ['star_formation', 'galaxies'],
-            'exoplanets': ['star_formation', 'cosmology']
+            'redox_geochemistry': ['organic_geochemistry', 'taphonomy'],
+            'organic_geochemistry': ['redox_geochemistry', 'sedimentology', 'taphonomy'],
+            'taphonomy': ['redox_geochemistry', 'organic_geochemistry', 'sedimentology'],
+            'sedimentology': ['taphonomy', 'isotope_geochemistry'],
+            'isotope_geochemistry': ['redox_geochemistry', 'sedimentology']
         }
 
         if domain in cross_connections:
             for connected_domain in cross_connections[domain]:
                 question = ResearchQuestion(
-                    question=f"How does {domain} affect {connected_domain} on cosmic scales?",
+                    question=f"How does {domain} affect {connected_domain} across the sedimentary record?",
                     question_type=QuestionType.INTERDISCIPLINARY,
                     importance=QuestionImportance.MAJOR,
                     domain=f"{domain}_{connected_domain}",
@@ -515,11 +515,11 @@ class QuestionGenerator:
 
         # Adjust based on domain
         domain_difficulty = {
-            'cosmology': 0.6,  # Hard due to limited observations
-            'high_energy': 0.5,  # Hard due to extreme conditions
-            'exoplanets': 0.8,  # Easier - lots of data
-            'star_formation': 0.7,
-            'galaxies': 0.7
+            'taphonomy': 0.6,  # Hard due to sparse preservation record
+            'isotope_geochemistry': 0.5,  # Hard due to analytical precision needs
+            'organic_geochemistry': 0.8,  # Easier - mature toolkit
+            'redox_geochemistry': 0.7,
+            'sedimentology': 0.7
         }
 
         domain_factor = 1.0

@@ -572,7 +572,7 @@ class PDFGenerator:
         legacy_captions = {
             1: "System architecture showing the four-layer structure: Physical Foundation, Domain, Integration, and Inquiry layers",
             2: "Domain adaptation accuracy versus number of training examples for various source-target domain pairs",
-            3: "Causal structure learning example for galaxy evolution variables showing the learned directed acyclic graph",
+            3: "Causal structure learning example for geochemical preservation variables showing the learned directed acyclic graph",
             4: "Physics curriculum learning stages and mastery progression through fifteen learning stages"
         }
 

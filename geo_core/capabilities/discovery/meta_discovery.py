@@ -23,9 +23,9 @@ INTEGRATION:
 - Uses V4.0 CRN (abstraction navigation)
 
 USE CASES:
-- Apply star formation discovery techniques to exoplanet atmospheres
-- Transfer stellar variability methods to AGN analysis
-- Use galaxy discovery patterns in molecular cloud analysis
+- Apply redox-proxy discovery techniques to isotopic excursion analysis
+- Transfer depositional-environment methods to taphonomic studies
+- Use stratigraphic discovery patterns in diagenetic analysis
 
 Date: 2026-04-14
 Version: 1.0
@@ -291,28 +291,28 @@ class MetaDiscoveryTransferEngine:
         """Initialize with example discovery patterns"""
         example_patterns = [
             DiscoveryPattern(
-                pattern_id="star_formation_causal",
-                domain="star_formation",
+                pattern_id="redox_preservation_causal",
+                domain="taphonomy",
                 strategy=DiscoveryStrategy.CAUSAL_INFERENCE,
                 success_rate=0.85,
                 sample_size=500,
                 effect_size=0.6,
                 key_features=["causal_structure", "latent_confounders", "intervention_testing"],
-                transferable_to=["exoplanet_atmospheres", "galaxy_formation", "accretion_disks"]
+                transferable_to=["organic_geochemistry", "sedimentology", "microbial_ecology"]
             ),
             DiscoveryPattern(
-                pattern_id="stellar_variability_time_series",
-                domain="stellar_variability",
+                pattern_id="sea_level_stratigraphic_time_series",
+                domain="stratigraphy",
                 strategy=DiscoveryStrategy.TIME_SERIES_ANALYSIS,
                 success_rate=0.92,
                 sample_size=1000,
                 effect_size=0.8,
                 key_features=["periodicity", "amplitude_modulation", "phase_lags"],
-                transferable_to=["agn_variability", "binary_variability", "pulsar_timing"]
+                transferable_to=["cyclostratigraphy", "sequence_stratigraphy", "basin_analysis"]
             ),
             DiscoveryPattern(
                 pattern_id="scaling_relations_dimensional",
-                domain="ism_structure",
+                domain="general_geochemistry",
                 strategy=DiscoveryStrategy.SCALING_RELATIONS,
                 success_rate=0.88,
                 sample_size=100,

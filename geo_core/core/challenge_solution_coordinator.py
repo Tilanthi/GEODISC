@@ -432,7 +432,7 @@ if __name__ == "__main__":
     test_discovery = {
         'title': 'Test Discovery',
         'parameters': {'param1': 1.0, 'param2': 2.0},
-        'domain': 'astrophysics'
+        'domain': 'geochemistry'
     }
     test_objective = lambda x: np.sum(x**2)
     test_initial_point = np.random.randn(5)

@@ -195,24 +195,24 @@ class CausalHypothesisGenerator(HypothesisGenerator):
         """Default causal knowledge for scientific domains"""
         return {
             'temperature_change': [
-                'stellar_heating', 'shock_heating', 'cosmic_ray_heating',
-                'radiative_cooling', 'adiabatic_expansion'
+                'burial_heating', 'hydrothermal_circulation', 'radiogenic_heating',
+                'geothermal_gradient', 'convective_cooling'
             ],
             'density_enhancement': [
-                'gravitational_collapse', 'shock_compression',
-                'turbulent_compression', 'magnetic_pressure'
+                'burial_compaction', 'pressure_dissolution',
+                'cementation', 'biomineralization'
             ],
             'velocity_gradient': [
-                'gravitational_infall', 'outflow', 'rotation',
-                'turbulence', 'magnetic_braking'
+                'pressure_driven_flow', 'advective_transport', 'convection',
+                'diffusive_mixing', 'buoyancy'
             ],
             'spectral_line_broadening': [
-                'thermal_motion', 'turbulence', 'outflow',
-                'rotation', 'opacity_broadening'
+                'thermal_broadening', 'compositional_zoning', 'matrix_effect',
+                'instrumental_drift', 'polymineralic_mixture'
             ],
             'flux_variation': [
-                'variable_source', 'extinction_change', 'lensing',
-                'scintillation', 'instrumental'
+                'redox_change', 'depositional_dilution', 'diagenetic_overprint',
+                'porewater_mixing', 'instrumental'
             ]
         }
 
@@ -262,38 +262,38 @@ class CausalHypothesisGenerator(HypothesisGenerator):
     def _get_mechanism(self, cause: str, obs_type: str) -> str:
         """Get mechanistic description of cause"""
         mechanisms = {
-            'stellar_heating': 'UV/X-ray radiation from nearby stars heats gas',
-            'shock_heating': 'Supersonic shock waves compress and heat gas',
-            'gravitational_collapse': 'Self-gravity causes density increase',
-            'turbulent_compression': 'Turbulent motions create local overdensities',
-            'outflow': 'Material ejected from central source creates velocity gradient'
+            'burial_heating': 'Geothermal gradient increases temperature with burial depth',
+            'hydrothermal_circulation': 'Hot circulating pore fluids heat surrounding rock',
+            'burial_compaction': 'Overburden pressure reduces pore space and increases density',
+            'cementation': 'Precipitation of authigenic minerals fills pore space',
+            'advective_transport': 'Pressure-driven fluid flow transports dissolved species'
         }
         return mechanisms.get(cause, f'{cause} operates via standard physical processes')
 
     def _get_assumptions(self, cause: str) -> List[str]:
         """Get assumptions required for this cause"""
         assumptions = {
-            'stellar_heating': ['nearby_star_present', 'gas_optically_thin'],
-            'shock_heating': ['supersonic_motion', 'dissipation_mechanism'],
-            'gravitational_collapse': ['jeans_unstable', 'no_support_mechanism'],
-            'turbulent_compression': ['turbulent_flow', 'mach_number_sufficient']
+            'burial_heating': ['sufficient_burial_depth', 'normal_geothermal_gradient'],
+            'hydrothermal_circulation': ['permeable_pathway', 'heat_source_present'],
+            'burial_compaction': ['overburden_pressure_sufficient', 'fluid_escape_pathway'],
+            'cementation': ['supersaturated_porewater', 'nucleation_sites_available']
         }
         return assumptions.get(cause, ['standard_physics'])
 
     def _get_predictions(self, cause: str, obs_type: str) -> List[str]:
         """Get testable predictions from this hypothesis"""
         predictions = {
-            'stellar_heating': [
-                'temperature_gradient_toward_star',
-                'ionization_state_increase_toward_star'
+            'burial_heating': [
+                'vitrinite_reflectance_increase_with_depth',
+                'clay_mineral_transformation_sequence'
             ],
-            'shock_heating': [
-                'velocity_jump_at_shock_front',
-                'compression_ratio_3_to_4'
+            'hydrothermal_circulation': [
+                'silica_vein_abundance_near_faults',
+                'oxygen_isotope_shift_in_carbonates'
             ],
-            'gravitational_collapse': [
-                'infall_velocity_signature',
-                'density_profile_r_minus_2'
+            'burial_compaction': [
+                'porosity_decrease_with_depth',
+                'density_increase_with_burial'
             ]
         }
         return predictions.get(cause, [f'observable_consistent_with_{cause}'])
@@ -306,9 +306,9 @@ class CausalHypothesisGenerator(HypothesisGenerator):
         # Adjust based on context
         if 'environment' in context:
             env = context['environment']
-            if env == 'star_forming_region' and cause in ['stellar_heating', 'gravitational_collapse']:
+            if env == 'burial_diagenesis_zone' and cause in ['burial_heating', 'burial_compaction']:
                 prior *= 1.5
-            elif env == 'diffuse_ism' and cause == 'stellar_heating':
+            elif env == 'open_marine_setting' and cause == 'burial_heating':
                 prior *= 0.7
 
         return min(0.95, max(0.05, prior))
@@ -316,11 +316,11 @@ class CausalHypothesisGenerator(HypothesisGenerator):
     def _estimate_complexity(self, cause: str) -> int:
         """Estimate complexity of the causal mechanism"""
         complexity = {
-            'stellar_heating': 2,  # Star + radiation
-            'shock_heating': 3,    # Shock + motion + heating
-            'gravitational_collapse': 2,  # Gravity + mass
-            'turbulent_compression': 4,   # Turbulence is complex
-            'outflow': 3
+            'burial_heating': 2,  # Depth + geothermal gradient
+            'hydrothermal_circulation': 3,    # Heat source + fluid pathway + convection
+            'burial_compaction': 2,  # Pressure + porosity reduction
+            'cementation': 4,   # Supersaturation + nucleation + growth
+            'advective_transport': 3
         }
         return complexity.get(cause, 2)
 
@@ -339,10 +339,10 @@ class MechanisticHypothesisGenerator(HypothesisGenerator):
                 'parameters': ['opacity', 'source_function', 'geometry'],
                 'predictions': ['spectral_line_profiles', 'continuum_shape']
             },
-            'gravitational_lensing': {
-                'description': 'Light bending by massive objects',
-                'parameters': ['mass', 'distance', 'alignment'],
-                'predictions': ['image_positions', 'magnification', 'time_delays']
+            'diagenetic_reaction': {
+                'description': 'Mineral dissolution and precipitation during diagenesis',
+                'parameters': ['porewater_chemistry', 'temperature', 'surface_area'],
+                'predictions': ['mineral_assemblage_changes', 'porosity_evolution']
             },
             'mhd_turbulence': {
                 'description': 'Magneto-hydrodynamic turbulent cascade',
@@ -351,8 +351,8 @@ class MechanisticHypothesisGenerator(HypothesisGenerator):
             },
             'chemical_evolution': {
                 'description': 'Time-dependent chemical abundances',
-                'parameters': ['density', 'temperature', 'uv_field', 'cosmic_rays'],
-                'predictions': ['abundance_ratios', 'depletion_patterns']
+                'parameters': ['density', 'temperature', 'porewater_composition', 'reaction_rates'],
+                'predictions': ['abundance_ratios', 'isotope_fractionation']
             }
         }
 
@@ -384,7 +384,7 @@ class MechanisticHypothesisGenerator(HypothesisGenerator):
 
         relevance = {
             'radiative_transfer': any(t in desc_lower for t in ['spectrum', 'line', 'emission', 'absorption']),
-            'gravitational_lensing': any(t in desc_lower for t in ['lens', 'arc', 'einstein', 'multiple image']),
+            'diagenetic_reaction': any(t in desc_lower for t in ['diagenesis', 'cement', 'dissolution', 'precipitation']),
             'mhd_turbulence': any(t in desc_lower for t in ['turbulence', 'velocity dispersion', 'structure']),
             'chemical_evolution': any(t in desc_lower for t in ['abundance', 'molecule', 'ion', 'chemical'])
         }

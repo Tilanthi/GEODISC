@@ -1,14 +1,14 @@
 """
-Cross-Survey Knowledge Fusion for STAN V42
+Cross-Dataset Knowledge Fusion for GEODISC
 
-Combines information from heterogeneous scientific surveys:
-- Multi-wavelength data fusion (radio, IR, optical, UV, X-ray)
-- Cross-catalog matching with uncertainty
+Combines information from heterogeneous geochemical datasets:
+- Multi-technique data fusion (XRF, ICP-MS, isotopes, imaging)
+- Cross-sample matching with uncertainty
 - Joint posterior inference from multiple sources
-- Tension detection between surveys
+- Tension detection between datasets
 - Optimal weighting for combined constraints
 
-This enables stronger constraints than any single survey alone,
+This enables stronger constraints than any single dataset alone,
 while properly accounting for systematics and correlations.
 """
 
@@ -44,7 +44,7 @@ class WavelengthBand(Enum):
 
 
 class SurveyType(Enum):
-    """Types of scientific surveys."""
+    """Types of geochemical datasets (re-used from legacy survey taxonomy)."""
     PHOTOMETRIC = "photometric"     # Imaging
     SPECTROSCOPIC = "spectroscopic" # Spectra
     ASTROMETRIC = "astrometric"     # Positions/motions
@@ -770,7 +770,7 @@ class JointPosteriorCalculator:
 
 class SurveyCalibrator:
     """
-    Cross-calibrates surveys using overlapping observations.
+    Cross-calibrates datasets using overlapping observations.
     """
 
     def __init__(self):

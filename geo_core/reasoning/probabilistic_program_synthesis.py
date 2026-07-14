@@ -3,8 +3,8 @@ Probabilistic Program Synthesis for STAN V42
 
 Automatically generate forward models from problem descriptions:
 - Learn probabilistic programs that explain observations
-- Compose existing physics modules into novel configurations
-- Discover new emission mechanisms and model unexpected phenomena
+- Compose existing geochemistry modules into novel configurations
+- Discover new geochemical processes and model unexpected phenomena
 
 Date: 2025-12-11
 Version: 42.0
@@ -148,134 +148,134 @@ class PhysicsLibrary:
     def __init__(self):
         self.primitives: Dict[str, ProgramPrimitive] = {}
         self.compositions: Dict[str, Callable] = {}
-        self._load_astrophysics_primitives()
+        self._load_geochemistry_primitives()
 
-    def _load_astrophysics_primitives(self):
-        """Load physics-specific primitives"""
+    def _load_geochemistry_primitives(self):
+        """Load geochemistry-specific primitives"""
 
-        # Gravitational physics
-        self.primitives["newton_gravity"] = ProgramPrimitive(
+        # Redox geochemistry
+        self.primitives["microbial_sulfate_reduction"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Newton's Gravitational Law",
-            parameters={"G": 6.674e-8},  # CGS
-            constraints=["mass > 0", "radius > 0"],
-            domain="gravitational",
-            units="dyn"
-        )
-
-        self.primitives["kepler_third"] = ProgramPrimitive(
-            primitive_id="",
-            primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Kepler's Third Law",
+            name="Microbial Sulfate Reduction",
             parameters={},
-            constraints=["period > 0", "semi_major_axis > 0"],
-            domain="orbital_mechanics",
-            units=""
+            constraints=["sulfate_concentration > 0", "organic_carbon > 0"],
+            domain="redox_geochemistry",
+            units="mol/L/yr"
         )
 
-        self.primitives["virial_theorem"] = ProgramPrimitive(
+        self.primitives["pyritization"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Virial Theorem",
+            name="Pyritization",
             parameters={},
-            constraints=["kinetic_energy >= 0", "potential_energy <= 0"],
-            domain="statistical_mechanics",
-            units="erg"
+            constraints=["fe_reactive > 0", "sulfide > 0"],
+            domain="redox_geochemistry",
+            units="wt_fraction"
         )
 
-        # Radiative transfer
-        self.primitives["planck_function"] = ProgramPrimitive(
+        self.primitives["iron_speciation"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Planck Function",
-            parameters={"h": 6.626e-27, "c": 2.998e10, "k": 1.381e-16},
-            constraints=["temperature > 0", "frequency > 0"],
-            domain="radiative",
-            units="erg/s/cm^2/Hz/sr"
+            name="Iron Speciation Partitioning",
+            parameters={},
+            constraints=["fe_total > 0"],
+            domain="redox_geochemistry",
+            units="ratio"
         )
 
-        self.primitives["stefan_boltzmann"] = ProgramPrimitive(
+        # Organic geochemistry
+        self.primitives["toc_preservation"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Stefan-Boltzmann Law",
-            parameters={"sigma": 5.670e-5},  # CGS
+            name="TOC Preservation Model",
+            parameters={},
+            constraints=["organic_carbon_flux > 0", "oxygen_exposure_time >= 0"],
+            domain="organic_geochemistry",
+            units="wt_percent"
+        )
+
+        self.primitives["vitrinite_reflectance"] = ProgramPrimitive(
+            primitive_id="",
+            primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
+            name="Vitrinite Reflectance (EasyRo)",
+            parameters={"A": 1.0e13},  # Arrhenius pre-factor (1/s)
+            constraints=["temperature > 0", "time > 0"],
+            domain="organic_geochemistry",
+            units="percent_Ro"
+        )
+
+        self.primitives["kerogen_maturation"] = ProgramPrimitive(
+            primitive_id="",
+            primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
+            name="Kerogen Thermal Maturation",
+            parameters={},
             constraints=["temperature > 0"],
-            domain="radiative",
-            units="erg/s/cm^2"
+            domain="organic_geochemistry",
+            units="fraction_transformed"
         )
 
-        self.primitives["radiative_transfer"] = ProgramPrimitive(
+        # Silicification / mineralization
+        self.primitives["silicification"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Radiative Transfer Equation",
+            name="Silicification (Permineralization)",
             parameters={},
-            constraints=["optical_depth >= 0"],
-            domain="radiative",
-            units="erg/s/cm^2/Hz/sr"
+            constraints=["silica_concentration > 0"],
+            domain="mineralogy",
+            units="wt_percent_SiO2"
         )
 
-        # Gravitational lensing
-        self.primitives["sie_lens"] = ProgramPrimitive(
+        self.primitives["carbonate_precipitation"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Singular Isothermal Ellipsoid",
+            name="Carbonate Precipitation",
             parameters={},
-            constraints=["velocity_dispersion > 0", "0 < ellipticity < 1"],
-            domain="gravitational_lensing",
-            units="arcsec"
+            constraints=["alkalinity > 0", "Ca_ion > 0"],
+            domain="mineralogy",
+            units="mol/L/yr"
         )
 
-        self.primitives["nfw_profile"] = ProgramPrimitive(
+        # Isotope fractionation
+        self.primitives["carbon_isotope_fractionation"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="NFW Density Profile",
+            name="Carbon Isotope Fractionation",
             parameters={},
-            constraints=["scale_radius > 0", "concentration > 0"],
-            domain="dark_matter",
-            units="g/cm^3"
+            constraints=["temperature > 0"],
+            domain="isotope_geochemistry",
+            units="permil_VPDB"
         )
 
-        # Stellar physics
-        self.primitives["mass_luminosity"] = ProgramPrimitive(
+        self.primitives["sulfur_isotope_fractionation"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Mass-Luminosity Relation",
-            parameters={"exponent": 3.5},
-            constraints=["mass > 0"],
-            domain="stellar",
-            units="L_sun"
-        )
-
-        self.primitives["hydrostatic_equilibrium"] = ProgramPrimitive(
-            primitive_id="",
-            primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Hydrostatic Equilibrium",
+            name="Sulfur Isotope Mass-Dependent Fractionation",
             parameters={},
-            constraints=["pressure > 0", "density > 0"],
-            domain="stellar",
-            units="dyn/cm^2"
+            constraints=["temperature > 0"],
+            domain="isotope_geochemistry",
+            units="permil_VCDT"
         )
 
-        # Cosmology
-        self.primitives["friedmann"] = ProgramPrimitive(
+        # Diagenesis and burial
+        self.primitives["compaction"] = ProgramPrimitive(
             primitive_id="",
             primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Friedmann Equation",
-            parameters={"H0": 70.0},  # km/s/Mpc
-            constraints=["scale_factor > 0"],
-            domain="cosmology",
-            units="km/s/Mpc"
-        )
-
-        self.primitives["luminosity_distance"] = ProgramPrimitive(
-            primitive_id="",
-            primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
-            name="Luminosity Distance",
+            name="Sediment Compaction (Athy's Law)",
             parameters={},
-            constraints=["redshift >= 0"],
-            domain="cosmology",
-            units="Mpc"
+            constraints=["burial_depth > 0"],
+            domain="sedimentology",
+            units="porosity_fraction"
+        )
+
+        self.primitives["geothermal_gradient"] = ProgramPrimitive(
+            primitive_id="",
+            primitive_type=ProgramPrimitiveType.PHYSICS_LAW,
+            name="Geothermal Gradient",
+            parameters={"gradient": 30.0},  # deg C / km
+            constraints=["burial_depth >= 0"],
+            domain="sedimentology",
+            units="deg_C"
         )
 
         # Statistical distributions
@@ -674,15 +674,15 @@ class ProgramGenerator:
         """Identify applicable conservation laws"""
         laws = []
 
-        if "gravitational" in physics or "stellar" in physics:
-            laws.append("energy_conservation")
-            laws.append("momentum_conservation")
+        if "redox" in physics or "organic" in physics:
+            laws.append("mass_conservation")
+            laws.append("carbon_balance")
 
-        if "electromagnetic" in physics or "radiative" in physics:
-            laws.append("energy_conservation")
-            laws.append("photon_number_conservation")
+        if "isotope" in physics or "thermodynamic" in physics:
+            laws.append("mass_conservation")
+            laws.append("isotope_mass_balance")
 
-        if "hydrodynamic" in physics:
+        if "sedimentological" in physics or "hydrodynamic" in physics:
             laws.append("mass_conservation")
             laws.append("momentum_conservation")
             laws.append("energy_conservation")
@@ -900,36 +900,43 @@ class ProgramEvaluator:
 
         name = primitive.name.lower()
 
-        # Physics primitives
-        if "planck" in name:
-            # B_nu(T) approximation
-            T = args[0] if args else 5000
-            return 2.0 * 6.626e-27 * (3e10)**2 / (1e14**3) * 1 / (math.exp(6.626e-27 * 1e14 / (1.381e-16 * T)) - 1)
+        # Geochemistry primitives
+        if "toc" in name or "preservation" in name:
+            # Simplified TOC preservation: flux * (1 - decay * exposure)
+            flux = args[0] if args else 1.0
+            exposure = args[1] if len(args) > 1 else 0.1
+            return flux * math.exp(-exposure)
 
-        elif "stefan" in name:
-            T = args[0] if args else 5000
-            return 5.67e-5 * T**4
+        elif "vitrinite" in name or "reflectance" in name or "maturation" in name:
+            # Simplified Arrhenius-style maturity: exp(-Ea / RT)
+            T = args[0] if args else 300.0
+            Ea = 200000.0  # activation energy (J/mol)
+            R = 8.314
+            return math.exp(-Ea / (R * (T + 273.15) + 1e-10))
 
-        elif "newton" in name or "gravity" in name:
+        elif "pyritization" in name or "sulfate_reduction" in name:
+            # Rate proportional to reactant concentrations
             if len(args) >= 2:
-                M, r = args[0], args[1]
-                G = 6.674e-8
-                return G * M / (r**2 + 1e-10)
+                fe, sulfide = args[0], args[1]
+                return fe * sulfide * 1e-3
             return 0
 
-        elif "kepler" in name:
-            if len(args) >= 2:
-                a, M = args[0], args[1]
-                G = 6.674e-8
-                return 2 * math.pi * math.sqrt(a**3 / (G * M + 1e-10))
-            return 0
+        elif "silicification" in name:
+            # Silica uptake proportional to concentration
+            silica = args[0] if args else 1.0
+            return silica * 0.1
 
-        elif "nfw" in name:
-            if len(args) >= 2:
-                r, rs = args[0], args[1]
-                x = r / (rs + 1e-10)
-                return 1 / (x * (1 + x)**2 + 1e-10)
-            return 0
+        elif "compaction" in name:
+            # Athy's law: porosity = phi0 * exp(-c * z)
+            depth = args[0] if args else 1.0
+            phi0 = 0.6
+            c = 0.4
+            return phi0 * math.exp(-c * depth)
+
+        elif "carbon_isotope" in name or "sulfur_isotope" in name:
+            # Temperature-dependent fractionation (simplified)
+            T = args[0] if args else 25.0
+            return 1e6 / ((T + 273.15)**2 + 1e-10)
 
         elif "combine" in name:
             return sum(args)
@@ -1023,7 +1030,7 @@ class ProbabilisticProgramSynthesizer:
         Args:
             problem_description: Natural language problem description
             data: Dictionary of observations
-            domain: Physics domain (e.g., "gravitational_lensing")
+            domain: Geochemistry domain (e.g., "redox_geochemistry")
             constraints: Additional constraints
             max_time: Maximum synthesis time in seconds
 

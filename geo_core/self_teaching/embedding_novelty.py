@@ -78,23 +78,23 @@ class SimpleEmbeddingModel:
             'mass': np.random.randn(self.embedding_dim) * 0.1,
             'energy': np.random.randn(self.embedding_dim) * 0.1,
             'force': np.random.randn(self.embedding_dim) * 0.1,
-            'star': np.random.randn(self.embedding_dim) * 0.1,
-            'planet': np.random.randn(self.embedding_dim) * 0.1,
-            'galaxy': np.random.randn(self.embedding_dim) * 0.1,
+            'mineral': np.random.randn(self.embedding_dim) * 0.1,
+            'sediment': np.random.randn(self.embedding_dim) * 0.1,
+            'basin': np.random.randn(self.embedding_dim) * 0.1,
             'causality': np.random.randn(self.embedding_dim) * 0.1,
             'entropy': np.random.randn(self.embedding_dim) * 0.1,
             'quantum': np.random.randn(self.embedding_dim) * 0.1,
-            'radiation': np.random.randn(self.embedding_dim) * 0.1,
-            'spectral': np.random.randn(self.embedding_dim) * 0.1,
+            'redox': np.random.randn(self.embedding_dim) * 0.1,
+            'isotopic': np.random.randn(self.embedding_dim) * 0.1,
             'temporal': np.random.randn(self.embedding_dim) * 0.1,
             'spatial': np.random.randn(self.embedding_dim) * 0.1,
-            'relativistic': np.random.randn(self.embedding_dim) * 0.1,
+            'diagenetic': np.random.randn(self.embedding_dim) * 0.1,
         }
 
         # Make related words more similar
         scientific_words['mass'] += scientific_words['gravity'] * 0.3
         scientific_words['energy'] += scientific_words['force'] * 0.3
-        scientific_words['radiation'] += scientific_words['spectral'] * 0.3
+        scientific_words['redox'] += scientific_words['isotopic'] * 0.3
 
         self.word_vectors = scientific_words
         self.fitted = True
@@ -361,7 +361,7 @@ class EnhancedRewardCalculator:
 
         # Additional bonus for bridging very different domains
         domain_families = {
-            'astrophysics': 'physical',
+            'geochemistry': 'physical',
             'physics': 'physical',
             'mathematics': 'abstract',
             'biology': 'complex',

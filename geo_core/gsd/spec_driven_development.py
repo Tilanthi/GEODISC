@@ -39,9 +39,9 @@ class RequirementCategory(Enum):
     DATA_SOURCES = "data_sources"        # Data sources and formats
     DEPLOYMENT = "deployment"            # Deployment requirements
 
-    # Astronomy-specific (for GEODISC legacy compat)
-    ASTRONOMY_DATA = "astronomy_data"    # Astronomical data sources
-    INSTRUMENTS = "instruments"          # Instruments/telescopes
+    # Geochemistry-specific
+    GEOCHEMISTRY_DATA = "geochemistry_data"  # Geochemical data sources
+    INSTRUMENTS = "instruments"          # Instruments/analytical equipment
     ANALYSIS_METHODS = "analysis_methods" # Analysis methods
 
     # Trading-specific (for STAN_IX_TRADING)
@@ -254,21 +254,21 @@ class QuestionGenerator:
         ],
     }
 
-    # Astronomy-specific questions
-    ASTRONOMY_QUESTIONS = {
-        RequirementCategory.ASTRONOMY_DATA: [
-            "What astronomical data sources will be used? (e.g., surveys, catalogs)",
-            "What wavelength ranges are of interest? (radio, optical, X-ray, etc.)",
-            "Are there specific telescopes or instruments to target?"
+    # Geochemistry-specific questions
+    GEOCHEMISTRY_QUESTIONS = {
+        RequirementCategory.GEOCHEMISTRY_DATA: [
+            "What geochemical data sources will be used? (e.g., sample suites, databases)",
+            "What geochemical parameters are of interest? (TOC, redox proxies, isotopes, etc.)",
+            "Are there specific formations or stratigraphic intervals to target?"
         ],
         RequirementCategory.INSTRUMENTS: [
-            "Which ground-based or space-based instruments are relevant?",
-            "What are the resolution/sensitivity requirements?",
-            "Are there observation planning constraints?"
+            "Which analytical instruments are relevant? (ICP-MS, XRF, SIMS, etc.)",
+            "What are the detection limit / precision requirements?",
+            "Are there sample preparation or contamination constraints?"
         ],
         RequirementCategory.ANALYSIS_METHODS: [
-            "What analysis methods are needed? (photometry, spectroscopy, etc.)",
-            "Are there specific scientific questions to address?",
+            "What analysis methods are needed? (isotope geochemistry, redox proxies, etc.)",
+            "Are there specific geological questions to address?",
             "What statistical methods should be applied?"
         ],
     }
@@ -303,13 +303,13 @@ class QuestionGenerator:
 
         Args:
             category: Requirement category
-            project_type: Project type (general, astronomy, trading)
+            project_type: Project type (general, geochemistry, trading)
 
         Returns:
             List of questions
         """
-        if project_type == "astronomy" and category in cls.ASTRONOMY_QUESTIONS:
-            return cls.ASTRONOMY_QUESTIONS[category]
+        if project_type == "geochemistry" and category in cls.GEOCHEMISTRY_QUESTIONS:
+            return cls.GEOCHEMISTRY_QUESTIONS[category]
         elif project_type == "trading" and category in cls.TRADING_QUESTIONS:
             return cls.TRADING_QUESTIONS[category]
         elif category in cls.BASE_QUESTIONS:
@@ -347,7 +347,7 @@ class RequirementsExtractor:
         Initialize requirements extractor.
 
         Args:
-            project_type: Type of project (general, astronomy, trading)
+            project_type: Type of project (general, geochemistry, trading)
             ask_callback: Function to ask user questions (returns answer)
         """
         self.project_type = project_type
@@ -529,7 +529,7 @@ def extract_requirements(
 
     Args:
         user_idea: Initial user idea/description
-        project_type: Type of project (general, astronomy, trading)
+        project_type: Type of project (general, geochemistry, trading)
         ask_callback: Function to ask user questions
 
     Returns:

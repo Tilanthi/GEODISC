@@ -32,10 +32,10 @@ INTEGRATION:
 - Integrates with v4_revolutionary systems
 
 SCIENTIFIC APPLICATIONS:
-- Stellar variability: Teff → R → L causal chain
-- Accretion disks: dM/dt → L_X with hysteresis
-- Star formation: Delayed triggering, feedback effects
-- AGN feedback: BH accretion → outbursts → quenching
+- Sea-level change: sea level → accommodation space → organic-matter burial
+- Diagenesis: burial depth → silica cementation → preservation with hysteresis
+- Depositional systems: transgression/regression with delayed feedback effects
+- Redox evolution: oxygenic revolution → redox shifts → taphonomic regimes
 
 Date: 2026-04-14
 Version: 1.0

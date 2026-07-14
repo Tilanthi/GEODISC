@@ -78,12 +78,12 @@ class ActiveExperimentationEngine:
             config: Configuration dict with keys:
                 - information_gain_threshold: Minimum expected gain (default: 0.1)
                 - max_parallel_experiments: Maximum concurrent experiments (default: 5)
-                - telescope_time_budget: Total available hours (default: 100)
+                - lab_time_budget: Total available lab hours (default: 100)
         """
         config = config or {}
         self.info_gain_threshold = config.get('information_gain_threshold', 0.1)
         self.max_parallel = config.get('max_parallel_experiments', 5)
-        self.time_budget = config.get('telescope_time_budget', 100)
+        self.time_budget = config.get('lab_time_budget', 100)
 
         self.pending_hypotheses: List[Hypothesis] = []
         self.completed_experiments: List[Experiment] = []
@@ -460,26 +460,26 @@ def demo_active_experimentation():
         ),
         Hypothesis(
             hypothesis_id="test_hyp_2",
-            claim="Temperature affects star formation rate",
-            predictions={'SFR': 1.5},
+            claim="Burial depth affects total organic carbon preservation",
+            predictions={'TOC': 1.5},
             confidence=0.4,
-            falsification_criteria=["No correlation with temperature"],
+            falsification_criteria=["No correlation with burial depth"],
             priority=0.6
         )
     ]
 
     # Available targets
     targets = [
-        {'name': 'molecular_cloud_A', 'observability': 0.8,
-         'required_instruments': ['ALMA'], 'base_duration': 2.0},
-        {'name': 'galaxy_cluster_B', 'observability': 0.6,
-         'required_instruments': ['Chandra'], 'base_duration': 5.0}
+        {'name': 'shale_formation_A', 'observability': 0.8,
+         'required_instruments': ['ICP-MS'], 'base_duration': 2.0},
+        {'name': 'banded_iron_formation_B', 'observability': 0.6,
+         'required_instruments': ['XRF'], 'base_duration': 5.0}
     ]
 
     # Instrument capabilities
     instrument_caps = {
-        'ALMA': {'sensitivity': 0.9, 'efficiency': 0.8, 'hourly_cost': 100},
-        'Chandra': {'sensitivity': 0.7, 'efficiency': 0.6, 'hourly_cost': 150}
+        'ICP-MS': {'sensitivity': 0.9, 'efficiency': 0.8, 'hourly_cost': 100},
+        'XRF': {'sensitivity': 0.7, 'efficiency': 0.6, 'hourly_cost': 150}
     }
 
     # Initialize engine

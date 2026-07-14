@@ -41,7 +41,7 @@ def gateway_module():
     # 2) file-path load (decoupled mode; avoids geo_core/__init__)
     if not _GATEWAY_PATH.is_file():
         raise RuntimeError(f"llm_gateway not found at {_GATEWAY_PATH}")
-    spec = importlib.util.spec_from_file_location("astra_llm_gateway", _GATEWAY_PATH)
+    spec = importlib.util.spec_from_file_location("geo_llm_gateway", _GATEWAY_PATH)
     _module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(_module)
     return _module

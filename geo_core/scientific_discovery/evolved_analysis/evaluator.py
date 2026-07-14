@@ -3,9 +3,9 @@
 Subclasses geo_core.intelligence.leapcore_evolution.FitnessEvaluator (loaded
 by file path in leapcore.py). Each Chromosome carries its program source in
 ``chrom.metadata['source']``. evaluate() runs that source in an isolated child
-process on REAL SDSS data and returns a machine-graded scalar:
+process on REAL geochemical data and returns a machine-graded scalar:
 
-    fitness = -(sigma_NMAD + 3 * eta)        (higher = better; maximised)
+    fitness = -(rmse) + 3 * r2               (higher = better; maximised)
 
 Bad / hanging / crashing code is contained by the subprocess + hard timeout and
 scores -inf, never crashing the loop.
@@ -32,7 +32,7 @@ NEG_INF = -1e9
 # (eval_worker.py). Detected once at import; None / missing-profile => fall back
 # to the plain subprocess (AST gate + rlimits still apply).
 SANDBOX_EXEC = shutil.which("sandbox-exec")
-PROFILE_PATH = Path(__file__).resolve().parent / "astra_worker.sb"
+PROFILE_PATH = Path(__file__).resolve().parent / "geo_worker.sb"
 
 
 class RealDataProgramEvaluator(FitnessEvaluator):
@@ -52,7 +52,7 @@ class RealDataProgramEvaluator(FitnessEvaluator):
         self.n_calls += 1
         src = (chrom.metadata or {}).get("source", "")
         m = self._run_subprocess(src, split="eval")
-        chrom.fitness = -(m["sigma_nmad"] + 3.0 * m["eta"]) if "error" not in m else NEG_INF
+        chrom.fitness = (-m["rmse"] + 3.0 * m["r2"]) if "error" not in m else NEG_INF
         chrom.metadata = dict(chrom.metadata or {})
         chrom.metadata["metrics"] = m
         if "error" in m:
@@ -65,8 +65,8 @@ class RealDataProgramEvaluator(FitnessEvaluator):
 
     # ------------------------------------------------------------------ #
     def _run_subprocess(self, src: str, split: str) -> dict:
-        if not src or "def estimate_redshift" not in src:
-            return {"sigma_nmad": 9.99, "eta": 1.0, "error": "no estimate_redshift"}
+        if not src or "def estimate_toc" not in src:
+            return {"rmse": 9.99, "r2": -1.0, "error": "no estimate_toc"}
         with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False,
                                          dir=str(Path.cwd())) as tf:
             tf.write(src)
@@ -88,9 +88,9 @@ class RealDataProgramEvaluator(FitnessEvaluator):
                 capture_output=True, text=True, timeout=self.timeout,
                 cwd=str(REPO_ROOT), env=env)
         except subprocess.TimeoutExpired:
-            return {"sigma_nmad": 9.99, "eta": 1.0, "error": "timeout"}
+            return {"rmse": 9.99, "r2": -1.0, "error": "timeout"}
         except Exception as e:
-            return {"sigma_nmad": 9.99, "eta": 1.0,
+            return {"rmse": 9.99, "r2": -1.0,
                     "error": f"spawn:{type(e).__name__}:{str(e)[:80]}"}
         finally:
             try:
@@ -99,10 +99,10 @@ class RealDataProgramEvaluator(FitnessEvaluator):
                 pass
         out = proc.stdout.strip().splitlines()
         if not out:
-            return {"sigma_nmad": 9.99, "eta": 1.0,
+            return {"rmse": 9.99, "r2": -1.0,
                     "error": (proc.stderr.strip()[:160] or "no stdout")}
         try:
             return json.loads(out[-1])
         except json.JSONDecodeError:
-            return {"sigma_nmad": 9.99, "eta": 1.0,
+            return {"rmse": 9.99, "r2": -1.0,
                     "error": f"unparseable: {out[-1][:120]}"}

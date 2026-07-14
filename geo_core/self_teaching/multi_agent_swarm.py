@@ -270,7 +270,7 @@ class ExplorerAgent(SwarmAgent):
                 'action': 'discovery',
                 'type': 'novel_pattern',
                 'content': {
-                    'domain': np.random.choice(['physics', 'astronomy', 'mathematics']),
+                    'domain': np.random.choice(['geochemistry', 'mineralogy', 'mathematics']),
                     'novelty': np.random.random(),
                     'confidence': self.capability.success_rate,
                     'position': self.position.tolist()
@@ -432,7 +432,7 @@ class ValidatorAgent(SwarmAgent):
         capability = AgentCapability(
             role=AgentRole.VALIDATOR,
             skills=['experimental_validation', 'data_analysis', 'statistical_testing'],
-            domain_expertise=['physics', 'astronomy', 'experimental'],
+            domain_expertise=['geochemistry', 'mineralogy', 'experimental'],
             exploration_tendency=0.2,
             social_tendency=0.5
         )

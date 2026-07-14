@@ -95,7 +95,7 @@ class DerivationValidator:
 
     def __init__(self, results_section: str):
         self.results_section = results_section
-        self.number_pattern = re.compile(r'\b\d+\.?\d*\s*(?:Gyr|Myr|K|M_\odot|Z_\odot|%)\b')
+        self.number_pattern = re.compile(r'\b\d+\.?\d*\s*(?:Ga|Ma|ppm|wt\.?\s?%|mg/kg|‰|%)\b')
 
     def validate(self) -> ValidationResult:
         """
@@ -169,11 +169,11 @@ class AgreementValidator:
 
     # Default tolerance thresholds (can be overridden)
     DEFAULT_TOLERANCES = {
-        "mass": 0.01,  # 1%
-        "metallicity": 0.05,  # 5%
-        "lifetime": 0.10,  # 10%
+        "toc": 0.10,  # 10% (TOC measurement)
+        "redox_proxy": 0.15,  # 15% (redox proxy ratios)
+        "depositional_age": 0.05,  # 5% (age in Ma/Ga)
         "temperature": 0.05,  # 5%
-        "pre_ms_fraction": 0.50,  # 50% (factor of 2)
+        "preservation_efficiency": 0.50,  # 50% (factor of 2)
     }
 
     def __init__(self, predicted_values: Dict[str, float],
@@ -296,11 +296,11 @@ class NonTrivialValidationValidator:
     def _is_non_trivial(self, case: Dict[str, Any]) -> bool:
         """Determine if case is non-trivial (not a calibration point)."""
         # A case is trivial if it matches exact calibration values
-        mass = case.get("M", 0)
-        metallicity = case.get("Z", 0)
+        toc = case.get("toc", 0)
+        redox_proxy = case.get("redox_proxy", 0)
 
-        # Solar calibration point
-        if abs(mass - 1.0) < 0.01 and abs(metallicity - 1.0) < 0.01:
+        # Reference standard calibration point
+        if abs(toc - 1.0) < 0.01 and abs(redox_proxy - 1.0) < 0.01:
             return False
 
         return True
@@ -508,8 +508,8 @@ if __name__ == "__main__":
     # Example validation (would be called by pipeline)
     tex = r"\cite{test1} and \cite{test2}"
     bib = r"@article{test1, title={Test}} @article{test2, title={Test}}"
-    results = "The lifetime is 10 Gyr"
-    cases = [{"M": 1.0, "Z": 1.0}]
+    results = "The depositional age is 2.4 Ga"
+    cases = [{"toc": 1.0, "redox_proxy": 1.0}]
 
     passed, report = validate_discovery_pipeline(tex, bib, results, cases)
     print(report)

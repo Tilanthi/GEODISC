@@ -36,9 +36,9 @@ INTEGRATION:
 - Integrates with swarm intelligence (parallel agents)
 
 USE CASES:
-- Test 1000+ molecular cloud configurations
-- Galaxy formation simulation parameter sweeps
-- Exoplanet atmosphere chemistry interventions
+- Test 1000+ sedimentary basin redox configurations
+- Diagenetic parameter sweeps across stratigraphic units
+- Isotopic excursion (δ¹³C) intervention analysis
 
 Date: 2026-04-14
 Version: 1.0

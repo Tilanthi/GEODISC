@@ -269,11 +269,11 @@ class EnhancedDiscoveryCoordinator:
         """Check if domain combination is non-obvious"""
         # Simple heuristic: check if domains are from different broad categories
         broad_categories = {
-            'stellar': ['stellar_evolution', 'star_formation', 'stellar_atmospheres'],
-            'ism': ['ism', 'molecular_clouds', 'astrochemistry'],
-            'exoplanets': ['exoplanets', 'planetary_formation'],
-            'cosmology': ['cosmology', 'cmb', 'large_scale_structure'],
-            'high_energy': ['high_energy_astro', 'compact_objects', 'neutrino']
+            'organic_geochemistry': ['kerogen_type', 'toc', 'biomarkers'],
+            'sedimentology': ['depositional_environment', 'facies', 'diagenesis'],
+            'taphonomy': ['fossil_preservation', 'silicification', 'decay'],
+            'stratigraphy': ['sequence_stratigraphy', 'correlation', 'facies'],
+            'isotope_geochemistry': ['d13c', 'd34s', 'radiometric_dating']
         }
 
         categories_seen = set()

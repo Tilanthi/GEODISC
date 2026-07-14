@@ -106,13 +106,13 @@ class DimensionalAnalysis:
         'h': {'M': 1, 'L': 2, 'T': -1},  # Planck constant
 
         # Physics specific
-        'luminosity': {'M': 1, 'L': 2, 'T': -3},
+        'heat_output': {'M': 1, 'L': 2, 'T': -3},
         'flux': {'M': 1, 'L': 0, 'T': -3},
         'mass': {'M': 1},
         'radius': {'L': 1},
         'time': {'T': 1},
-        'stellar_mass': {'M': 1},
-        'SFR': {'M': 1, 'T': -1},  # Star formation rate
+        'TOC': {'M': 1},
+        'reaction_rate': {'M': 1, 'T': -1},  # Geochemical reaction rate
     }
 
     @classmethod
@@ -188,27 +188,27 @@ class ConservationLaw:
         'momentum': {
             'equation': 'dp/dt = F',
             'description': 'Momentum change equals applied force',
-            'applications': ['accretion', 'outflows', 'mergers']
+            'applications': ['sediment_accumulation', 'hydrothermal_circulation', 'basin_subsidence']
         },
         'angular_momentum': {
             'equation': 'dL/dt = τ',
             'description': 'Angular momentum change equals applied torque',
-            'applications': ['disk_formation', 'rotation_curves', 'spin_evolution']
+            'applications': ['coriolis_dynamics', 'geodynamo', 'rotational_stratification']
         },
         'mass': {
             'equation': 'dM/dt = Ṁ_in - Ṁ_out',
             'description': 'Mass continuity',
-            'applications': ['accretion_rates', 'mass_loss', 'galaxy_growth']
+            'applications': ['sedimentation_rates', 'organic_degradation', 'basin_filling']
         },
         'charge': {
             'equation': 'dQ/dt = 0',
             'description': 'Electric charge conservation',
-            'applications': ['plasma_neutrality', 'current_continuity']
+            'applications': ['charge_balance', 'redox_balance']
         },
         'baryon': {
             'equation': 'dB/dt = 0',
             'description': 'Baryon number conservation',
-            'applications': ['nuclear_reactions', 'particle_physics']
+            'applications': ['isotope_fractionation', 'radioactive_decay']
         }
     }
 
@@ -302,11 +302,11 @@ class ConservationLaw:
             L = system['mass'] * system['velocity'] * system['radius']
             constraints.append(f'Angular momentum: L = {L:.3e}')
 
-        # Kepler's laws
+        # Characteristic dynamical period
         if all(k in system for k in ['mass', 'radius', 'period']):
             # L^2 / (G * M) = period
             period_from_L = system['radius']**3 / (system.get('G', 6.674e-8) * system['mass'])
-            constraints.append(f'Keplerian period: T = {period_from_L:.3e}')
+            constraints.append(f'Characteristic period: T = {period_from_L:.3e}')
 
         return constraints
 

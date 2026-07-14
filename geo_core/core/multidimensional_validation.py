@@ -604,7 +604,7 @@ if __name__ == "__main__":
     test_discovery = {
         'title': 'Test Discovery',
         'parameters': {'param1': 1.0, 'param2': 2.0},
-        'domain': 'astrophysics',
+        'domain': 'geochemistry',
         'assumptions': ['assumption1', 'assumption2']
     }
 
@@ -615,12 +615,12 @@ if __name__ == "__main__":
             lambda d: 0.8
         ],
         'literature_database': {
-            'astrophysics': [
+            'geochemistry': [
                 {'parameters': {'param1': 1.1, 'param2': 2.1}}
             ]
         },
         'existing_knowledge': {
-            'astrophysics': [
+            'geochemistry': [
                 {'parameters': {'param1': 0.5, 'param2': 1.5}}
             ]
         }

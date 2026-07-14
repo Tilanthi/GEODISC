@@ -331,7 +331,7 @@ class V7AutonomousScientist:
     def write_publication(
         self,
         research_summary: Dict[str, Any],
-        target_journal: str = "Astronomy & Astrophysics"
+        target_journal: str = "Geochimica et Cosmochimica Acta"
     ) -> Publication:
         """
         Generate a publication-ready paper.
@@ -464,7 +464,7 @@ class V7AutonomousScientist:
 
         publication = self.write_publication(
             research_summary,
-            target_journal="Astronomy & Astrophysics"
+            target_journal="Geochimica et Cosmochimica Acta"
         )
 
         # Compile final report

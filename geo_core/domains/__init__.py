@@ -319,7 +319,6 @@ from .registry import DomainRegistry
 # Each import is guarded so a missing optional dependency degrades gracefully.
 # ----------------------------------------------------------------------------
 NEUTRAL_DOMAIN_IMPORTS = {
-    "atomic_physics": ("AtomicPhysicsDomain", "create_atomic_physics_domain"),
     "molecular_spectroscopy": ("MolecularSpectroscopyDomain", "create_molecular_spectroscopy_domain"),
     "fluid_dynamics": ("FluidDynamicsDomain", "create_fluid_dynamics_domain"),
     "dynamical_systems": ("DynamicalSystemsDomain", "create_dynamical_systems_domain"),
@@ -327,7 +326,6 @@ NEUTRAL_DOMAIN_IMPORTS = {
     "signal_processing": ("SignalProcessingDomain", "create_signal_processing_domain"),
     "inverse_problems": ("InverseProblemsDomain", "create_inverse_problems_domain"),
     "hpc": ("HPCDomain", "create_hpc_domain"),
-    "quantum_applications": ("QuantumApplicationsDomain", "create_quantum_applications_domain"),
     "statistical_mechanics": ("StatisticalMechanicsDomain", "create_statistical_mechanics_domain"),
     "prebiotic_chemistry": ("PrebioticChemistryDomain", "create_prebiotic_chemistry_domain"),
 }

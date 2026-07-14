@@ -126,8 +126,8 @@ class EvolutionEngine:
         self._elitist_merge(children)
         best = max(self.population, key=lambda c: c.fitness)
         m = best.metadata.get("metrics", {})
-        row = {"best_fitness": best.fitness, "best_sigma": m.get("sigma_nmad"),
-               "best_eta": m.get("eta"), "n_children": len(children),
+        row = {"best_fitness": best.fitness, "best_rmse": m.get("rmse"),
+               "best_r2": m.get("r2"), "n_children": len(children),
                "proposals": self.stats["proposals"]}
         self.history.append(row)
         return row
@@ -148,7 +148,7 @@ def _src(c: Chromosome) -> str:
 def _niche(c: Chromosome):
     s = (c.metadata or {}).get("spec") or {}
     if s:
-        return (s.get("model", "llm"), len(s.get("color_pairs", []) or []),
+        return (s.get("model", "llm"), len(s.get("feature_pairs", []) or []),
                 s.get("degree", 0))
     # fall back to source-hash bucket for LLM programs without a spec
     return ("llm", hash(_src(c)) % 5, 0)

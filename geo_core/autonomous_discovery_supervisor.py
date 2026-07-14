@@ -19,7 +19,7 @@ both machine-graded:
      record without a ``verification`` block CANNOT be written).
   2. **Produce** new candidates by periodically launching the proven
      AlphaEvolve-style evolutionary engine as an ISOLATED subprocess on real
-     SDSS data. Its verified outputs flow back via ``evolved_discoveries.json``.
+     geochemical data. Its verified outputs flow back via ``evolved_discoveries.json``.
 
 There is no text-generation path. If nothing verifies, nothing is written; the
 loop simply waits. "Cannot emit fiction" is structural.
@@ -62,7 +62,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # under launchd (where shell env vars are not inherited). Runs with
 # PYTHONPATH=geo_core/scientific_discovery so it imports without triggering
 # geo_core/__init__ (decoupled — deadlock history).
-_DEFAULT_EVOLUTION_MODULE = "evolved_analysis.run_engine"
+_DEFAULT_EVOLUTION_MODULE = "evolved_analysis.run_claim_search"
 _EVOLUTION_PYTHONPATH = str(REPO_ROOT / "geo_core" / "scientific_discovery")
 
 
@@ -315,7 +315,7 @@ def main() -> int:
     root = logging.getLogger()
     root.setLevel(logging.INFO)
     PERSIST_DIR.mkdir(parents=True, exist_ok=True)
-    fh = logging.FileHandler(PERSIST_DIR / ".astra_supervisor.log")
+    fh = logging.FileHandler(PERSIST_DIR / ".geodisc_supervisor.log")
     fh.setFormatter(fmt)
     root.addHandler(fh)
     sh = logging.StreamHandler()

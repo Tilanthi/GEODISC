@@ -377,7 +377,7 @@ class HybridMetaCognitiveSystem:
 
             # Check for domain-specific patterns
             domain_signals = {
-                'astrophysics': [r'star|galaxy|nebula|cosmic|stellar'],
+                'geochemistry': [r'mineral|sediment|basin|redox|strata|taphonomic'],
                 'physics': [r'quantum|classical|energy|force|velocity'],
                 'biology': [r'cell|gene|protein|organism'],
                 'economics': [r'market|price|economic|financial'],

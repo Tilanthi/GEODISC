@@ -32,7 +32,7 @@ def parsimony(src: str) -> float:
 
 class SelectionEvaluator(FitnessEvaluator):
     def __init__(self, base, K: int = 5, cascade: bool = False,
-                 cascade_thresh: float = 0.08, parsimony_weight: float = 0.0,
+                 cascade_thresh: float = 2.0, parsimony_weight: float = 0.0,
                  stage1_fold: int = 0):
         self.base = base                  # a RealDataProgramEvaluator
         self.K = K
@@ -53,10 +53,10 @@ class SelectionEvaluator(FitnessEvaluator):
 
         if self.cascade:                  # cheap stage-1 on a single fold
             s1 = self.base.evaluate_split(src, f"cv:{self.K}:{self.stage1_fold}")
-            if "error" in s1 or s1.get("sigma_nmad", 9.99) > self.cascade_thresh:
+            if "error" in s1 or s1.get("rmse", 9.99) > self.cascade_thresh:
                 self.n_pruned += 1
                 chrom.fitness = NEG_INF
-                chrom.metadata["metrics"] = {"sigma_nmad": 9.99, "eta": 1.0,
+                chrom.metadata["metrics"] = {"rmse": 9.99, "r2": -1.0,
                                              "pruned": True}
                 chrom.metadata["parsimony"] = parsimony(src)
                 return chrom.fitness
@@ -70,9 +70,9 @@ class SelectionEvaluator(FitnessEvaluator):
             chrom.metadata["metrics"] = m
             return chrom.fitness
         chrom.metadata["metrics"] = m
-        chrom.metadata["metrics_cv_std"] = m.get("cv_sigma_std")
-        # primary = -(sigma + 3*eta); optional multi-objective parsimony term
-        chrom.fitness = -(m["sigma_nmad"] + 3.0 * m["eta"]
+        chrom.metadata["metrics_cv_std"] = m.get("cv_rmse_std")
+        # primary = -(rmse - 3*r2); optional multi-objective parsimony term
+        chrom.fitness = -(m["rmse"] - 3.0 * m["r2"]
                           + self.parsimony_weight * par)
         return chrom.fitness
 

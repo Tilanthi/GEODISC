@@ -170,18 +170,18 @@ class HypothesisFormulator:
         hypotheses = []
 
         # Look for patterns suggesting hypotheses
-        if 'width' in question.question.lower() and 'filament' in question.question.lower():
+        if 'framboid' in question.question.lower() and 'size' in question.question.lower():
             hyp = {
-                'statement': "Filament width is set by the magnetothermal sonic scale where turbulent damping equals thermal conduction",
+                'statement': "Pyrite framboid size distribution is set by the redox boundary depth where euxinic conditions limit framboid growth",
                 'type': HypothesisType.EMPIRICAL,
                 'predictions': [
-                    "Width ∝ B^(1/2) at fixed density",
-                    "Width correlates with Alfven velocity",
-                    "Width shows weak temperature dependence"
+                    "Mean framboid diameter decreases under more euxinic conditions",
+                    "Framboid size variance correlates with redox potential",
+                    "Framboid diameter shows a threshold near the ferruginous-euxinic transition"
                 ],
-                'test_method': "Measure filament widths and B-fields across diverse environments",
-                'required_data': ["Filament width measurements", "Magnetic field maps", "Density measurements"],
-                'theoretical_basis': ["MHD theory", "Turbulent damping", "Thermal conduction"]
+                'test_method': "Measure pyrite framboid diameters across modern and ancient redox gradients",
+                'required_data': ["Framboid diameter measurements", "Redox proxy data", "Sulfur isotope data"],
+                'theoretical_basis': ["Redox chemistry", "Pyrite nucleation kinetics", "Diagenetic modelling"]
             }
             hypotheses.append(hyp)
         else:
@@ -240,9 +240,9 @@ class HypothesisFormulator:
 
         # Common scientific concepts
         concept_keywords = [
-            'mass', 'radius', 'luminosity', 'temperature', 'density',
-            'velocity', 'pressure', 'magnetic field', 'filament', 'width',
-            'star formation', 'galaxy', 'dark matter', 'black hole', 'accretion'
+            'toc', 'redox', 'isotope', 'temperature', 'density',
+            'porosity', 'pressure', 'magnetic susceptibility', 'framboid', 'grain size',
+            'organic matter burial', 'basin', 'pyrite', 'chert', 'diagenesis'
         ]
 
         text_lower = text.lower()

@@ -19,12 +19,12 @@ Based on: "Building the 14 Key Pillars of Agentic AI" - Pillar 11
 
 Example Use:
     shards = [
-        DomainShard("astronomy", astro_docs),
+        DomainShard("geochemistry", geo_docs),
         DomainShard("trading", trading_docs),
         DomainShard("general", general_docs),
     ]
     retriever = ShardedRetriever(shards)
-    results = retriever.retrieve("telescope optics")  # Searches astronomy shard
+    results = retriever.retrieve("chert silica precipitation")  # Searches geochemistry shard
     # Faster and more precise than monolithic search
 """
 
@@ -134,7 +134,7 @@ class ShardSelector:
     def _get_domain_keywords(self, domain: str) -> List[str]:
         """Get keywords associated with a domain."""
         keywords = {
-            'astronomy': ['telescope', 'star', 'galaxy', 'planet', 'observatory', 'cosmos', 'nebula'],
+            'geochemistry': ['mineral', 'element', 'isotope', 'formation', 'strata', 'basin', 'chert'],
             'trading': ['stock', 'market', 'price', 'trade', 'portfolio', 'strategy', 'alpha'],
             'physics': ['quantum', 'particle', 'energy', 'force', 'wave', 'atom', 'nuclear'],
             'biology': ['gene', 'cell', 'protein', 'dna', 'organism', 'evolution'],
@@ -168,7 +168,7 @@ class ShardedRetriever:
         ```python
         # Create shards
         shards = [
-            DomainShard("astro_kb", "astronomy", astronomy_docs),
+            DomainShard("geo_kb", "geochemistry", geochemistry_docs),
             DomainShard("trading_kb", "trading", trading_docs),
             DomainShard("general_kb", "general", general_docs),
         ]
@@ -177,8 +177,8 @@ class ShardedRetriever:
         retriever = ShardedRetriever(shards)
 
         # Query - automatically searches relevant shards
-        results = retriever.retrieve("telescope optics specs")
-        # Searches astronomy shard only (faster, more precise)
+        results = retriever.retrieve("silica nucleation in chert")
+        # Searches geochemistry shard only (faster, more precise)
         ```
     """
 

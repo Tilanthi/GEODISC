@@ -34,7 +34,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('.astra_sleep_watchdog.log'),
+        logging.FileHandler('.geodisc_sleep_watchdog.log'),
         logging.StreamHandler()
     ]
 )
@@ -42,8 +42,8 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 GEODISC_DIR = Path("/Users/gjw255/astrodata/SWARM/GEODISC-dev-main")
-ACTIVE_FILE = GEODISC_DIR / ".astra_active"
-SHUTDOWN_FILE = GEODISC_DIR / ".astra_intentional_shutdown"
+ACTIVE_FILE = GEODISC_DIR / ".geodisc_active"
+SHUTDOWN_FILE = GEODISC_DIR / ".geodisc_intentional_shutdown"
 DISCOVERY_SCRIPT = GEODISC_DIR / "start_autonomous_discovery.py"
 PYTHON_BIN = "/Users/gjw255/.local/bin/python3"
 
@@ -121,7 +121,7 @@ class SleepAwareWatchdog:
 
         try:
             # Check last modification time of autonomous log
-            log_file = GEODISC_DIR / ".astra_autonomous.log"
+            log_file = GEODISC_DIR / ".geodisc_autonomous.log"
             if not log_file.exists():
                 return False
 
@@ -166,7 +166,7 @@ class SleepAwareWatchdog:
                 # DEVNULL (not PIPE): the parent never drains these pipes, so PIPE
                 # fills the 16/64KB buffer and the child's next log/print flush
                 # blocks forever in _bufferedwriter_flush_unlocked (the init hang).
-                # The child self-logs to .astra_autonomous.log via FileHandler, so
+                # The child self-logs to .geodisc_autonomous.log via FileHandler, so
                 # no diagnostic data is lost by discarding the piped stdout/stderr.
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL

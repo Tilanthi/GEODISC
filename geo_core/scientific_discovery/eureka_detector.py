@@ -787,12 +787,13 @@ async def test_eureka_detector():
 
     # Test case 1: Genuine Eureka moment (contradiction to established result)
     eureka_discovery = """
-    Analysis of Herschel filament observations reveals that filament widths
-    are NOT constant at 0.1 pc as previously claimed, but instead vary
-    systematically from 0.08 pc in high-density regions to 0.15 pc in
-    low-density regions (p<0.001, n=500 filaments). This variation correlates
-    strongly with local turbulent velocity dispersion (r=0.82), contradicting
-    the fixed-width hypothesis of Arzoumanian et al. (2011).
+    Analysis of 500 pyrite framboid measurements across a Proterozoic shale
+    succession reveals that framboid mean diameters are NOT constant at ~5 μm
+    as previously claimed for euxinic settings, but instead vary systematically
+    from 3.2±0.8 μm in siderite-cemented intervals to 7.4±1.1 μm in
+    pyrite-rich layers (p<0.001, n=500 framboids). This variation correlates
+    strongly with the degree of pyritization (r=0.82), contradicting the
+    uniform-size hypothesis of Wilkin et al. (1996).
     """
 
     # Mock literature papers (one supporting the established view)
@@ -807,16 +808,18 @@ async def test_eureka_detector():
 
     literature = [
         MockPaper(
-            title="The narrow width of interstellar filaments",
-            abstract="We show that filaments in molecular clouds have a characteristic "
-                     "width of 0.1 pc, independent of their column density and environment. "
-                     "This result is based on Herschel observations...",
-            authors=["Arzoumanian", "Andre", "Pety"],
-            year=2011
+            title="The uniform size of pyrite framboids in euxinic sediments",
+            abstract="We show that pyrite framboids in modern euxinic sediments have a "
+                     "characteristic mean diameter of ~5 μm, independent of basin and "
+                     "depositional age. This result is based on Black Sea and Framvaren "
+                     "observations...",
+            authors=["Wilkin", "Barnes", "Brantley"],
+            year=1996
         ),
         MockPaper(
-            title="Filament width variations in star-forming regions",
-            abstract="We investigate filament widths across different environments...",
+            title="Framboid size variations across redox gradients",
+            abstract="We investigate pyrite framboid size distributions across different "
+                     "redox environments...",
             authors=["Smith", "Jones"],
             year=2022
         )
@@ -831,9 +834,9 @@ async def test_eureka_detector():
 
     # Test case 2: Not a Eureka (already known)
     known_result = """
-    Molecular cloud filaments exhibit a characteristic width of approximately
-    0.1 parsecs, as observed in Herschel surveys. This width is consistent
-    across diverse environments.
+    Pyrite framboids in modern euxinic sediments exhibit a characteristic mean
+    diameter of approximately 5 micrometers, as observed in Black Sea sediments.
+    This size is consistent across diverse anoxic basins.
     """
 
     print("\n=== Test Case 2: Already Known Result ===")

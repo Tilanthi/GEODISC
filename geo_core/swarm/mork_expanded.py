@@ -528,10 +528,6 @@ class ExpandedMORK(MORKOntology):
             ("LORENTZ_TRANS", "Lorentz Transformation", ["lorentz transformation", "boost"]),
             ("SPACETIME", "Spacetime", ["spacetime", "minkowski"]),
             ("GEODESIC", "Geodesic", ["geodesic", "shortest path"]),
-            ("SCHWARZSCHILD", "Schwarzschild Metric", ["schwarzschild", "black hole"]),
-            ("BLACK_HOLE", "Black Hole", ["black hole", "event horizon", "singularity"]),
-            ("GRAVITATIONAL_WAVE", "Gravitational Waves", ["gravitational wave", "LIGO"]),
-            ("COSMOLOGY", "Cosmology", ["cosmology", "universe", "big bang"]),
         ]
         for cid, name, kw in relativity_concepts:
             self._add_concept(cid, name, domain, kw, "RELATIVITY")
@@ -546,7 +542,6 @@ class ExpandedMORK(MORKOntology):
             ("BETA_DECAY", "Beta Decay", ["beta decay", "electron emission"]),
             ("GAMMA_RAY", "Gamma Radiation", ["gamma ray", "gamma radiation"]),
             ("FISSION", "Nuclear Fission", ["fission", "chain reaction"]),
-            ("FUSION", "Nuclear Fusion", ["fusion", "stellar nucleosynthesis"]),
             ("STANDARD_MODEL", "Standard Model", ["standard model", "quarks", "leptons"]),
             ("QUARK", "Quark", ["quark", "hadron", "baryon", "meson"]),
             ("LEPTON", "Lepton", ["lepton", "electron", "muon", "neutrino"]),

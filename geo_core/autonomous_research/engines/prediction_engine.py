@@ -247,7 +247,7 @@ class TheoryRevisionEngine:
 
     def list_updated_theories(self) -> List[str]:
         """List recently updated theories"""
-        return ['Standard_Model', 'Lambda_CDM', 'Stellar_Evolution']
+        return ['Redox_Zoning', 'Isotope_Fractionation', 'Compaction_Law']
 
 
 # ============================================================================

@@ -68,7 +68,7 @@ class Anomaly:
     type: AnomalyType
     status: AnomalyStatus
     detection_time: float
-    source_location: Optional[Dict[str, float]]  # RA, Dec, etc.
+    source_location: Optional[Dict[str, float]]  # stratigraphic position, sample depth, etc.
     data_context: Dict[str, Any]
     observed_value: float
     expected_value: float
@@ -102,7 +102,7 @@ class DiscoveryCandidate:
     confidence: float
     supporting_evidence: List[str]
     required_observations: List[Dict[str, Any]]
-    astrophysical_implications: List[str]
+    geochemical_implications: List[str]
 
 
 @dataclass

@@ -115,11 +115,11 @@ class UnifiedPhysicsEngine:
             'h': 6.626e-27,  # Planck constant
             'k_B': 1.381e-16,  # Boltzmann constant
             'sigma_SB': 5.670e-5,  # Stefan-Boltzmann constant
-            'M_sun': 1.989e33,  # Solar mass
-            'R_sun': 6.957e10,  # Solar radius
-            'L_sun': 3.828e33,  # Solar luminosity
-            'AU': 1.496e13,  # Astronomical unit
-            'pc': 3.086e18,  # Parsec
+            'N_A': 6.022e23,  # Avogadro number
+            'R_gas': 8.314e7,  # Gas constant (erg/mol/K)
+            'Faraday': 9.649e4,  # Faraday constant (C/mol)
+            'amu': 1.661e-24,  # Atomic mass unit (g)
+            'k_D': 1.0,  # Distribution coefficient (generic)
             'eV': 1.602e-12,  # Electron volt in erg
         }
 

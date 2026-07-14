@@ -16,7 +16,7 @@ def test_timeout_from_worker_thread():
             time.sleep(25)  # Simulate slow GEODISC call (longer than 20s timeout)
             return {"answer": "test"}
 
-    system.initialize_with_astra(SlowGEODISC())
+    system.initialize_with_geo(SlowGEODISC())
 
     # Run discovery cycle in worker thread (simulating real environment)
     result_container = []
@@ -49,7 +49,7 @@ def test_timeout_from_worker_thread():
     # Verify the thread completed or is about to complete (not stuck indefinitely)
     # The key is that we returned from this test in reasonable time
 
-def test_successful_astra_call():
+def test_successful_geo_call():
     """Test that successful GEODISC calls work correctly"""
 
     config = DiscoveryConfig()
@@ -60,7 +60,7 @@ def test_successful_astra_call():
         def answer(self, query):
             return {"answer": "Quick geochemistry discovery about mineral formation"}
 
-    system.initialize_with_astra(FastGEODISC())
+    system.initialize_with_geo(FastGEODISC())
 
     result = system.run_discovery_cycle(timeout=5)
 

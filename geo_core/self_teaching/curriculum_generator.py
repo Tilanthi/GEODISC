@@ -73,7 +73,7 @@ class CurriculumConfig:
     """Configuration for the curriculum generator"""
     # Domain preferences
     domain_weights: Dict[str, float] = field(default_factory=lambda: {
-        'astrophysics': 0.25,
+        'geochemistry': 0.25,
         'causal_inference': 0.20,
         'physics': 0.15,
         'mathematics': 0.15,

@@ -561,8 +561,8 @@ class StigmergicMemory:
 
         # Common domains to check
         common_domains = [
-            'astrophysics', 'causal_inference', 'physics',
-            'mathematics', 'astronomy', 'general'
+            'geochemistry', 'causal_inference', 'physics',
+            'mathematics', 'taphonomy', 'general'
         ]
 
         for domain in common_domains:

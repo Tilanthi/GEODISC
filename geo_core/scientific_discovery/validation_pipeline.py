@@ -802,16 +802,17 @@ async def test_validation_pipeline():
 
     # Test discovery
     test_discovery = (
-        "Molecular clouds exhibit a characteristic filament width of approximately 0.1 parsecs, "
-        "as observed in Herschel surveys (Arzoumanian et al., 2011). This width is consistent "
-        "across diverse environments with p < 0.001, suggesting a fundamental physical process "
-        "regulating filament structure. The relationship between filament width and Jeans length "
-        "suggests a connection to turbulent fragmentation (n = 150 clouds)."
+        "Proterozoic black shales exhibit a characteristic pyrite framboid diameter of "
+        "approximately 5 micrometers, as observed in drill-core samples (Wilkin et al., 1996). "
+        "This diameter is consistent across diverse euxinic basins with p < 0.001, suggesting "
+        "a fundamental redox process regulating framboid formation. The relationship between "
+        "framboid diameter and the degree of pyritization suggests a connection to porewater "
+        "sulfide activity (n = 150 samples)."
     )
 
     report = await pipeline.validate(
         discovery_claim=test_discovery,
-        domains=["ism", "molecular_clouds"],
+        domains=["geochemistry", "taphonomy"],
         discovery_type="pattern_discovery"
     )
 

@@ -46,7 +46,7 @@ class UnifiedSTANSystem:
         Initialize unified STAN-CORE V4.0 system.
 
         Args:
-            mode: Operating mode ("general", "astronomy", "trading", "scientific")
+            mode: Operating mode ("general", "trading", "scientific")
             config: Optional configuration dict
         """
         import logging
@@ -83,10 +83,6 @@ class UnifiedSTANSystem:
             logger.info("[UnifiedSTAN] Initializing trading-specific components...")
             self._init_trading_components()
             logger.info("[UnifiedSTAN] ✅ Trading components complete")
-        elif mode == "astronomy":
-            logger.info("[UnifiedSTAN] Initializing astronomy-specific components...")
-            self._init_astronomy_components()
-            logger.info("[UnifiedSTAN] ✅ Astronomy components complete")
 
         logger.info(f"[UnifiedSTAN] 🎉 Initialization complete! Ready for {mode} mode")
 
@@ -212,10 +208,6 @@ class UnifiedSTANSystem:
 
     def _init_trading_components(self):
         """Trading-specific components removed (GEODISC is geochemistry-focused)."""
-        pass
-
-    def _init_astronomy_components(self):
-        """Astronomy-specific components removed (GEODISC is geochemistry-focused)."""
         pass
 
     def _check_data_sufficiency(self, query: str) -> Optional[str]:

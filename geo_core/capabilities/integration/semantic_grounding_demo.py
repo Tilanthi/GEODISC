@@ -28,14 +28,14 @@ from geo_core.capabilities.v95_semantic_grounding import (
 
 
 def demo_hallucination_detection():
-    """Demonstrate detection of the PN_analysis hallucination."""
+    """Demonstrate detection of a fabricated geochemistry formula."""
     print("=" * 70)
     print("DEMO 1: Detecting Known Hallucination")
     print("=" * 70)
 
-    # The fake formula from PN_analysis
-    fake_formula = "ν_t = 9 GHz (n_e/10^4 cm^-3)^0.56 (R/0.1 pc)^(-0.66) (T_e/10^4 K)^(-0.36)"
-    fake_citation = "Seaquist (1976), ApJ 211, L149"
+    # The fake formula from a fabricated pyritization analysis
+    fake_formula = "DOP = 0.85 (TOC/2 wt%)^0.42 (SO4/10 mM)^0.31 (pH/8)^(-0.18)"
+    fake_citation = "Raiswell (1985), Geochim. Cosmochim. Acta 149, 215"
 
     print(f"Formula: {fake_formula}")
     print(f"Citation: {fake_citation}")
@@ -58,18 +58,18 @@ def demo_content_validation():
 
     # Content with both good and problematic formulas
     content = """
-    Based on the analysis of planetary nebulae, we find:
+    Based on the analysis of chert nodules, we find:
 
-    1. The free-free optical depth follows the standard relation:
-       τ_ν ∝ ν^(-2.1) Te^(-1.35) EM
-       (Mezger & Henderson 1967; Oster 1961)
+    1. The vitrinite reflectance follows the Arrhenius relation:
+       R_o ∝ exp(-E_a/RT) * t^(1/2)
+       (Sweeney & Burnham 1990; Larter 1988)
 
-    2. The turnover frequency can be estimated as:
-       ν_t = 9 GHz (n_e/10^4 cm^-3)^0.56 (R/0.1 pc)^(-0.66) (T_e/10^4 K)^(-0.36)
-       (Seaquist 1976, ApJ 211, L149)
+    2. The degree of pyritization can be estimated as:
+       DOP = 0.85 (TOC/2 wt%)^0.42 (SO4/10 mM)^0.31 (pH/8)^(-0.18)
+       (Raiswell 1985, Geochim. Cosmochim. Acta 149, 215)
 
-    3. For a uniform shell geometry, we derive:
-       n_e ∝ ν_t^(1.26) Te^(-0.81)
+    3. For a uniform burial history, we derive:
+       TOC ∝ R_o^(1.26) T^(-0.81)
     """
 
     print("Content to validate:")
@@ -77,7 +77,7 @@ def demo_content_validation():
     print()
 
     # Validate
-    report = validate_scientific_content(content, domain="astronomy")
+    report = validate_scientific_content(content, domain="geochemistry")
 
     print("Validation Report:")
     print(f"  Total claims: {report.total_claims}")
@@ -116,18 +116,18 @@ def demo_safe_output_generation():
 
     # Safe content (all verified)
     safe_content = """
-    The free-free optical depth is given by:
-    τ_ν ∝ ν^(-2.1) Te^(-1.35) EM
+    The vitrinite reflectance is given by:
+    R_o ∝ exp(-E_a/RT) * t^(1/2)
 
-    This is the standard thermal bremsstrahlung absorption formula
-    from Mezger & Henderson (1967) and Oster (1961).
+    This is the standard thermal maturation (Arrhenius) relation
+    from Sweeney & Burnham (1990) and Larter (1988).
     """
 
     print("Safe Content:")
     print(safe_content)
     print()
 
-    output, report = generator.generate(safe_content, domain="astronomy")
+    output, report = generator.generate(safe_content, domain="geochemistry")
 
     print("Generated Output:")
     print(output)
@@ -136,16 +136,16 @@ def demo_safe_output_generation():
 
     # Unsafe content (contains hallucination)
     unsafe_content = """
-    The turnover frequency for planetary nebulae follows:
-    ν_t = 9 GHz (n_e/10^4 cm^-3)^0.56 (R/0.1 pc)^(-0.66) (T_e/10^4 K)^(-0.36)
-    (Seaquist 1976, ApJ 211, L149)
+    The degree of pyritization for chert nodules follows:
+    DOP = 0.85 (TOC/2 wt%)^0.42 (SO4/10 mM)^0.31 (pH/8)^(-0.18)
+    (Raiswell 1985, Geochim. Cosmochim. Acta 149, 215)
     """
 
     print("Unsafe Content (with hallucination):")
     print(unsafe_content)
     print()
 
-    output, report = generator.generate(unsafe_content, domain="astronomy")
+    output, report = generator.generate(unsafe_content, domain="geochemistry")
 
     print("Generated Output (with warnings):")
     print(output[:500])
@@ -163,9 +163,9 @@ def demo_formula_lookup():
 
     # Test formulas
     test_formulas = [
-        "τ_ν ∝ ν^(-2.1) Te^(-1.35) EM",  # Verified
-        "B_ν(T) = (2hν³/c²) * 1/(exp(hν/kT) - 1)",  # Verified
-        "ν_t = 9 GHz (n_e/10^4 cm^-3)^0.56",  # Hallucinated
+        "R_o ∝ exp(-E_a/RT) * t^(1/2)",  # Verified
+        "D = D_0 * exp(-E_a/(R*T))",  # Verified (Arrhenius diffusion)
+        "DOP = 0.85 (TOC/2 wt%)^0.42",  # Hallucinated
     ]
 
     for formula in test_formulas:
@@ -187,8 +187,8 @@ def demo_speculative_content():
 
     # Properly labeled speculative content
     speculative = """
-    SPECULATIVE: We hypothesize that the turnover frequency might follow:
-    n_e ∝ ν_t^(1.5) Te^(-0.5)
+    SPECULATIVE: We hypothesize that the organic carbon burial might follow:
+    TOC ∝ R_o^(1.5) T^(-0.5)
 
     This relationship has not been verified against observational data
     and should be considered tentative.
@@ -198,7 +198,7 @@ def demo_speculative_content():
     print(speculative)
     print()
 
-    report = validate_scientific_content(speculative, domain="astronomy")
+    report = validate_scientific_content(speculative, domain="geochemistry")
 
     print(f"Safe to output: {report.safe_to_output}")
     print(f"Overall confidence: {report.overall_confidence:.2f}")

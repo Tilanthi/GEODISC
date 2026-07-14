@@ -1,7 +1,8 @@
 """ablation.py — Recommendation 3: an AlphaEvolve Fig-7-style ablation.
 
-Runs the SAME real photo-z task under a staircase of conditions with an EQUAL
-LLM-call budget, to measure the marginal effect of each cheap-ablation feature:
+Runs the SAME real TOC-prediction task under a staircase of conditions with an
+EQUAL LLM-call budget, to measure the marginal effect of each cheap-ablation
+feature:
 
     floor_seed   re-seed from naive every step, minimal context   (≈ GEODISC today)
     no_context   memory ON, but proposer sees source only
@@ -13,7 +14,7 @@ LLM-call budget, to measure the marginal effect of each cheap-ablation feature:
 Each condition gets the same number of LLM program-proposals and the same seed
 for selection/routing. The LLM is non-deterministic, so this is a single-run
 PRELIMINARY ablation (multi-seed averaging is the production version). Reports
-held-out TEST sigma_NMAD/eta per condition + proposer stats.
+held-out TEST rmse/r2 per condition + proposer stats.
 """
 from __future__ import annotations
 
@@ -54,7 +55,7 @@ def _trim(src: str, n: int = 1200) -> str:
 
 def _niche(chrom: Chromosome):
     s = (chrom.metadata or {}).get("spec") or {}
-    return (s.get("model", "llm"), len(s.get("color_pairs", []) or []),
+    return (s.get("model", "llm"), len(s.get("feature_pairs", []) or []),
             s.get("degree", 0)) if s else ("llm", -1, -1)
 
 
@@ -156,10 +157,10 @@ class Ablation:
         rec = {
             "condition": name, "flags": flags, "n_steps": self.n_steps,
             "elapsed_s": round(time.time() - t0, 1),
-            "seed_test_sigma": seed_test["sigma_nmad"],
-            "best_eval_sigma": best.metadata.get("metrics", {}).get("sigma_nmad"),
-            "best_test_sigma": best_test["sigma_nmad"],
-            "best_test_eta": best_test["eta"],
+            "seed_test_rmse": seed_test["rmse"],
+            "best_eval_rmse": best.metadata.get("metrics", {}).get("rmse"),
+            "best_test_rmse": best_test["rmse"],
+            "best_test_r2": best_test["r2"],
             "best_origin": best.metadata.get("origin"),
             "best_gen": best.generation,
             "stats": stats,
@@ -175,8 +176,8 @@ class Ablation:
         for n in names:
             print(f"\n--- condition: {n} (steps={self.n_steps}) ---")
             r = self.run_condition(n, flagmap[n])
-            print(f"    best TEST sigma={r['best_test_sigma']:.4f} eta={r['best_test_eta']:.3f}  "
-                  f"(eval sigma={r['best_eval_sigma']:.4f})  "
+            print(f"    best TEST rmse={r['best_test_rmse']:.4f} r2={r['best_test_r2']:.3f}  "
+                  f"(eval rmse={r['best_eval_rmse']:.4f})  "
                   f"llm={r['stats']['llm_calls']} valid={r['stats']['valid']} "
                   f"improved={r['stats']['improved']}  t={r['elapsed_s']}s")
         return self.results
@@ -187,18 +188,18 @@ def _bar(val, vmax, width=30):
     return "#" * n + "." * (width - n)
 
 
-def report(results, seed_sigma):
+def report(results, seed_rmse):
     print("\n" + "=" * 78)
-    print("ABLATION RESULT — held-out TEST sigma_NMAD by condition (lower is better)")
+    print("ABLATION RESULT — held-out TEST rmse by condition (lower is better)")
     print("=" * 78)
-    sigmas = [r["best_test_sigma"] for r in results] + [seed_sigma]
-    vmax = max(sigmas)
-    print(f"{'condition':<13}{'TEST sigma':>12}{'TEST eta':>10}{'  valid/impr':>14}  bar (0..%.3f)" % vmax)
+    rmses = [r["best_test_rmse"] for r in results] + [seed_rmse]
+    vmax = max(rmses)
+    print(f"{'condition':<13}{'TEST rmse':>12}{'TEST r2':>10}{'  valid/impr':>14}  bar (0..%.3f)" % vmax)
     for r in results:
         st = r["stats"]
-        print(f"{r['condition']:<13}{r['best_test_sigma']:>12.4f}{r['best_test_eta']:>10.3f}"
-              f"{st['valid']:>9}/{st['improved']:<4}  {_bar(r['best_test_sigma'], vmax)}")
-    print(f"{'naive seed':<13}{seed_sigma:>12.4f}{'':>10}{'':>14}  {_bar(seed_sigma, vmax)}")
+        print(f"{r['condition']:<13}{r['best_test_rmse']:>12.4f}{r['best_test_r2']:>10.3f}"
+              f"{st['valid']:>9}/{st['improved']:<4}  {_bar(r['best_test_rmse'], vmax)}")
+    print(f"{'naive seed':<13}{seed_rmse:>12.4f}{'':>10}{'':>14}  {_bar(seed_rmse, vmax)}")
     print("\n(marginal effect read top-to-bottom: each row adds one feature to the row above.)")
 
 
@@ -210,16 +211,16 @@ def main():
     args = ap.parse_args()
     print("=" * 78)
     print("Recommendation 3 — ABLATION of context feedback / ensemble / meta-prompt")
-    print("Task: REAL SDSS photo-z. Fast=Haiku, Strong=Sonnet. Equal LLM budget/cond.")
+    print("Task: REAL geochemical TOC. Fast=Haiku, Strong=Sonnet. Equal LLM budget/cond.")
     print("=" * 78)
     ab = Ablation(n_steps=args.steps, elite=args.elite, seed=args.seed)
     res = ab.run_all()
-    seed_sigma = res[0]["seed_test_sigma"]
-    report(res, seed_sigma)
+    seed_rmse = res[0]["seed_test_rmse"]
+    report(res, seed_rmse)
 
     out = Path.home() / ".geodisc_persistent" / "evolved_programs" / "ablation.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"seed_test_sigma": seed_sigma,
+    out.write_text(json.dumps({"seed_test_rmse": seed_rmse,
                                "fast_model": FAST_MODEL, "strong_model": STRONG_MODEL,
                                "n_steps": args.steps, "results": res}, indent=2))
     print(f"\nablation log -> {out}")

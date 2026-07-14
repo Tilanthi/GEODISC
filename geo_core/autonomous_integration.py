@@ -65,7 +65,7 @@ class AutonomousSystemConfig:
     autonomy_level: float = 0.7
 
     # Domain boundaries
-    primary_domains: List[str] = field(default_factory=lambda: ["astrophysics", "astronomy"])
+    primary_domains: List[str] = field(default_factory=lambda: ["geochemistry", "taphonomy"])
     related_domains: List[str] = field(default_factory=lambda: ["physics", "mathematics", "computational"])
     forbidden_domains: List[str] = field(default_factory=list)
 
@@ -464,7 +464,7 @@ class AutonomousGEODISCSystem:
 
 # Convenience functions
 
-def create_autonomous_astra(
+def create_autonomous_geo(
     mode: AutonomousMode = AutonomousMode.IDLE_EXPLORATION,
     autonomy_level: float = 0.7,
     domains: Optional[List[str]] = None
@@ -483,13 +483,13 @@ def create_autonomous_astra(
     config = AutonomousSystemConfig(
         mode=mode,
         autonomy_level=autonomy_level,
-        primary_domains=domains or ["astrophysics", "astronomy"]
+        primary_domains=domains or ["geochemistry", "taphonomy"]
     )
 
     return AutonomousGEODISCSystem(config)
 
 
-def initialize_astra_with_autonomy(
+def initialize_geo_with_autonomy(
     autonomy_level: float = 0.7,
     enable_idle_exploration: bool = True,
     enable_continuous: bool = False
@@ -514,7 +514,7 @@ def initialize_astra_with_autonomy(
     elif autonomy_level > 0.5:
         mode = AutonomousMode.REACTIVE_ONLY
 
-    return create_autonomous_astra(
+    return create_autonomous_geo(
         mode=mode,
         autonomy_level=autonomy_level
     )
@@ -526,6 +526,6 @@ __all__ = [
     'AutonomousGEODISCSystem',
     'AutonomousMode',
     'AutonomousSystemConfig',
-    'create_autonomous_astra',
-    'initialize_astra_with_autonomy'
+    'create_autonomous_geo',
+    'initialize_geo_with_autonomy'
 ]

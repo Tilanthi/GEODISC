@@ -154,10 +154,10 @@ class ProblemClassifier:
                 'acid', 'base', 'oxidation', 'reduction', 'catalyst'
             },
             ProblemCategory.ASTRONOMICAL: {
-                'star', 'galaxy', 'planet', 'cosmology', 'telescope',
-                'black hole', 'supernova', 'redshift', 'dark matter',
-                'universe', 'nebula', 'quasar', 'pulsar', 'exoplanet',
-                'astronomical', 'celestial', 'orbit', 'solar', 'lunar'
+                'geochemistry', 'stratigraphy', 'sedimentology', 'taphonomy',
+                'mineral', 'isotope', 'redox', 'proterozoic', 'precambrian',
+                'organic carbon', 'pyrite', 'shale', 'chert', 'banded iron',
+                'oxygenic', 'great oxidation', 'fossil', 'burial', 'diagenesis'
             },
             ProblemCategory.BIOMEDICAL: {
                 'disease', 'treatment', 'drug', 'gene', 'protein',
@@ -239,9 +239,9 @@ class ProblemClassifier:
                 CapabilityType.LLM_INFERENCE
             ],
             ProblemCategory.ASTRONOMICAL: [
-                CapabilityType.ARXIV,  # External: arXiv astro-ph
+                CapabilityType.ARXIV,  # External: arXiv geochemistry papers
                 CapabilityType.WOLFRAM_ALPHA,  # External: Wolfram for calculations
-                CapabilityType.WIKIPEDIA,  # External: Wikipedia for astronomy
+                CapabilityType.WIKIPEDIA,  # External: Wikipedia for geochemistry
                 CapabilityType.CAUSAL_DISCOVERY,
                 CapabilityType.QUANTITATIVE_REASONER,
                 CapabilityType.LLM_INFERENCE

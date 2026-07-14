@@ -8,7 +8,7 @@ Levels:
 - Level 0: Raw Observations (spectra, images, measurements)
 - Level 1: Physical Parameters (temperature, density, velocity)
 - Level 2: Scientific Principles (hydrodynamics, thermodynamics)
-- Level 3: Domain Theories (stellar evolution, galaxy formation)
+- Level 3: Domain Theories (depositional environments, diagenetic alteration)
 
 Performance: 3-5× improvement for knowledge-intensive tasks
 

@@ -33,7 +33,7 @@ _FAMILY = [("GradientBoosting", re.compile(r"GradientBoosting|XGBoost|HistGradie
            ("RandomForest", re.compile(r"RandomForest|ExtraTrees")),
            ("Ridge", re.compile(r"\bRidge\b")), ("Lasso", re.compile(r"\bLasso\b")),
            ("Linear", re.compile(r"LinearRegression")),
-           (" LombScargle", re.compile(r"LombScargle|astropy\.periodogram")),
+           ("GaussianProcess", re.compile(r"GaussianProcess|KernelRidge")),
            ("Majority", re.compile(r"value_counts\(\)\.idxmax"))]
 
 
@@ -51,7 +51,7 @@ def program_hash(src: str) -> str:
 def _metric_from(metrics: dict, task: str) -> tuple[str, float]:
     if task == "classification":
         return "balanced_accuracy", float(metrics.get("balanced_accuracy", 0.0))
-    return "sigma_NMAD", float(metrics.get("sigma_nmad", 0.0))
+    return "rmse", float(metrics.get("rmse", 0.0))
 
 
 def emit_verified_discovery(*, task: str, program_source: str, eval_metrics: dict,
@@ -61,13 +61,13 @@ def emit_verified_discovery(*, task: str, program_source: str, eval_metrics: dic
     """Narrate + persist one verified discovery. Returns the record."""
     metric_name, metric_value = _metric_from(eval_metrics, task)
     _, held_out_value = _metric_from(held_out_metrics, task)
-    eta = eval_metrics.get("eta") or held_out_metrics.get("eta")
+    r2 = eval_metrics.get("r2") or held_out_metrics.get("r2")
     family = sniff_family(program_source)
     facts = {"task": task, "method": f"{family}-class pipeline (evolved)",
              "method_family": family, "metric_name": metric_name,
              "metric_value": round(metric_value, 4),
              "held_out_value": round(held_out_value, 4),
-             "eta": round(eta, 4) if eta is not None else None,
+             "r2": round(r2, 4) if r2 is not None else None,
              "n_train": n_train, "n_eval": n_eval, "n_test": n_test,
              "data_source": data_source}
     narrated = narrate_with_stan(facts) if use_stan else template_narrate(facts)
@@ -78,12 +78,12 @@ def emit_verified_discovery(*, task: str, program_source: str, eval_metrics: dic
         "discovery_type": narrated.get("discovery_type", "machine_verified_analysis"),
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "verification": {
-            "by": "code execution on real archival data (NOT LLM self-judgment)",
+            "by": "code execution on real geochemical data (NOT LLM self-judgment)",
             "metric_name": metric_name,
             "eval_value": round(metric_value, 4),
             "held_out_test_value": round(held_out_value, 4),
-            "eta": round(eta, 4) if eta is not None else None,
-            "cv_sigma_std": eval_metrics.get("cv_sigma_std"),
+            "r2": round(r2, 4) if r2 is not None else None,
+            "cv_rmse_std": eval_metrics.get("cv_rmse_std"),
             "n_train": n_train, "n_eval": n_eval, "n_test": n_test,
             "data_source": data_source, "program_hash": program_hash(program_source),
             "stan_narrated": bool(narrated.get("stan_used")),

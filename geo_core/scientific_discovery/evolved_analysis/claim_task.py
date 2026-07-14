@@ -1,12 +1,12 @@
 """claim_task.py — the Phase-2 evolved artifact: a (CLAIM, executable TEST) pair.
 
-Phase 1 evolves a fixed function (``estimate_redshift``) for a fixed task. Phase 2
-generalises the engine to OPEN-ENDED Eureka search: the evolved artifact is now a
-pair
+Phase 2 generalises the AlphaEvolve engine to OPEN-ENDED Eureka search: the
+evolved artifact is a pair
 
     CLAIM     : a short, quantitative natural-language statement about real data
-                (e.g. "In SDSS, galaxies with W1−W2 > 0.5 at z<0.8 show a >30%
-                mid-IR excess consistent with AGN").
+                (e.g. "In the geochemical dataset, samples with Fe/Al > 0.5 show
+                a >30% enrichment in redox-sensitive Mo consistent with anoxic
+                deposition").
     run_claim : executable code that loads REAL archival data and returns an
                 objective statistic + significance for the claim.
 
@@ -22,9 +22,10 @@ Two-gate EVALUATE (design §5):
 Only candidates passing BOTH gates are emitted, via discovery_store's
 verification block, so they reach the genuine store through the chokepoint.
 
-Real data: the same cached, provenance-manifested SDSS photo-z sample used by
-the Phase-1 engine (u,g,r,i,z + z_spec) — kept consistent so no new fake data
-is introduced.
+Real data: a cached, provenance-manifested geochemistry sample (columns such as
+toc, d13c, Fe_Al, S_TOC, depth, Ro, HI) — to be re-grounded against a real
+geochemical database (e.g. EarthChem); see the domain-re-grounding note in
+CLAUDE.md.
 """
 from __future__ import annotations
 
@@ -37,14 +38,14 @@ EFFECT_MIN = 0.30     # |effect| (e.g. |Spearman r|) must be at least this
 PMAX = 1e-3           # p-value must be at most this
 ENTRY_POINT = "run_claim"
 
-# A seed program. This claim is REAL (gate 1 passes — g-r vs z is strongly
-# correlated in SDSS) but KNOWN (gate 2 catches it — it's the basis of photo-z).
-# It is the floor the search must BEAT on novelty, not a goal in itself.
-NAIVE_CLAIM_SEED = '''CLAIM = "In the SDSS sample, a galaxy's g-r color is positively correlated with its spectroscopic redshift (redder galaxies lie at higher z)."
+# A seed program. This claim is REAL-plausible (gate 1 would pass — TOC and the
+# organic-matter d13c are correlated in many basins) but KNOWN (gate 2 catches
+# it). It is the floor the search must BEAT on novelty, not a goal in itself.
+NAIVE_CLAIM_SEED = '''CLAIM = "In the geochemical dataset, a sample's total organic carbon (TOC) is positively correlated with its organic-matter d13c (heavier isotope ratios associate with higher TOC)."
 
 
 def run_claim(df_train, df_eval):
-    """Test the claim on real SDSS data on the HELD-OUT eval split.
+    """Test the claim on real geochemical data on the HELD-OUT eval split.
 
     The headline statistic must come from df_eval (not df_train), per the
     Gate-1 leakage contract (§7.3); ``claim_uses_heldout_split`` enforces this
@@ -53,37 +54,43 @@ def run_claim(df_train, df_eval):
     from scipy.stats import spearmanr
     import numpy as np
     df = df_eval
-    gr = df["g"].to_numpy(float) - df["r"].to_numpy(float)
-    z = df["z_spec"].to_numpy(float)
-    mask = np.isfinite(gr) & np.isfinite(z)
-    r, p = spearmanr(gr[mask], z[mask])
+    toc = df["toc"].to_numpy(float)
+    d13c = df["d13c"].to_numpy(float)
+    mask = np.isfinite(toc) & np.isfinite(d13c)
+    r, p = spearmanr(toc[mask], d13c[mask])
     return {
         "effect": float(r),
         "pvalue": float(p),
-        "effect_type": "spearman_gr_z",
-        "summary": f"Spearman(g-r, z) = {r:.3f}, p = {p:.2e}, n = {int(mask.sum())}",
+        "effect_type": "spearman_toc_d13c",
+        "summary": f"Spearman(TOC, d13c) = {r:.3f}, p = {p:.2e}, n = {int(mask.sum())}",
     }
 '''
 
 # Task system prompt for the LLM proposer. Asks for a NEW (CLAIM, run_claim)
-# pair exploring a different real relationship in the SDSS columns, such that the
-# claim is BOTH statistically significant AND plausibly NOT already textbook.
+# pair exploring a different real relationship in the geochemical columns, such
+# that the claim is BOTH statistically significant AND plausibly NOT already
+# textbook.
 TASK_SYSTEM = (
-    "You are an expert scientist searching for a NOVEL, real statistical "
-    "relationship in SDSS galaxy photometry that is NOT already a well-known "
-    "textbook result. You are given the current candidate (a natural-language "
-    "CLAIM plus a `run_claim(df_train, df_eval)` function that tests it on real "
-    "data and returns {effect, pvalue, effect_type, summary}).\n"
-    "The available REAL data columns are: u, g, r, i, z (model mags) and z_spec "
-    "(spectroscopic redshift). You may use numpy/scipy/pandas/sklearn only.\n"
+    "You are an expert geochemist searching for a NOVEL, real statistical "
+    "relationship in a Proterozoic / early-Earth geochemical dataset that is "
+    "NOT already a well-known textbook result. You are given the current "
+    "candidate (a natural-language CLAIM plus a `run_claim(df_train, df_eval)` "
+    "function that tests it on real data and returns {effect, pvalue, "
+    "effect_type, summary}).\n"
+    "The available REAL data columns are: toc (total organic carbon), d13c "
+    "(organic-matter carbon isotope), Fe_Al (Fe/Al ratio), S_TOC (S/TOC ratio), "
+    "depth (burial depth), Ro (vitrinite reflectance / thermal maturity), HI "
+    "(hydrogen index). You may use numpy/scipy/pandas/sklearn only.\n"
     "HARD RULES:\n"
     "- Keep the EXACT signature: def run_claim(df_train, df_eval)\n"
     "- Set a module-level CLAIM = \"...\" string: a specific, quantitative claim.\n"
     "- Return a dict with keys effect (a correlation/contrast magnitude in [-1,1] "
     "or a normalized contrast), pvalue (a real significance), effect_type, summary.\n"
     "- Pick a relationship that is genuinely significant on the data but AVOID "
-    "textbook basics (e.g. 'color correlates with redshift', 'Tully-Fisher', "
-    "'luminosity function'). Prefer specific, non-obvious combinations.\n"
+    "textbook basics (e.g. 'TOC correlates with d13c', 'burial depth increases "
+    "thermal maturity', 'redox-sensitive metals enrich under anoxia'). Prefer "
+    "specific, non-obvious combinations, conditional/subset relations, residuals "
+    "after removing the dominant trend, or interactions of 3+ variables.\n"
     "- No file I/O, no network, no plotting. Correct and self-contained.\n"
     "RESPOND WITH EITHER:\n"
     "  (a) one or more diff blocks (<<<SEARCH>>>...<<<REPLACE>>>...<<<END>>>)\n"
@@ -97,7 +104,7 @@ def parse_claim(src: str) -> Optional[str]:
 
     Uses a backreference (\\1) so the CLOSING quote is the same character as the
     opening quote — this lets a double-quoted claim contain apostrophes (e.g.
-    "a galaxy's g-r color") without being truncated at the apostrophe, which
+    "a sample's TOC") without being truncated at the apostrophe, which
     previously fed Gate 2 an incomplete fragment and caused false 'novel' calls.
     """
     m = re.search(r'^CLAIM\s*=\s*(["\'])(.+?)\1', src, re.MULTILINE | re.DOTALL)

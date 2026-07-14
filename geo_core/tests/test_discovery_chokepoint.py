@@ -142,15 +142,15 @@ def test_user_active_heartbeat():
 
 
 def test_claim_parse_handles_apostrophes():
-    """CLAIM strings often contain apostrophes ("galaxy's"); the parser must not
+    """CLAIM strings often contain apostrophes ("sample's"); the parser must not
     truncate at them (truncation fed Gate 2 an incomplete fragment → false novel)."""
     from geo_core.scientific_discovery.evolved_analysis.claim_task import (
         parse_claim, NAIVE_CLAIM_SEED)
     claim = parse_claim(NAIVE_CLAIM_SEED)
-    assert claim and "galaxy" in claim and "redshift" in claim, \
+    assert claim and "sample" in claim and "TOC" in claim, \
         f"claim truncated: {claim!r}"
     # the apostrophe-bearing claim must include content PAST the apostrophe
-    assert "g-r" in claim or "color" in claim, f"lost content after apostrophe: {claim!r}"
+    assert "d13c" in claim or "isotope" in claim, f"lost content after apostrophe: {claim!r}"
 
 
 def test_gate1_significance_logic():

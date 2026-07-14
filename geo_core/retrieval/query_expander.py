@@ -92,10 +92,10 @@ class RuleBasedExpander(QueryExpander):
                 'big': ['large', 'scalable', 'high-capacity', 'massive', 'distributed'],
                 'fast': ['efficient', 'optimized', 'low-latency', 'accelerated'],
             },
-            'astronomy': {
-                'star': ['stellar', 'sun', 'celestial body', 'main sequence'],
-                'observe': ['detect', 'measure', 'image', 'survey'],
-                'telescope': ['observatory', 'instrument', 'detector', 'array'],
+            'geochemistry': {
+                'shale': ['sediment', 'mudstone', 'basin', 'formation'],
+                'analyze': ['measure', 'characterize', 'quantify', 'assay'],
+                'spectrometer': ['instrument', 'analyzer', 'detector', 'mass spec'],
             },
             'trading': {
                 'profit': ['return', 'gain', 'alpha', 'excess return'],

@@ -26,7 +26,7 @@ from .v95_semantic_grounding import (
 
 def grounded_answer(
     answer_func: Callable,
-    domain: str = "astronomy",
+    domain: str = "geochemistry",
     strict_mode: bool = True
 ) -> Callable:
     """
@@ -38,7 +38,7 @@ def grounded_answer(
         strict_mode: If True, block unverified content
 
     Example:
-        @grounded_answer(domain="astronomy")
+        @grounded_answer(domain="geochemistry")
         def answer(self, question: str) -> Dict:
             # ... existing implementation ...
             return result
@@ -85,7 +85,7 @@ class GroundedScientificDiscovery:
     being presented as findings.
     """
 
-    def __init__(self, discovery_system=None, domain: str = "astronomy"):
+    def __init__(self, discovery_system=None, domain: str = "geochemistry"):
         self.discovery_system = discovery_system
         self.domain = domain
         self.grounding = SemanticGroundingLayer()
@@ -205,7 +205,7 @@ def _add_warning_header(content: str, report: GroundingReport) -> str:
 
 
 # Convenience function for quick validation
-def quick_validate(text: str, domain: str = "astronomy") -> Dict[str, Any]:
+def quick_validate(text: str, domain: str = "geochemistry") -> Dict[str, Any]:
     """
     Quick validation of text for scientific content.
 

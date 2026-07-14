@@ -309,7 +309,6 @@ class EnhancedUnifiedSTANSystem:
         # Configure domains to auto-load (GEODISC: domain-neutral set only;
         # geochemistry domains are registered separately via register_geo_domains).
         domains_config = {
-            'atomic_physics': {'enabled': True},
             'molecular_spectroscopy': {'enabled': True},
             'fluid_dynamics': {'enabled': True},
             'dynamical_systems': {'enabled': True},
@@ -317,7 +316,6 @@ class EnhancedUnifiedSTANSystem:
             'signal_processing': {'enabled': True},
             'inverse_problems': {'enabled': True},
             'hpc': {'enabled': True},
-            'quantum_applications': {'enabled': True},
             'statistical_mechanics': {'enabled': True},
             'prebiotic_chemistry': {'enabled': True},
         }

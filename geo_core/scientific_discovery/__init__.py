@@ -14,10 +14,7 @@ Modules:
 - query_optimizer: Intelligent literature search query optimization
 - validation_pipeline: Multi-stage discovery validation
 - research_papers: PDF processing, citation networks, literature mining
-- astro_databases: Access to Vizier, SIMBAD, ADS, and other catalogs
-- data_repositories: Access to ALMA, NASA, ESO, CADC, arXiv datasets
-- advanced_analysis: ML photometry, galaxy classification, phot-z
-- theoretical_physics: MHD solvers, plasma physics, radiation-hydro
+- geochem_data: Access to geochemical databases (EarthChem, PBDB) — to be wired
 
 Version: 3.0.0-Eureka
 Date: 2026-07-03

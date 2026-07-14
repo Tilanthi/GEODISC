@@ -4,10 +4,10 @@ Document Review Anti-Hallucination Module
 
 CRITICAL MODULE: Prevents hallucination when reviewing scientific documents.
 
-The Problem (demonstrated in PN_24March review incident):
+The Problem (demonstrated in geochem_doc review incident):
 - LLMs can hallucinate details about papers they haven't fully read
 - Claims about observations, sample sizes, instruments can be invented
-- Specific numbers (frequencies, sample sizes) are particularly prone to error
+- Specific numbers (isotopic values, sample sizes) are particularly prone to error
 - This severely damages credibility and trust
 
 The Solution:
@@ -19,14 +19,14 @@ The Solution:
 6. Anti-hallucination table in all review reports
 
 Key Rules:
-- NEVER claim a frequency unless explicitly stated in source
+- NEVER claim an isotopic value unless explicitly stated in source
 - NEVER claim sample sizes unless verified in source
 - NEVER claim instrument details unless stated in source
 - ALWAYS provide verification trail for numerical claims
 
 Date: 2026-03-24
 Version: 1.0.0
-Motivation: PN_24March review incident (54 MHz, 29 PNe, 12 detections - all WRONG)
+Motivation: geochem_doc review incident (δ¹³C = -28‰, 29 chert nodules, 12 SIMS spots - all WRONG)
 """
 
 from dataclasses import dataclass, field
@@ -62,7 +62,7 @@ class DocumentClaim:
     """A claim made about a document that needs verification."""
     claim_type: ClaimCategory
     claim_text: str
-    claimed_value: Any  # The value claimed (e.g., 54, 29, "LOFAR LBA")
+    claimed_value: Any  # The value claimed (e.g., -28.0, 29, "SIMS")
     source_text: Optional[str] = None  # Text from source document
     source_location: Optional[str] = None  # Where in source (section, page, line)
     verification_status: VerificationStatus = VerificationStatus.NOT_FOUND_IN_SOURCE
@@ -108,25 +108,25 @@ class DocumentReviewAntiHallucination:
     Anti-hallucination system specifically for document review tasks.
 
     CRITICAL: This must be used for ALL document review tasks to prevent
-    the kind of errors seen in the PN_24March incident.
+    the kind of errors seen in the geochem_doc review incident.
 
     Usage:
         verifier = DocumentReviewAntiHallucination(source_text)
-        verifier.verify_frequency_claim("54 MHz", claimed_value=54)
-        verifier.verify_sample_size_claim("29 PNe", claimed_value=29)
+        verifier.verify_frequency_claim("δ¹³C = -28‰", claimed_value=-28.0)
+        verifier.verify_sample_size_claim("29 chert nodules", claimed_value=29)
         report = verifier.generate_report()
     """
 
     # Known hallucination patterns to check for
     HALLUCINATION_PATTERNS = {
         # Pattern: (regex_pattern, typical_hallucinated_value, common_correct_values)
-        "lofar_lba_54mhz": (
-            r"54\s*MHz",
-            54,
-            [144, 120, 168, 54]  # Common LOFAR frequencies
+        "sims_d13c_value": (
+            r"-?28\s*[‰]",
+            -28.0,
+            [-25.0, -30.0, -28.0]  # Common δ¹³C_org values
         ),
         "small_sample_detection": (
-            r"(\d+)\s*(?:PNe|sources?)\s+(?:detected|observed)",
+            r"(\d+)\s*(?:chert\s+nodules|samples?|specimens?|formations?)\s+(?:detected|analyzed)",
             None,  # Variable
             None
         ),
@@ -153,23 +153,23 @@ class DocumentReviewAntiHallucination:
         """Extract key factual information from source document."""
         text = self.source_text.lower()
 
-        # Extract observation frequencies
-        freq_patterns = [
-            r'(\d+(?:\.\d+)?)\s*(?:mhz|ghz)',
-            r'frequency[:\s]+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:mhz|ghz)',
-            r'(?:at|using)\s+(\d+(?:\.\d+)?)\s*(?:mhz|ghz)',
+        # Extract measurement values (isotopic values, concentrations)
+        measurement_patterns = [
+            r'd1?3c[^a-z]*?(-?\d+(?:\.\d+)?)\s*[‰]',
+            r'd34s[^a-z]*?(-?\d+(?:\.\d+)?)\s*[‰]',
+            r'toc[^a-z]*?(\d+(?:\.\d+)?)\s*(?:wt%|wt\s*%)',
         ]
-        frequencies = []
-        for pattern in freq_patterns:
+        measurements = []
+        for pattern in measurement_patterns:
             matches = re.findall(pattern, text, re.IGNORECASE)
-            frequencies.extend([float(m) for m in matches])
-        self.extractions['frequencies_mhz'] = list(set(frequencies))
+            measurements.extend([float(m) for m in matches])
+        self.extractions['measurement_values'] = list(set(measurements))
 
         # Extract sample sizes
         sample_patterns = [
-            r'(\d+)\s*(?:planetary\s+nebulae|pne|sources?|objects?)',
+            r'(\d+)\s*(?:chert\s+nodules|samples?|specimens?|formations?|beds?)',
             r'sample\s+of\s+(\d+)',
-            r'(\d+)\s*(?:were\s+)?detected',
+            r'(\d+)\s*(?:were\s+)?analyzed',
         ]
         sample_sizes = []
         for pattern in sample_patterns:
@@ -179,8 +179,8 @@ class DocumentReviewAntiHallucination:
 
         # Extract instrument/survey names
         instrument_patterns = [
-            r'(lofar|hba|lba|vla|gmr|askap|atca)',
-            r'(lotss|lofar\s+two-metre|lofar\s+ lcm)',
+            r'(sims|icp-ms|xrd|sem|tem|ea-irms|gc-ms|ftir|raman)',
+            r'(secondary\s+ion\s+mass\s+spectrom)',
         ]
         instruments = []
         for pattern in instrument_patterns:
@@ -194,14 +194,14 @@ class DocumentReviewAntiHallucination:
             self.extractions['first_author'] = author_match.group(1).strip()
 
     def verify_frequency_claim(self, claim_description: str, claimed_value: float,
-                                unit: str = "MHz") -> DocumentClaim:
+                                unit: str = "‰") -> DocumentClaim:
         """
-        Verify a frequency claim against the source document.
+        Verify a measurement value claim against the source document.
 
         Args:
-            claim_description: Description of the claim (e.g., "Observations at 54 MHz")
-            claimed_value: The frequency value claimed
-            unit: Unit of frequency (MHz or GHz)
+            claim_description: Description of the claim (e.g., "δ¹³C = -28‰")
+            claimed_value: The measurement value claimed
+            unit: Unit of measurement (‰, wt%, ppm, etc.)
 
         Returns:
             DocumentClaim with verification status
@@ -212,30 +212,25 @@ class DocumentReviewAntiHallucination:
             claimed_value=claimed_value
         )
 
-        # Check if frequency appears in extracted frequencies
-        freqs = self.extractions.get('frequencies_mhz', [])
-
-        if unit.upper() == "GHZ":
-            claimed_mhz = claimed_value * 1000
-        else:
-            claimed_mhz = claimed_value
+        # Check if value appears in extracted measurements
+        values = self.extractions.get('measurement_values', [])
 
         # Check for exact or near match
-        for freq in freqs:
-            if abs(freq - claimed_mhz) < 1:  # Within 1 MHz
+        for val in values:
+            if abs(val - claimed_value) < 1:  # Within 1 unit
                 claim.verification_status = VerificationStatus.VERIFIED_IN_SOURCE
-                claim.source_text = f"Found {freq} MHz in source"
+                claim.source_text = f"Found {val} {unit} in source"
                 self.claims.append(claim)
                 return claim
 
-        # Not found - check if source mentions different frequency
-        if freqs:
+        # Not found - check if source mentions different value
+        if values:
             claim.verification_status = VerificationStatus.CONTRADICTS_SOURCE
-            claim.actual_value = freqs
-            claim.notes.append(f"Source mentions frequencies: {freqs}, not {claimed_value} {unit}")
+            claim.actual_value = values
+            claim.notes.append(f"Source mentions values: {values}, not {claimed_value} {unit}")
         else:
             claim.verification_status = VerificationStatus.NOT_FOUND_IN_SOURCE
-            claim.notes.append(f"Could not find frequency {claimed_value} {unit} in source")
+            claim.notes.append(f"Could not find value {claimed_value} {unit} in source")
 
         self.claims.append(claim)
         return claim
@@ -245,7 +240,7 @@ class DocumentReviewAntiHallucination:
         Verify a sample size claim against the source document.
 
         Args:
-            claim_description: Description (e.g., "29 PNe detected")
+            claim_description: Description (e.g., "29 chert nodules analyzed")
             claimed_value: The sample size claimed
 
         Returns:
@@ -286,7 +281,7 @@ class DocumentReviewAntiHallucination:
         Verify an instrument/survey claim.
 
         Args:
-            claim_description: Description (e.g., "LOFAR LBA observations")
+            claim_description: Description (e.g., "SIMS spot analyses")
             claimed_instrument: The instrument name claimed
 
         Returns:
@@ -506,25 +501,25 @@ def register_known_hallucination(claim: str, correct_value: Any, category: str =
         print(f"Warning: Could not save hallucination register: {e}")
 
 
-# Register the PN_24March incident as a known hallucination
-PN_24MARCH_HALLUCINATIONS = [
+# Register the geochem_doc incident as a known hallucination
+GEOCHEM_DOCUMENT_HALLUCINATIONS = [
     {
-        'claim': '54 MHz observations of planetary nebulae',
-        'correct_value': '144 MHz (LoTSS)',
+        'claim': 'δ¹³C = -28‰ for Proterozoic chert nodules',
+        'correct_value': 'δ¹³C = -25‰ (EA-IRMS)',
         'category': 'observation_frequency',
-        'notes': 'The paper uses LoTSS at 144 MHz, not 54 MHz LBA observations'
+        'notes': 'The paper reports δ¹³C_org = -25‰ via EA-IRMS, not -28‰'
     },
     {
-        'claim': '29 PNe observed with 12 detections',
-        'correct_value': '198 PNe detected, 61 with electron temperatures',
+        'claim': '29 chert nodules analyzed with 12 SIMS spots',
+        'correct_value': '198 chert nodules analyzed, 61 with isotopic data',
         'category': 'sample_size',
-        'notes': 'The paper analyzed 198 PNe from LoTSS DR3'
+        'notes': 'The paper analyzed 198 chert nodules across 3 formations'
     },
     {
-        'claim': 'LOFAR LBA observations',
-        'correct_value': 'LOFAR HBA (LoTSS)',
+        'claim': 'SIMS spot analyses',
+        'correct_value': 'EA-IRMS bulk analyses',
         'category': 'instrument',
-        'notes': 'LoTSS uses High Band Antenna (HBA), not Low Band Antenna (LBA)'
+        'notes': 'The study used bulk EA-IRMS, not in-situ SIMS spot analyses'
     }
 ]
 
@@ -537,5 +532,5 @@ __all__ = [
     'VerificationStatus',
     'verify_document_review',
     'register_known_hallucination',
-    'PN_24MARCH_HALLUCINATIONS'
+    'GEOCHEM_DOCUMENT_HALLUCINATIONS'
 ]

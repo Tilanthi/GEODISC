@@ -22,7 +22,7 @@ def _load():
         raise FileNotFoundError(
             f"Real leapcore_evolution.py not found at {LEAPCORE_PATH}. "
             "Update LEAPCORE_PATH in code_evolve/leapcore.py.")
-    spec = importlib.util.spec_from_file_location("astra_leapcore_real", LEAPCORE_PATH)
+    spec = importlib.util.spec_from_file_location("geo_leapcore_real", LEAPCORE_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
