@@ -47,8 +47,19 @@ memory) repurposed from astrophysics to geochemistry.
   scaffolds (Levels 2-17) registered; mechanistic process-graph capability
   present. Domain *content* is skeletal — awaiting separate geochemistry
   training. Gates green: `import geo_core` + `create_geo_stan_system()`;
-  `geo_core/tests/test_discovery_chokepoint.py` (11); `mpg.explain_preservation()`;
+  `geo_core/tests/test_discovery_chokepoint.py` (11) +
+  `geo_core/tests/test_claim_gates.py` (8); `mpg.explain_preservation()`;
   16 domains.
+- **Pipeline discipline added (2026-07-14):** the two-gate engine now runs a
+  static **leakage guard** (`claim_uses_heldout_split` in `claim_task.py`) that
+  rejects any candidate whose Gate-1 headline ignores the held-out `df_eval`
+  split — the §7.3 in-sample trap, run *before* the sandbox eval. It also logs
+  one structured JSONL verdict per candidate (pass or fail) to
+  `~/.geodisc_persistent/evolved_programs/claim_verdicts.jsonl` (§7.2) so the
+  search funnel (where candidates die) is diagnosable. **Known gap:** the
+  sandbox worker still cannot load real data — `real_data.load_split` was purged
+  with the astrophysics data, so Gate 1 currently always fails; re-grounding it
+  in geochemistry data (EarthChem / PBDB) is the remaining domain task.
 - **Public repo**: https://github.com/Tilanthi/GEODISC (`main` branch; git
   remotes `origin` and `geodisc` both point here). Published as a clean
   geochemistry-only history. The precursor astrophysics history is preserved
@@ -101,7 +112,11 @@ chokepoint. `autonomous_discovery_supervisor.py` — always-on, user-yielding
 supervisor that ingests verified records and (when idle + an LLM token is
 available) runs the evolutionary engine. `scientific_discovery/evolved_analysis/`
 — the generic AlphaEvolve two-gate engine (Gate 1: real-data significance,
-sandboxed; Gate 2: literature novelty).
+sandboxed; Gate 2: literature novelty). Within it, `two_gate_eval` (in
+`run_claim_search.py`) runs a static **leakage guard** (`claim_uses_heldout_split`)
+before the sandbox — rejecting candidates whose headline ignores the held-out
+`df_eval` split — and appends one structured JSONL verdict per candidate via
+`verdict_log.py`.
 
 ### Geochemistry domain layer — `geo_core/domains/geochemistry/`
 16 `BaseDomainModule` scaffolds (Levels 2-17), each declaring its capability
@@ -187,13 +202,16 @@ falls back to fiction.
 ## Persistent Memory & Key Files
 - `~/.geodisc_persistent/` — GEODISC persistent state, conversation context, LLM env
 - `~/.geodisc_persistent/discovery_memory.json` — verified discoveries
+- `~/.geodisc_persistent/evolved_programs/claim_verdicts.jsonl` — per-candidate
+  two-gate verdict log (one JSONL line each, with `outcome` funnel bucket) for
+  the evolutionary search
 - `.geodisc_state.json`, `.geodisc_service.log` — runtime state/logs (gitignored)
 
 ---
 
 ## Testing
 ```bash
-python -m pytest geo_core/tests/test_discovery_chokepoint.py -q   # fiction-free gate (11 tests)
+python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py -q  # fiction-free gate (11) + gate discipline (8)
 python -c "import geo_core; from geo_core import create_geo_stan_system; create_geo_stan_system()"  # smoke
 python -c "from geo_core import mechanistic_process_graphs as mpg; mpg.explain_preservation()"     # capability
 python -c "from geo_core.domains import geochemistry; print(len(geochemistry.ALL_GEODISC_DOMAINS))" # 16

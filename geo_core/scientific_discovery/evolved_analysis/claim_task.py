@@ -28,6 +28,7 @@ is introduced.
 """
 from __future__ import annotations
 
+import ast
 import re
 from typing import Optional, Tuple
 
@@ -43,10 +44,15 @@ NAIVE_CLAIM_SEED = '''CLAIM = "In the SDSS sample, a galaxy's g-r color is posit
 
 
 def run_claim(df_train, df_eval):
-    """Test the claim on real SDSS data. Returns a significance dict."""
+    """Test the claim on real SDSS data on the HELD-OUT eval split.
+
+    The headline statistic must come from df_eval (not df_train), per the
+    Gate-1 leakage contract (§7.3); ``claim_uses_heldout_split`` enforces this
+    before the sandbox ever runs.
+    """
     from scipy.stats import spearmanr
     import numpy as np
-    df = df_train
+    df = df_eval
     gr = df["g"].to_numpy(float) - df["r"].to_numpy(float)
     z = df["z_spec"].to_numpy(float)
     mask = np.isfinite(gr) & np.isfinite(z)
@@ -96,6 +102,45 @@ def parse_claim(src: str) -> Optional[str]:
     """
     m = re.search(r'^CLAIM\s*=\s*(["\'])(.+?)\1', src, re.MULTILINE | re.DOTALL)
     return m.group(2).strip() if m else None
+
+
+def claim_uses_heldout_split(src: str, entry_point: str = ENTRY_POINT) -> Tuple[bool, str]:
+    """Static leakage guard (§7.3): run BEFORE the sandboxed Gate-1 eval.
+
+    The two-gate contract is that Gate 1 reports significance on the HELD-OUT
+    (eval) split. A candidate that ignores ``df_eval`` computes its headline on
+    the training frame, making in-sample == out-of-sample and the gate's
+    "significant on real held-out data" promise a silent lie — the §7.3 trap.
+    Static analysis cannot fully prove data-flow, so this is a CONSERVATIVE
+    NECESSARY check: the candidate's ``run_claim`` body must actually *read*
+    ``df_eval``. Candidates that copy the ``df = df_train`` pattern and never
+    touch the held-out frame are rejected before we spend a sandbox run.
+
+    A parameter declaration does not count — in the AST it is an ``ast.arg``,
+    not an ``ast.Name``, so a candidate that merely names ``df_eval`` in the
+    signature is still rejected.
+
+    Returns ``(True, "ok")`` if df_eval is read in the body, else
+    ``(False, "leakage: ...")``. Never raises.
+    """
+    try:
+        try:
+            tree = ast.parse(src)
+        except SyntaxError:
+            return (False, "leakage: unparseable candidate")
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef) and node.name == entry_point:
+                for sub in ast.walk(node):
+                    if (isinstance(sub, ast.Name) and sub.id == "df_eval"
+                            and isinstance(sub.ctx, ast.Load)):
+                        return (True, "ok")
+                return (False, "leakage: held-out split (df_eval) is never read in "
+                               "the body; the headline must come from df_eval, not df_train")
+        # No entry point here — let the sandbox/safety layer report it; this is
+        # not a leakage verdict.
+        return (True, "ok")
+    except Exception:  # pragma: no cover — defensive; never crash the caller
+        return (False, "leakage: check-failed")
 
 
 def gate1_significant(metrics: dict) -> Tuple[bool, str]:

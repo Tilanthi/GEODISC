@@ -30,8 +30,9 @@ import tempfile
 from pathlib import Path
 
 from .claim_task import (NAIVE_CLAIM_SEED, TASK_SYSTEM, ENTRY_POINT,
-                         parse_claim, gate1_significant)
+                         parse_claim, gate1_significant, claim_uses_heldout_split)
 from .proposer import LLMProposer, apply_diff
+from .verdict_log import log_verdict
 
 logger = logging.getLogger(__name__)
 
@@ -96,15 +97,38 @@ def gate1_run(src: str, seed: int = 42, timeout: float = 90.0) -> dict:
 # --------------------------------------------------------------------------- #
 # Two-gate evaluation                                                          #
 # --------------------------------------------------------------------------- #
-def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True) -> dict:
-    """Run Gate 1 then (if it passes) Gate 2. Returns a full verdict dict."""
+def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
+                  dataset: str = "default") -> dict:
+    """Run the leakage guard, then Gate 1, then (if it passes) Gate 2.
+
+    Returns a full verdict dict and appends one JSONL verdict line per candidate
+    (§7.2) so the search funnel stays diagnosable even when run as a subprocess
+    with stdout discarded.
+    """
     claim = parse_claim(src) or ""
+    program_hash = _program_hash(src)
+
+    # §7.3 — cheap static leakage guard BEFORE spending a sandbox eval. A
+    # candidate that never reads the held-out (eval) split is rejected here,
+    # without spawning the worker.
+    ok, reason = claim_uses_heldout_split(src)
+    if not ok:
+        result = {
+            "claim": claim,
+            "program_hash": program_hash,
+            "gate1": {"pass": False, "reason": reason, "metrics": {}},
+            "gate2": None,
+            "both_pass": False,
+        }
+        log_verdict(result, dataset)
+        return result
+
     g1_metrics = gate1_run(src, seed=seed)
     g1_pass, g1_reason = gate1_significant(g1_metrics)
 
     result = {
         "claim": claim,
-        "program_hash": _program_hash(src),
+        "program_hash": program_hash,
         "gate1": {"pass": g1_pass, "reason": g1_reason,
                   "metrics": {k: v for k, v in g1_metrics.items() if k != "trace"}},
         "gate2": None,
@@ -112,6 +136,7 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True) -> dict:
     }
 
     if not g1_pass:
+        log_verdict(result, dataset)
         return result  # fabricated/non-significant claim stops here
 
     if run_gate2:
@@ -131,6 +156,7 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True) -> dict:
         result["gate2"] = {"pass": None, "status": "skipped"}
 
     result["both_pass"] = bool(g1_pass and result["gate2"] and result["gate2"]["pass"] is True)
+    log_verdict(result, dataset)
     return result
 
 
