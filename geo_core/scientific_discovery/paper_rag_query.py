@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Astronomical Paper Library - RAG Query System
+Scientific Paper Library - RAG Query System
 ==============================================
 
 Retrieval-Augmented Generation system for querying your paper library.
@@ -310,7 +310,7 @@ class PaperRAGSystem:
 
     def _build_prompt(self, query: str, context: str) -> str:
         """Build prompt for LLM."""
-        prompt = f"""You are an expert astronomy research assistant with access to a specialized library of scientific papers.
+        prompt = f"""You are an expert scientific research assistant with access to a specialized library of scientific papers.
 
 USER QUESTION: {query}
 

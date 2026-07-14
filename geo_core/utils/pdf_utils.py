@@ -36,7 +36,7 @@ def safe_text(text):
         '⇒': '=>',
         '⇐': '<=',
 
-        # Greek letters (common in astronomy/physics)
+        # Greek letters (common in physics)
         'Α': 'A', 'Β': 'B', 'Γ': 'Gamma', 'Δ': 'Delta', 'Ε': 'E',
         'Ζ': 'Z', 'Η': 'H', 'Θ': 'Theta', 'Ι': 'I', 'Κ': 'K',
         'Λ': 'Lambda', 'Μ': 'M', 'Ν': 'N', 'Ξ': 'Xi', 'Ο': 'O',
@@ -48,7 +48,7 @@ def safe_text(text):
         'π': 'pi', 'ρ': 'rho', 'σ': 'sigma', 'τ': 'tau', 'υ': 'upsilon',
         'φ': 'phi', 'χ': 'chi', 'ψ': 'psi', 'ω': 'omega',
 
-        # Special astronomy symbols
+        # Special scientific symbols
         '☉': 'Sun',
         '☊': 'asc',
         '☋': 'desc',

@@ -192,7 +192,7 @@ class CausalHypothesisGenerator(HypothesisGenerator):
         self.known_causes = known_causes or self._default_causes()
 
     def _default_causes(self) -> Dict[str, List[str]]:
-        """Default causal knowledge for astronomical domains"""
+        """Default causal knowledge for scientific domains"""
         return {
             'temperature_change': [
                 'stellar_heating', 'shock_heating', 'cosmic_ray_heating',

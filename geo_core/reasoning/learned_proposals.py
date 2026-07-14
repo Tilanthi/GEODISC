@@ -10,7 +10,7 @@ from past runs to improve future sampling efficiency:
 - Knowledge transfer between similar problems
 - Optimal scaling and correlation learning
 
-This dramatically improves sampling efficiency for astrophysical inference
+This dramatically improves sampling efficiency for scientific inference
 where parameter degeneracies and multimodality are common.
 """
 

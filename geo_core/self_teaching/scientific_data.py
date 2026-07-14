@@ -2,7 +2,7 @@
 Scientific Data Integration Module for STAR-Learn
 
 This module provides:
-1. Real-world physics and astronomy datasets
+1. Real-world scientific datasets
 2. Physical law discovery from data
 3. Experimental data validation
 4. Cross-domain dataset integration

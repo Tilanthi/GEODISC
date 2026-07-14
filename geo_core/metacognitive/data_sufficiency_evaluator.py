@@ -266,7 +266,7 @@ class EnhancedDataSufficiencyEvaluator:
                     limitation_details=f"Resolution mismatch: {res_pc:.3f} pc vs. {scale_pc:.3f} pc target",
                     recommendation="refuse",
                     confidence=0.95,
-                    justification=f"Cannot determine properties at {scale_pc:.3f} pc scale with {res_pc:.3f} pc resolution. This represents a {mismatch_ratio:.1f}× resolution mismatch. Any conclusions about small-scale structure would be dominated by beam averaging effects, not genuine astrophysical structure. This is an information-theoretic limit: data at this resolution cannot constrain features at the requested scale."
+                    justification=f"Cannot determine properties at {scale_pc:.3f} pc scale with {res_pc:.3f} pc resolution. This represents a {mismatch_ratio:.1f}× resolution mismatch. Any conclusions about small-scale structure would be dominated by beam averaging effects, not genuine small-scale structure. This is an information-theoretic limit: data at this resolution cannot constrain features at the requested scale."
                 )
 
         return self._sufficient_assessment()
@@ -772,7 +772,7 @@ class EnhancedDataSufficiencyEvaluator:
                     limitation_details="Correlation claimed as causation without experimental controls",
                     recommendation="uncertain",
                     confidence=0.90,
-                    justification="The observational data establish correlation but not causation. Multiple confounding variables and alternative causal pathways are consistent with the observed pattern. Distinguishing between causal hypotheses requires: (1) controlled manipulation (impossible in astrophysics/observational studies), (2) natural experiments with appropriate controls, or (3) instrumental variable approaches. The current data do not meet these requirements for causal inference."
+                    justification="The observational data establish correlation but not causation. Multiple confounding variables and alternative causal pathways are consistent with the observed pattern. Distinguishing between causal hypotheses requires: (1) controlled manipulation (impossible in observational studies), (2) natural experiments with appropriate controls, or (3) instrumental variable approaches. The current data do not meet these requirements for causal inference."
                 )
 
         return self._sufficient_assessment()

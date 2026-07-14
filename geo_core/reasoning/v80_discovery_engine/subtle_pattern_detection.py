@@ -40,7 +40,7 @@ class DetectedPattern:
 
 class SubtlePatternDetection:
     """
-    Detect subtle patterns across vast astronomical datasets.
+    Detect subtle patterns across vast scientific datasets.
 
     Methods:
     1. Multi-Scale Scanning: Look for patterns at different scales

@@ -142,7 +142,7 @@ class SynthesisResult:
 class PhysicsLibrary:
     """
     Library of physics primitives for program synthesis.
-    Contains astrophysics-relevant laws and relationships.
+    Contains physics-relevant laws and relationships.
     """
 
     def __init__(self):
@@ -151,7 +151,7 @@ class PhysicsLibrary:
         self._load_astrophysics_primitives()
 
     def _load_astrophysics_primitives(self):
-        """Load astrophysics-specific primitives"""
+        """Load physics-specific primitives"""
 
         # Gravitational physics
         self.primitives["newton_gravity"] = ProgramPrimitive(

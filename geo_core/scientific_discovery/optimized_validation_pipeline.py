@@ -81,7 +81,7 @@ class OptimizedValidationPipeline(ValidationPipeline):
 
         Args:
             discovery_claim: The discovery text to validate
-            domains: List of astronomical domains
+            domains: List of scientific domains
             discovery_type: Type of discovery
             enable_early_exit: Enable early exit for low-quality discoveries
             enable_progressive_depth: Enable progressive validation depth

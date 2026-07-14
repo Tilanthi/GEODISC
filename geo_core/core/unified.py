@@ -1,14 +1,14 @@
 """
-STAN-CORE: Unified AGI System - All Capabilities Integrated (ASTRO ENHANCED)
-==============================================================================
+STAN-CORE: Unified AGI System - All Capabilities Integrated
+===========================================================
 
 This is the new unified STAN system that automatically integrates ALL capabilities
 from versions V36-V94 into a single, optimized system that selects the best
 approaches for maximum performance without version dependencies.
 
-**ASTRO ENHANCED VERSION**: This specialized version integrates astrophysics domain
-knowledge, training data, and specialized reasoning capabilities for astronomy
-and physics applications.
+**GEODISC VERSION**: This specialized version integrates geochemistry domain
+knowledge, training data, and specialized reasoning capabilities for geochemistry
+and earth-science applications.
 
 Core Integrated Capabilities:
 - Symbolic causal reasoning (V36)
@@ -25,18 +25,18 @@ Core Integrated Capabilities:
 - Self-modifying architecture (V93)
 - Embodied learning (V94)
 
-**ASTRO-SPECIFIC ENHANCEMENTS**:
-- Gravitational physics and cosmology reasoning
-- ISM (Interstellar Medium) physics expertise
+**GEODISC-SPECIFIC ENHANCEMENTS**:
+- Sedimentology and taphonomy reasoning
+- Geochemistry and mineralogy expertise
 - Radiative transfer and spectroscopic analysis
-- Interferometry and observational astronomy
-- Multi-wavelength data reconciliation
-- Astrophysical simulation and modeling
+- Bayesian data fusion across geochemical datasets
+- Multi-proxy data reconciliation
+- Mechanistic process-graph modeling
 
 The system automatically selects optimal capabilities based on the task.
 """
 
-__version__ = "3.1.0-ASTRO"
+__version__ = "3.1.0"
 
 from typing import Dict, List, Any, Optional, Union, Tuple
 from dataclasses import dataclass, field

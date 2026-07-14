@@ -566,7 +566,7 @@ class PDFGenerator:
             1: "GEODISC V4.0 System Architecture showing the seven-layer structure: Semantic Grounding, Metacognitive Systems, Multi-Mind Orchestration, Meta-Context Engine, Integration, Memory/Knowledge, and Physical Foundation layers",
             2: "V4.0 Revolutionary Capabilities: (A) Meta-Context Engine with temporal scales and cognitive frames, (B) Autocatalytic Self-Compiler cycle, (C) Cognitive-Relativity Navigator abstraction scale, (D) Multi-Mind Orchestration with seven specialized minds",
             3: "V95 Semantic Grounding Layer anti-hallucination system showing verification pipeline and performance metrics",
-            4: "GEODISC Domain Expansion: Original 9 domains (blue), V1.0 expansion +14 domains (green), V4.0 expansion +48 astrophysics domains (orange). Total: 75 domains, all verified operational (100% pass rate)"
+            4: "GEODISC Domain Expansion: Original 9 domains (blue), V1.0 expansion +14 domains (green), V4.0 expansion +48 geochemistry domains (orange). Total: 75 domains, all verified operational (100% pass rate)"
         }
         # Legacy figure captions
         legacy_captions = {
@@ -907,7 +907,7 @@ def generate_stan_paper_with_figures(
         filename=output_pdf,
         title=title,
         author=", ".join(authors or ["STAN Team"]),
-        subject="Astronomical Research",
+        subject="Geochemical Research",
         keywords=keywords or []
     )
 

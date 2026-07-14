@@ -54,7 +54,7 @@ class AblationReportGenerator:
 
 ## Executive Summary
 
-This report presents comprehensive ablation studies conducted on the GEODISC (Autonomous System for Scientific Discovery in Astrophysics) system. The studies systematically evaluate the contribution of each major component to overall system performance, providing empirical validation for architectural design decisions.
+This report presents comprehensive ablation studies conducted on the GEODISC (Autonomous System for Scientific Discovery in Geochemistry) system. The studies systematically evaluate the contribution of each major component to overall system performance, providing empirical validation for architectural design decisions.
 
 ### Key Findings
 
@@ -68,7 +68,7 @@ This report presents comprehensive ablation studies conducted on the GEODISC (Au
 
 The ablation studies follow a systematic approach:
 
-1. **Baseline Establishment**: Full GEODISC system evaluated on {len(TEST_QUERIES)} diverse astrophysics queries
+1. **Baseline Establishment**: Full GEODISC system evaluated on {len(TEST_QUERIES)} diverse geochemistry queries
 2. **Component Ablation**: Individual components systematically disabled
 3. **Performance Measurement**: 14 evaluation metrics across 6 categories
 4. **Comparative Analysis**: Performance degradation quantified relative to baseline
@@ -327,7 +327,7 @@ The ablation studies reveal several important architectural implications:
 
 2. **Memory Systems are Fundamental**: All memory-related ablations show significant performance impact, particularly Working Memory, confirming the importance of cognitive architectures inspired by human working memory constraints.
 
-3. **Domain Specialization Provides Value**: Astrophysics-specific domain modules contribute significantly to performance, justifying the extensive domain engineering effort.
+3. **Domain Specialization Provides Value**: Geochemistry-specific domain modules contribute significantly to performance, justifying the extensive domain engineering effort.
 
 4. **Physics Engine Enables Robust Reasoning**: The unified physics engine with curriculum learning substantially improves performance, particularly on queries requiring physical reasoning.
 

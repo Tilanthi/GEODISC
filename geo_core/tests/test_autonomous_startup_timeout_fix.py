@@ -58,7 +58,7 @@ def test_successful_astra_call():
     # Mock GEODISC system that responds quickly
     class FastGEODISC:
         def answer(self, query):
-            return {"answer": "Quick astronomical discovery about stellar formation"}
+            return {"answer": "Quick geochemistry discovery about mineral formation"}
 
     system.initialize_with_astra(FastGEODISC())
 

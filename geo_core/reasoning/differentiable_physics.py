@@ -2,7 +2,7 @@
 Differentiable Physics Engine for STAN V42
 
 Implements automatic differentiation through physics forward models,
-enabling gradient-based optimization for astrophysical inference.
+enabling gradient-based optimization for physics-based inference.
 
 Key capabilities:
 - Automatic differentiation through any physics model
@@ -306,7 +306,7 @@ class DifferentiablePhysicsEngine:
         self._event_bus = None
 
     def _register_builtin_models(self):
-        """Register built-in astrophysics models."""
+        """Register built-in physics models."""
         self.models["planck"] = self._planck_function
         self.models["sie_lens"] = self._sie_lens_deflection
         self.models["nfw_profile"] = self._nfw_density_profile

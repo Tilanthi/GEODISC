@@ -43,7 +43,7 @@ class GenuineDiscoveryValidator:
     """Validates whether discoveries represent genuinely new science."""
     
     def __init__(self):
-        # Textbook knowledge indicators - well-established astrophysical facts
+        # Textbook knowledge indicators - well-established scientific facts
         self.textbook_patterns = {
             'ism_phases': [
                 r'cold neutral medium.*cnm.*100.*K',
@@ -107,7 +107,7 @@ class GenuineDiscoveryValidator:
                 is_genuine=False,
                 quality=DiscoveryQuality.TEXTBOOK_KNOWLEDGE,
                 confidence=0.95,
-                reasons=["This content restates well-established astrophysical knowledge"],
+                reasons=["This content restates well-established scientific knowledge"],
                 suggested_improvements=[
                     "Focus on unexplained phenomena or novel relationships",
                     "Look for anomalies in existing data", 

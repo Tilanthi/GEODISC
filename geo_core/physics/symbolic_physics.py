@@ -2,7 +2,7 @@
 SymPy Integration for GEODISC Physics Engine
 
 This module integrates SymPy for symbolic mathematics in physics calculations,
-providing exact analytical solutions for astrophysical problems.
+providing exact analytical solutions for physics problems.
 
 Key capabilities:
 - Symbolic differentiation and integration

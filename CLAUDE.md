@@ -35,11 +35,25 @@ memory) repurposed from astrophysics to geochemistry.
 - **Purpose**: Proterozoic geochemistry; atmospheric evolution of the early Earth;
   biological evolution; the oxygenic revolution/evolution and its role in
   biological preservation (taphonomy).
-- **Core package**: `geo_core/` (renamed from the astrophysics `astra_core`)
-- **Status (2026-07-11)**: Migration complete. Astronomy content fully removed;
-  `geo_core` imports clean and constructs; 16 geochemistry domain scaffolds
-  (Levels 2-17) registered; mechanistic process-graph capability added. Domain
-  *content* is skeletal — awaiting separate geochemistry training.
+- **Core package**: `geo_core/` (one-time repurposing from the predecessor
+  astrophysics `astra_core`; see the migration spec)
+- **Status (2026-07-14)**: Astrophysics fully purged. All astronomy domain
+  modules, the FPUS "Universe Simulator", the 4 astro domain packages
+  (`general_relativity` / `plasma_physics` / `radiative_processes` /
+  `radiative_transfer_theory`), astro physics models
+  (`schwarzschild_metric` / `orbital_velocity` / `virial_theorem`), the GR
+  `relativistic_physics` module, and all `STAN-XI-ASTRO` branding have been
+  removed. `geo_core` imports clean and constructs; 16 geochemistry domain
+  scaffolds (Levels 2-17) registered; mechanistic process-graph capability
+  present. Domain *content* is skeletal — awaiting separate geochemistry
+  training. Gates green: `import geo_core` + `create_geo_stan_system()`;
+  `geo_core/tests/test_discovery_chokepoint.py` (11); `mpg.explain_preservation()`;
+  16 domains.
+- **Public repo**: https://github.com/Tilanthi/GEODISC (`main` branch; git
+  remotes `origin` and `geodisc` both point here). Published as a clean
+  geochemistry-only history. The precursor astrophysics history is preserved
+  only on local branch `archive/astra-precursor` and on the unrelated ASTRA-dev
+  repository — never push it to GEODISC.
 - **Operating mode: interactive-only.** GEODISC services **user-requested
   tasks** via `create_geo_stan_system()`. The autonomous discovery supervisor
   (`com.geodisc.discovery`) is **intentionally disabled** — it is NOT installed

@@ -135,43 +135,12 @@ def test_v47_physics_imports():
     """Test V47+ enhanced physics imports"""
     from geo_core.physics import (
         QuantumMechanics,
-        NuclearAstrophysics,
     )
     print("  ✓ QuantumMechanics imported")
-    print("  ✓ NuclearAstrophysics imported")
 
     # Test actual functionality
     ef = QuantumMechanics.fermi_energy(1e30, 9.109e-28)
     print(f"  ✓ QuantumMechanics.fermi_energy works: {ef:.2e} erg")
-
-    be = NuclearAstrophysics.binding_energy(56, 26)
-    print(f"  ✓ NuclearAstrophysics.binding_energy works: {be:.2f} MeV")
-
-
-@test_section("V47+ Domain Module Imports")
-def test_v47_domain_imports():
-    """Test V47+ enhanced domain imports"""
-    from geo_core.domains import (
-        HighEnergyDomain,
-        GalacticArchaeologyDomain,
-        ExtragalacticDomain,
-        create_high_energy_domain,
-        create_galactic_archaeology_domain,
-        create_extragalactic_domain,
-    )
-    print("  ✓ HighEnergyDomain imported")
-    print("  ✓ GalacticArchaeologyDomain imported")
-    print("  ✓ ExtragalacticDomain imported")
-
-    # Test domain creation
-    he_domain = create_high_energy_domain()
-    print(f"  ✓ HighEnergyDomain created: {len(he_domain.get_capabilities())} capabilities")
-
-    ga_domain = create_galactic_archaeology_domain()
-    print(f"  ✓ GalacticArchaeologyDomain created: {len(ga_domain.get_capabilities())} capabilities")
-
-    eg_domain = create_extragalactic_domain()
-    print(f"  ✓ ExtragalacticDomain created: {len(eg_domain.get_capabilities())} capabilities")
 
 
 @test_section("V47+ Meta-Learning Imports")
@@ -218,17 +187,6 @@ def test_causal_physics_integration():
         print("  ✓ StructuralCausalModel can be created")
     except Exception as e:
         print(f"  ✓ StructuralCausalModel handles creation: {e}")
-
-
-@test_section("Cross-Module Function Calls: Domains to Causal")
-def test_domain_causal_integration():
-    """Test that domain modules can use causal discovery"""
-    from geo_core.domains import HighEnergyDomain
-
-    domain = HighEnergyDomain()
-    # Test that domain can process queries
-    result = domain.process_query("Analyze pulsar timing data", context={})
-    print(f"  ✓ HighEnergyDomain.process_query works: confidence = {result.confidence:.2f}")
 
 
 @test_section("Cross-Module Function Calls: Meta-Learning to Domains")
@@ -419,38 +377,11 @@ def test_physics_graceful_degradation():
     """Test that physics modules handle missing dependencies gracefully"""
     from geo_core.physics import (
         QuantumMechanics,
-        NuclearAstrophysics,
     )
 
     # Test that individual functions work even if other components fail
     wavelength = QuantumMechanics.de_broglie_wavelength(1e-24)
     print(f"  ✓ QuantumMechanics works independently")
-
-    binding = NuclearAstrophysics.binding_energy(4, 2)
-    print(f"  ✓ NuclearAstrophysics works independently")
-
-
-@test_section("Graceful Degradation: Domains")
-def test_domains_graceful_degradation():
-    """Test that domain modules handle missing dependencies gracefully"""
-    from geo_core.domains import (
-        HighEnergyDomain,
-        GalacticArchaeologyDomain,
-        ExtragalacticDomain,
-    )
-
-    # Each domain should work independently
-    for domain_class, create_fn, name in [
-        (HighEnergyDomain, None, "HighEnergyDomain"),
-        (GalacticArchaeologyDomain, None, "GalacticArchaeologyDomain"),
-        (ExtragalacticDomain, None, "ExtragalacticDomain"),
-    ]:
-        try:
-            domain = domain_class()
-            result = domain.process_query("test query", context={})
-            print(f"  ✓ {name} works independently")
-        except Exception as e:
-            print(f"  ⚠ {name}: {e}")
 
 
 # =============================================================================
@@ -516,44 +447,6 @@ def test_active_discovery_pipeline():
     print(f"  ✓ Active discovery pipeline complete")
 
 
-@test_section("End-to-End: Multi-Domain Query Processing")
-def test_multidomain_query():
-    """Test query processing across multiple domains"""
-    from geo_core.domains import (
-        HighEnergyDomain,
-        GalacticArchaeologyDomain,
-        ExtragalacticDomain,
-    )
-
-    domains = [
-        HighEnergyDomain(),
-        GalacticArchaeologyDomain(),
-        ExtragalacticDomain(),
-    ]
-
-    test_queries = [
-        "Analyze gamma-ray burst light curve",
-        "Determine stellar population age from color-magnitude diagram",
-        "Measure galaxy redshift from spectral lines",
-    ]
-
-    for query in test_queries:
-        best_domain = None
-        best_confidence = 0
-
-        for domain in domains:
-            try:
-                result = domain.process_query(query, context={})
-                if result.confidence > best_confidence:
-                    best_confidence = result.confidence
-                    best_domain = domain.config.domain_name
-            except Exception as e:
-                continue
-
-        if best_domain:
-            print(f"  ✓ '{query[:40]}...' → {best_domain} ({best_confidence:.2f})")
-
-
 # =============================================================================
 # 8. RUN ALL TESTS
 # =============================================================================
@@ -569,11 +462,9 @@ def run_all_tests():
         test_core_imports,
         test_v47_causal_imports,
         test_v47_physics_imports,
-        test_v47_domain_imports,
         test_v47_metalearning_imports,
         test_physics_cross_module_calls,
         test_causal_physics_integration,
-        test_domain_causal_integration,
         test_metalearning_domain_integration,
         test_domain_orchestrator,
         test_unified_orchestrator,
@@ -581,9 +472,7 @@ def run_all_tests():
         test_missing_dependencies,
         test_causal_graceful_degradation,
         test_physics_graceful_degradation,
-        test_domains_graceful_degradation,
         test_active_discovery_pipeline,
-        test_multidomain_query,
     ]
 
     # Run tests

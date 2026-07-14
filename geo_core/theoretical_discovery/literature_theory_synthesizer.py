@@ -438,7 +438,7 @@ class LiteratureTheorySynthesizer:
         insights = []
 
         if known_concepts is None:
-            # Default astrophysical concepts
+            # Default scientific concepts
             known_concepts = {
                 'turbulence', 'magnetic field', 'rotation', 'radiation',
                 'relativity', 'quantum effects', 'viscosity', 'shock',

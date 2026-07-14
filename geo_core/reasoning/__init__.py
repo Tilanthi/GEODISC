@@ -55,15 +55,6 @@ V42 Core Enhancement Modules:
 37. Calibrated Confidence Estimation - Proper probability calibration
 38. Falsification-First Hypothesis Testing - Popperian scientific method
 
-V43 Astrophysics-Aware Reasoning:
-39. Observational Likelihood - Connect forward models to data with beam convolution
-40. Physical Process Library - Encyclopedia of ISM mechanisms
-41. ISM Knowledge Base - Expert domain knowledge (phases, tracers, dust, B-fields)
-42. Astrophysical Causal Discovery - Physics-constrained, bias-aware causality
-43. Astrophysical Theory Synthesis - Build theories from patterns
-44. Multiwavelength Reconciliation - Integrate X-ray/optical/IR/radio
-45. Observational Strategy - Design discriminating tests
-
 V44 ARC-AGI Integration (NEW):
 46. ARC-AGI Integration - Grid-based pattern recognition and transformation synthesis
 47. Formal Logic Enhanced - Z3 SMT solver and Prolog integration

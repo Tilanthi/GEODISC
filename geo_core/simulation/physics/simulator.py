@@ -2,7 +2,7 @@
 Physics Simulation Engine
 
 Simulates physical phenomena for grounded understanding.
-Includes classical mechanics, electromagnetism, and astronomy.
+Includes classical mechanics, electromagnetism, and orbital mechanics.
 """
 
 import numpy as np

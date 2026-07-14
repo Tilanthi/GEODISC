@@ -5,7 +5,7 @@ V108 Real-Time Streaming Discovery - Online Causal Discovery and Alerting
 PROBLEM: Traditional discovery systems process static datasets. They cannot:
 1. Detect discoveries as data arrives in real-time
 2. Adapt to changing relationships over time
-3. Alert astronomers to emerging patterns immediately
+3. Alert researchers to emerging patterns immediately
 4. Handle streaming data from surveys (LSST, SKA)
 
 SOLUTION: Real-Time Streaming Discovery with:

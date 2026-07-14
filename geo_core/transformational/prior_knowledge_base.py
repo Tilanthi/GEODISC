@@ -66,7 +66,7 @@ class ScientificRelation:
     # Metadata
     citation: str = ""  # Primary literature citation
     confidence_level: float = 0.95  # Confidence level (default 95%)
-    domain: str = ""  # Astrophysical domain (e.g., "molecular_clouds")
+    domain: str = ""  # Scientific domain (e.g., "geochemical_process")
 
     # Machine-checkable predicate
     def is_consistent_with(self, observed_value: float, observed_uncertainty: float = 0.0) -> Tuple[bool, float]:

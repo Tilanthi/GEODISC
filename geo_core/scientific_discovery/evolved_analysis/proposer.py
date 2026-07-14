@@ -110,7 +110,7 @@ class LLMProposer(Proposer):
         self.n_errors = 0
 
     BASE_SYSTEM = (
-        "You are an expert astronomer and ML engineer. You improve a Python "
+        "You are an expert scientist and ML engineer. You improve a Python "
         "function `estimate_redshift(df_train, df_eval)` that predicts "
         "spectroscopic redshift (z_spec) of galaxies from SDSS u,g,r,i,z model "
         "magnitudes. It is graded on REAL held-out galaxies by two metrics: "

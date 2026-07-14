@@ -1,6 +1,6 @@
 
 """
-Advanced counterfactual reasoning for astrophysics
+Advanced counterfactual reasoning for scientific inference
 """
 
 import numpy as np

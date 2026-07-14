@@ -38,7 +38,7 @@ class Hypothesis:
 
 @dataclass
 class Experiment:
-    """Represents an astronomical observation/experiment."""
+    """Represents a scientific observation/experiment."""
     experiment_id: str
     objective: str
     target_objects: List[str]

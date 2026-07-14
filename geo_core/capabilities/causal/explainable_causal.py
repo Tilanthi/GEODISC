@@ -2,7 +2,7 @@
 V106 Explainable Causal Reasoning - Natural Language Explanations from Causal Graphs
 ===================================================================================
 
-PROBLEM: Causal graphs (PAGs from V98) are not interpretable by astronomers.
+PROBLEM: Causal graphs (PAGs from V98) are not interpretable by domain experts.
 Need to translate:
 - X --> Y (directed edge)
 - X <-> Y (bidirected - latent confounder)
@@ -14,7 +14,7 @@ SOLUTION: Explainable Causal Reasoning with:
 1. Causal Story Generator - Convert PAGs to narratives
 2. Question Answering - "Why does X cause Y?"
 3. Visualization Engine - Interactive causal graph exploration
-4. Physical Interpretation - Map causal relations to astrophysics
+4. Physical Interpretation - Map causal relations to scientific domain knowledge
 
 INTEGRATION:
 - Uses V98 FCI output (PAGs) as input
@@ -516,13 +516,13 @@ def create_explainable_causal_reasoner() -> ExplainableCausalReasoner:
 
 # Convenience function
 
-def explain_causal_discovery_to_astronomer(
+def explain_causal_discovery_to_expert(
     pag: Any,
     question: Optional[str] = None,
     variable_descriptions: Optional[Dict[str, str]] = None
 ) -> str:
     """
-    Generate astronomer-friendly explanation of causal discovery results.
+    Generate expert-friendly explanation of causal discovery results.
 
     Args:
         pag: PAG from V98 FCI

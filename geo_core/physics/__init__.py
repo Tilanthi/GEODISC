@@ -3,7 +3,7 @@ Unified differentiable physics interface for GEODISC
 
 Integrates:
 - Differentiable physics (V42)
-- Astrophysical constraints
+- Physical constraints
 - Symbolic math
 - Constraint enforcement
 - Multi-physics coupling
@@ -515,17 +515,11 @@ except ImportError:
     logger.warning("PhysicalAnalogicalReasoner not available")
 
 # V47+ New physics modules
-# RelativisticPhysics removed (GR/astronomy-specific; GEODISC is geochemistry).
-RelativisticPhysics = None
-
 try:
     from .quantum_mechanics import QuantumMechanics
 except ImportError:
     QuantumMechanics = None
     logger.warning("QuantumMechanics not available")
-
-# NuclearAstrophysics removed (astronomy-specific; GEODISC is geochemistry).
-NuclearAstrophysics = None
 
 # V5.0 SymPy Integration (Symbolic Physics)
 try:
@@ -558,9 +552,7 @@ __all__ = [
     'PhysicalAnalogy',
     'Phenomenon',
     # V47+ exports
-    'RelativisticPhysics',
     'QuantumMechanics',
-    'NuclearAstrophysics',
 ]
 
 # Add SymPy exports if available

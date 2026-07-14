@@ -6,10 +6,10 @@ This module implements a comprehensive parallel processing infrastructure extend
 BIODISC parallelization concepts across GEODISC's entire discovery ecosystem.
 
 Architecture Levels:
-├── Data-Level Parallelism: Process different sky regions simultaneously
+├── Data-Level Parallelism: Process different data partitions simultaneously
 ├── Feature-Level Parallelism: Analyze different variables concurrently
 ├── Method-Level Parallelism: Run multiple discovery methods in parallel
-├── Domain-Level Parallelism: Process different astronomical domains independently
+├── Domain-Level Parallelism: Process different scientific domains independently
 └── Adaptive Parallelism: Dynamic resource allocation based on task complexity
 
 Key Features:
@@ -23,12 +23,12 @@ Key Features:
 Expected Benefits:
 - 4-8x speedup for large-scale discoveries
 - Better utilization of multi-core systems (80%+ CPU utilization)
-- Improved scalability to astronomical big data
+- Improved scalability to large-scale scientific data
 - Reduced time-to-insight for complex multi-domain analyses
 
 Date: 2026-06-29
 Version: 1.0
-Based on: BIODISC parallel processing with astronomical domain optimization
+Based on: BIODISC parallel processing with scientific domain optimization
 """
 
 import numpy as np
@@ -49,10 +49,10 @@ warnings.filterwarnings('ignore')
 
 class ParallelizationLevel(Enum):
     """Levels of parallelization in the hierarchy"""
-    DATA_LEVEL = "data"           # Different sky regions, time periods, datasets
+    DATA_LEVEL = "data"           # Different data partitions, time periods, datasets
     FEATURE_LEVEL = "feature"     # Different variables, features, parameters
     METHOD_LEVEL = "method"       # Different discovery methods, algorithms
-    DOMAIN_LEVEL = "domain"       # Different astronomical domains
+    DOMAIN_LEVEL = "domain"       # Different scientific domains
     ADAPTIVE_LEVEL = "adaptive"   # Dynamic combination of levels
 
 
@@ -202,7 +202,7 @@ class AdaptiveWorkerPool:
         """
         Execute data-level parallelization.
 
-        Process different sky regions, time periods, or datasets simultaneously.
+        Process different data partitions, time periods, or datasets simultaneously.
         """
         start_time = time.time()
         results = []
@@ -442,7 +442,7 @@ class AdaptiveWorkerPool:
         """
         Execute domain-level parallelization.
 
-        Process different astronomical domains independently.
+        Process different scientific domains independently.
         """
         start_time = time.time()
         results = {}
@@ -551,7 +551,7 @@ class AdaptiveWorkerPool:
 
 class BiodiscOptimizedParallelization:
     """
-    BIODISC-optimized parallelization system for astronomical discoveries.
+    BIODISC-optimized parallelization system for scientific discoveries.
 
     This class provides a unified interface for multi-level parallelization
     with adaptive resource management and performance optimization.
@@ -568,10 +568,10 @@ class BiodiscOptimizedParallelization:
         Execute complete discovery pipeline with multi-level parallelization.
 
         This method orchestrates parallel processing across multiple levels:
-        1. Data-level: Different sky regions/datasets
+        1. Data-level: Different data partitions/datasets
         2. Feature-level: Different variables/features
         3. Method-level: Different discovery methods
-        4. Domain-level: Different astronomical domains
+        4. Domain-level: Different scientific domains
         """
         start_time = time.time()
         pipeline_results = {}
@@ -678,7 +678,7 @@ def parallel_feature_analysis(features: List[Any],
     """
     Parallel feature analysis with BIODISC optimization.
 
-    Provides optimal speedup for multi-variable astronomical analysis.
+    Provides optimal speedup for multi-variable scientific analysis.
     """
     parallel_system = BiodiscOptimizedParallelization(config)
     results = parallel_system.worker_pool.execute_feature_parallel(features, analysis_function)

@@ -103,7 +103,7 @@ class EurekaEnhancedValidator:
 
         Args:
             discovery_claim: The discovery text
-            domains: Astronomical domains
+            domains: Scientific domains
             discovery_type: Type of discovery
             max_results_per_source: Papers to fetch per source
 

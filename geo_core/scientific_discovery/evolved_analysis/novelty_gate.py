@@ -223,7 +223,7 @@ def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper]
         f"[{i}] {p.title} ({p.year})\n{p.abstract[:900]}"
         for i, p in enumerate(papers))
     system = (
-        "You are a strict scientific novelty auditor. A candidate astrophysical "
+        "You are a strict scientific novelty auditor. A candidate scientific "
         "CLAIM is ALREADY-KNOWN (not a new discovery) if EITHER (a) one of the "
         "RETRIEVED ABSTRACTS states or directly implies it — cite that abstract's "
         "index; OR (b) it is a well-established foundational / textbook result "

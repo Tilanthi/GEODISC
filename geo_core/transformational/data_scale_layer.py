@@ -1,7 +1,7 @@
 """
 Data Scale-Up Layer for Transformational Architecture
 
-Implements automated data ingestion for multiple astronomical surveys with
+Implements automated data ingestion for multiple scientific surveys with
 standardized CloudRecord schema and strict train/holdout splitting.
 
 This module addresses the critical N=7 clouds problem by scaling to N≥30
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class SurveyType(Enum):
-    """Supported astronomical survey types"""
+    """Supported scientific survey types"""
     HERSCHEL_GBS = "herschel_gould_belt_survey"
     LOFAR_LOTSS = "lofar_lotss_dr2"
     GAIA_DR3 = "gaia_dr3"
@@ -121,7 +121,7 @@ class IngestionResult:
 
 class DataScaleLayer:
     """
-    Data Scale-Up Layer for multi-survey astronomical data ingestion.
+    Data Scale-Up Layer for multi-survey scientific data ingestion.
 
     This class implements automated ingestion, standardization, and
     train/holdout splitting for rigorous discovery validation.

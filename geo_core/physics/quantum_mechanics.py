@@ -1,5 +1,5 @@
 """
-Quantum mechanics basics for astrophysics
+Quantum mechanics basics for physics
 
 Implements:
 - Wave-particle duality and uncertainty principle
@@ -10,7 +10,7 @@ Implements:
 
 This provides the quantum physics foundation needed for understanding
 atomic spectra, stellar interiors, white dwarfs, neutron stars, and
-high-energy astrophysical phenomena.
+high-energy physical phenomena.
 
 Date: 2025-12-23
 Version: 47.0
@@ -58,9 +58,9 @@ E_CHARGE = 4.803e-10  # Elementary charge (esu)
 
 class QuantumMechanics:
     """
-    Quantum mechanics module for astrophysics
+    Quantum mechanics module for physics
 
-    Provides quantum physics foundation for astronomical applications.
+    Provides quantum physics foundation for scientific applications.
     """
 
     # Stage definitions
@@ -301,13 +301,13 @@ class QuantumMechanics:
                 mastery_threshold=0.70
             ),
 
-            # Stage 5: Quantum Processes in Astrophysics
+            # Stage 5: Quantum Processes in Physics
             LearningStage(
                 name=QuantumMechanics.STAGE_QUANTUM_PROCESSES,
                 complexity=ComplexityLevel.EXPERT,
                 prerequisites=[QuantumMechanics.STAGE_ATOMIC_PHYSICS],
                 concepts=[
-                    # Astrophysical quantum processes
+                    # Quantum processes
                     "photoionization",
                     "recombination",
                     "collisional_excitation",

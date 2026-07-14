@@ -20,7 +20,7 @@ class ExperimentExecutor:
     Executes experiments and collects results.
 
     Can:
-    1. Access astronomical archives
+    1. Access scientific data archives
     2. Run numerical simulations
     3. Manage data pipelines
     4. Process real-time data

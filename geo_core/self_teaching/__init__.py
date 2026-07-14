@@ -32,12 +32,12 @@ V2.5 MAJOR Enhancements (AGI Capabilities):
 - MetaLearningSystem: Learn to learn, few-shot adaptation
 - ConsciousnessSimulator: Metacognitive awareness and theory of mind
 
-V3.0 Astronomy Specialization (MAJOR STEP FORWARD):
-- AstronomyCausalDiscoverySystem: Gas dynamics, filament formation, radiative transfer
-- SPH Simulation: Smoothed Particle Hydrodynamics for gas dynamics and star formation
-- InterstellarChemistryNetwork: Molecular reaction networks and deuterium fractionation
-- StellarPhysics & HII Regions: Stellar evolution, ionization, feedback
-- MultiWavelengthFusion: Radio, mm, sub-mm, IR data combination and analysis
+V3.0 Geochemistry Specialization (MAJOR STEP FORWARD):
+- GeochemistryCausalDiscoverySystem: fluid dynamics, mineral processes, geochemical cycles
+- Reaction-Transport Modeling: Coupled geochemical kinetics and mass transport
+- GeochemicalReactionNetwork: Mineral reaction networks and isotopic fractionation
+- Diagenesis & Redox Chemistry: Mineral diagenesis, redox processes, oxygenation feedback
+- Multi-Proxy Data Fusion: Isotopic, elemental, and mineralogical data combination and analysis
 
 Version: 3.0.0
 Date: 2026-03-16

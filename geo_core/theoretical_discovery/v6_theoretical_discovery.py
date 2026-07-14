@@ -160,7 +160,7 @@ class V6TheoreticalDiscovery:
             if any(kw in query_lower for kw in keywords):
                 domains.append(domain)
 
-        # Default to general astrophysics
+        # Default to general science
         if not domains:
             domains = ['astrophysics']
 
@@ -188,7 +188,7 @@ class V6TheoreticalDiscovery:
 
     def _extract_variables(self, query: str) -> List[str]:
         """Extract relevant physical variables from query"""
-        # Common astrophysical variables
+        # Common scientific variables
         variable_keywords = {
             'mass': 'mass',
             'temperature': 'temperature',

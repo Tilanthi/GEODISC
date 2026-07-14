@@ -3,7 +3,7 @@ V105 Meta-Discovery Transfer Learning - Accelerating Discovery Across Domains
 =========================================================================
 
 PROBLEM: Discovery in new domains is slow - requires extensive data and training.
-Each astrophysical sub-domain requires learning from scratch.
+Each scientific sub-domain requires learning from scratch.
 
 SOLUTION: Meta-learning across domains to enable:
 1. Few-shot discovery: Learn from 5 examples in new domain

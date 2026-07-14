@@ -7,7 +7,7 @@ by implementing sophisticated uncertainty handling mechanisms.
 
 Based on challenges identified in GEODISC v4.5 vs robotics optimization:
 - Scientific discovery has inherently higher uncertainty than robotics
-- Multiple sources of uncertainty: measurement, model, astrophysical
+- Multiple sources of uncertainty: measurement, model, systematic
 - Need for adaptive algorithms that can handle varying uncertainty levels
 
 Solutions implemented:

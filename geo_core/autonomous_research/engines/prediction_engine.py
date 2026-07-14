@@ -342,7 +342,7 @@ Using {len(results)} experiments, we find support for this hypothesis with
 confidence level of {np.mean([r.confidence for r in results]):.2f}.
 
 This work demonstrates the capability of autonomous scientific research systems
-to conduct meaningful astronomical research.
+to conduct meaningful scientific research.
         """.strip()
 
     def _generate_sections(self, research_summary: Dict) -> Dict:

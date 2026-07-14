@@ -599,7 +599,7 @@ class ValidationPipeline:
 
         Args:
             discovery_claim: The discovery text to validate
-            domains: List of astronomical domains
+            domains: List of scientific domains
             discovery_type: Type of discovery
 
         Returns:

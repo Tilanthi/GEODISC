@@ -1,7 +1,7 @@
 """
 Cross-Survey Knowledge Fusion for STAN V42
 
-Combines information from heterogeneous astronomical surveys:
+Combines information from heterogeneous scientific surveys:
 - Multi-wavelength data fusion (radio, IR, optical, UV, X-ray)
 - Cross-catalog matching with uncertainty
 - Joint posterior inference from multiple sources
@@ -44,7 +44,7 @@ class WavelengthBand(Enum):
 
 
 class SurveyType(Enum):
-    """Types of astronomical surveys."""
+    """Types of scientific surveys."""
     PHOTOMETRIC = "photometric"     # Imaging
     SPECTROSCOPIC = "spectroscopic" # Spectra
     ASTROMETRIC = "astrometric"     # Positions/motions
@@ -64,7 +64,7 @@ class MatchQuality(Enum):
 
 @dataclass
 class Survey:
-    """Metadata for an astronomical survey."""
+    """Metadata for a scientific survey."""
     name: str
     wavelength_band: WavelengthBand
     survey_type: SurveyType
@@ -80,7 +80,7 @@ class Survey:
 
 @dataclass
 class Source:
-    """A single astronomical source from a survey."""
+    """A single scientific source from a survey."""
     source_id: str
     survey_name: str
     ra: float  # degrees

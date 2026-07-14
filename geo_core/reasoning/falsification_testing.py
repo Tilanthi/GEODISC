@@ -8,7 +8,7 @@ Implements rigorous hypothesis testing following Popperian falsificationist prin
 - Tracks surviving hypotheses through multiple tests
 
 This approach prevents confirmation bias and ensures
-scientific rigor in astrophysical inference.
+scientific rigor in statistical inference.
 """
 
 from dataclasses import dataclass, field

@@ -1,7 +1,7 @@
 """
 Cross-domain meta-learning for rapid domain adaptation
 
-Enables GEODISC to rapidly adapt to new astronomical domains
+Enables GEODISC to rapidly adapt to new scientific domains
 using few-shot learning and knowledge transfer from existing domains.
 
 Extends existing V50 meta-learning with domain transfer capabilities.

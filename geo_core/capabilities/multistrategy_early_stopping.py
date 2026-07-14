@@ -29,7 +29,7 @@ Expected Benefits:
 
 Date: 2026-06-29
 Version: 1.0
-Based on: BIODISC early stopping and progressive refinement with astronomical adaptations
+Based on: BIODISC early stopping and progressive refinement with scientific domain adaptations
 """
 
 import numpy as np
@@ -282,7 +282,7 @@ class EarlyStoppingEvaluator:
 
 class BiodiscOptimizedEarlyStopping:
     """
-    BIODISC-optimized early stopping system for astronomical discoveries.
+    BIODISC-optimized early stopping system for scientific discoveries.
 
     This class provides comprehensive early stopping capabilities with
     progressive refinement and adaptive criteria combination.

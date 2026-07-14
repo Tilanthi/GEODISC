@@ -3,7 +3,7 @@ V98 FCI Causal Discovery - For Latent Confounders
 ===================================================
 
 PROBLEM: The PC algorithm assumes causal sufficiency - no unmeasured common
-causes. In real astrophysical data, this is almost always violated. For example,
+causes. In real scientific data, this is almost always violated. For example,
 stellar mass and environment both depend on halo mass (latent confounder).
 
 SOLUTION: Implement the FCI (Fast Causal Inference) algorithm which:

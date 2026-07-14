@@ -1,7 +1,7 @@
 """
 Quantum Applications Domain Module for GEODISC
 
-Atomic structure, molecular processes, quantum optics in astrophysics
+Atomic structure, molecular processes, quantum optics and quantum chemistry
 
 Date: 2026-03-20
 Version: 1.0.0
@@ -45,7 +45,7 @@ class QuantumApplicationsDomain(BaseDomainModule):
             domain_name="quantum_applications",
             version="1.0.0",
             dependencies=[],
-            description="Atomic structure, molecular processes, quantum optics in astrophysics"
+            description="Atomic structure, molecular processes, quantum optics and quantum chemistry"
         )
 
     def get_config(self) -> DomainConfig:

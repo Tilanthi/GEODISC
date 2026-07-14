@@ -5,7 +5,7 @@ This module implements real-time literature search and novelty validation
 to replace keyword-based scoring with semantic similarity to actual scientific papers.
 
 Key Features:
-- Real arXiv API integration for astrophysics literature
+- Real arXiv API integration for scientific literature
 - ADS (Astrophysics Data System) integration
 - Semantic similarity scoring using vector embeddings
 - Citation network analysis
@@ -765,7 +765,7 @@ class LiteratureValidator:
 
         Args:
             discovery_claim: The discovery text to validate
-            domains: List of astronomical domains
+            domains: List of scientific domains
             discovery_type: Type of discovery (pattern_discovery, theoretical_synthesis, etc.)
             max_results_per_source: Max results to fetch from each source
 

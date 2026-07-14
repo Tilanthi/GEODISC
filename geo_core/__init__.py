@@ -178,7 +178,7 @@ except ImportError:
 # These represent the enhanced capabilities added to address RASTI paper limitations
 
 # -----------------------------------------------------------------------------
-# Domain System (Phase 2): Modular domain architecture for specialized astronomy
+# Domain System (Phase 2): Modular domain architecture for specialized geochemistry
 # -----------------------------------------------------------------------------
 try:
     from .domains import (

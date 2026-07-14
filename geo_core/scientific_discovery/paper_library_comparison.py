@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Astronomical Paper Library - Comparison of Approaches
+Scientific Paper Library - Comparison of Approaches
 ======================================================
 
 Comprehensive comparison of different approaches to building
-a specialized knowledge base for astronomical research.
+a specialized knowledge base for scientific research.
 
 Author: STAN_IX_ASTRO
 Date: January 10, 2026
@@ -123,7 +123,7 @@ The most powerful system combines ALL THREE:
    - Papers you need to cite precisely
 
 2. LLM TRAINING DATA for:
-   - General astronomical knowledge
+   - General scientific knowledge
    - Background on methods and techniques
    - Quick conceptual explanations
 
@@ -241,7 +241,7 @@ LLM TRAINING DATA:
   Cost: Included
   Benefit: General knowledge, quick answers
 
-RECOMMENDATION FOR ASTRONOMY RESEARCH
+RECOMMENDATION FOR SCIENTIFIC RESEARCH
 ======================================
 
 For W3 star formation research, I recommend:

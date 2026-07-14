@@ -248,7 +248,7 @@ class ComprehensiveSystemTest:
         try:
             from geo_core import create_geo_stan_system
 
-            print("  Processing astronomy query...", end=" ")
+            print("  Processing geochemistry query...", end=" ")
             system = create_geo_stan_system()
             result = system.answer("What causes supernovae?")
 

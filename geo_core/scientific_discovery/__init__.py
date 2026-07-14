@@ -2,8 +2,8 @@
 GEODISC Scientific Discovery Module
 ===================================
 
-Comprehensive scientific discovery system for autonomous research in astronomy
-and astrophysics. Integrates literature mining, data analysis, theoretical
+Comprehensive scientific discovery system for autonomous research in geochemistry
+and the earth sciences. Integrates literature mining, data analysis, theoretical
 modeling, and autonomous experiment design.
 
 Modules:

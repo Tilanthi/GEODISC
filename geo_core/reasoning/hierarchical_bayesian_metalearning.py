@@ -364,7 +364,7 @@ class TaskSimilarityComputer:
         return 0.0
 
     def _build_domain_hierarchy(self) -> Dict[str, List[str]]:
-        """Build domain hierarchy for astrophysics"""
+        """Build domain hierarchy for science domains"""
         return {
             "astrophysics": ["astrophysics"],
             "gravitational_lensing": ["astrophysics", "gravitational_lensing"],

@@ -5,7 +5,7 @@ Implements Gordon's principles from 30 years of Pogonomyrmex barbatus research.
 All parameters are immutable (validated by biological field research).
 
 These transforms are domain-agnostic and apply to any stigmergic swarm system,
-including astronomical inference.
+including scientific inference.
 """
 
 from typing import Dict

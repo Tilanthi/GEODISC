@@ -57,7 +57,7 @@ class HypothesisType(Enum):
     STATISTICAL_FLUKE = "statistical"   # Random fluctuation
     KNOWN_PHYSICS = "known_physics"     # Explained by known physics
     NEW_PHYSICS = "new_physics"         # Requires new physics
-    NEW_OBJECT = "new_object"           # New class of astronomical object
+    NEW_OBJECT = "new_object"           # New class of scientific object
     CALIBRATION = "calibration"         # Calibration issue
 
 

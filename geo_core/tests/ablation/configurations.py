@@ -131,7 +131,7 @@ def get_domain_module_ablations() -> List[AblationConfig]:
             description="Only core domains (reasoning, memory, physics, causal)",
             ablation_type=AblationType.DOMAIN_MODULES,
             settings={"max_domains": "core_only"},
-            expected_impact="No astrophysics-specific domain knowledge",
+            expected_impact="No geochemistry-specific domain knowledge",
             expected_degradation=40.0
         ),
         AblationConfig(
@@ -160,10 +160,10 @@ def get_domain_module_ablations() -> List[AblationConfig]:
         ),
         AblationConfig(
             name="no_high_energy_domains",
-            description="Remove high-energy astrophysics domains",
+            description="Remove geochemistry domain modules",
             ablation_type=AblationType.DOMAIN_MODULES,
             settings={"excluded_domains": ["high_energy", "pulsars", "black_holes", "xray_binaries"]},
-            expected_impact="No specialized high-energy astrophysics knowledge",
+            expected_impact="No specialized geochemistry knowledge",
             expected_degradation=18.0
         ),
     ]
@@ -228,7 +228,7 @@ def get_causal_discovery_ablations() -> List[AblationConfig]:
         ),
         AblationConfig(
             name="no_astro_causal",
-            description="Remove astrophysical causal models",
+            description="Remove geochemical causal models",
             ablation_type=AblationType.CAUSAL_DISCOVERY,
             disabled_components={"astro_causal_models"},
             expected_impact="No domain-specific causal reasoning",

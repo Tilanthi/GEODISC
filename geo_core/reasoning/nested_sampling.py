@@ -10,7 +10,7 @@ Implements advanced nested sampling with:
 
 Nested sampling is particularly powerful for:
 - Model comparison via Bayesian evidence
-- Multi-modal posteriors in astrophysics (e.g., lens parameter degeneracies)
+- Multi-modal posteriors in scientific inference (e.g., parameter degeneracies)
 - Robust uncertainty quantification
 """
 
@@ -1054,7 +1054,7 @@ class NestedSampler:
 
 
 # ============================================================================
-# Astrophysics-Specific Helpers
+# Domain-Specific Helpers
 # ============================================================================
 
 def create_lens_parameter_bounds() -> Dict[str, Tuple[float, float]]:

@@ -238,7 +238,7 @@ class HypothesisFormulator:
         # Simple extraction - in production would use NLP
         concepts = []
 
-        # Common astrophysical concepts
+        # Common scientific concepts
         concept_keywords = [
             'mass', 'radius', 'luminosity', 'temperature', 'density',
             'velocity', 'pressure', 'magnetic field', 'filament', 'width',

@@ -70,7 +70,7 @@ class ScalingRelation:
 class DimensionalAnalysis:
     """Advanced dimensional analysis beyond Buckingham Pi theorem"""
 
-    # Base dimensions in astrophysics
+    # Base dimensions in physics
     BASE_DIMENSIONS = {
         'M': 'mass',
         'L': 'length',
@@ -80,7 +80,7 @@ class DimensionalAnalysis:
         'I': 'intensity'
     }
 
-    # Common astrophysical quantities with dimensions
+    # Common physical quantities with dimensions
     QUANTITIES = {
         # Mechanical
         'velocity': {'L': 1, 'T': -1},
@@ -105,7 +105,7 @@ class DimensionalAnalysis:
         'c': {'L': 1, 'T': -1},  # Speed of light
         'h': {'M': 1, 'L': 2, 'T': -1},  # Planck constant
 
-        # Astrophysical specific
+        # Physics specific
         'luminosity': {'M': 1, 'L': 2, 'T': -3},
         'flux': {'M': 1, 'L': 0, 'T': -3},
         'mass': {'M': 1},
@@ -349,7 +349,7 @@ class PerturbationTheory:
         Returns:
             Suggested expansion parameter or None
         """
-        # Common small parameters in astrophysics
+        # Common small parameters in physics
         small_parameters = {
             'v/c': 'velocity / speed of light',
             'GM/(rc^2)': 'gravitational potential',

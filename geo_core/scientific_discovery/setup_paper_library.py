@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Setup Script for Astronomical Paper Library
+Setup Script for Scientific Paper Library
 ===========================================
 
 Quick setup to initialize your paper library and add first papers.
@@ -64,7 +64,7 @@ def create_example_config():
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Setup astronomical paper library'
+        description='Setup scientific paper library'
     )
 
     parser.add_argument(

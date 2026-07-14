@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Astronomical Paper Library - RAG System for Research Papers
+Scientific Paper Library - RAG System for Research Papers
 ==========================================================
 
-A specialized knowledge base for astronomical research papers that:
+A specialized knowledge base for scientific research papers that:
 1. Stores and indexes PDF papers
 2. Builds incrementally over time
 3. Enables semantic search and retrieval
@@ -158,7 +158,7 @@ class Paper:
 
 class PaperLibrary:
     """
-    Manager for astronomical paper library.
+    Manager for scientific paper library.
 
     Features:
     - Add papers incrementally

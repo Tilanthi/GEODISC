@@ -1572,7 +1572,7 @@ __all__ += [
 # )
 
 # V95: Semantic Grounding Layer.
-# (The Enhanced Astrophysical Causal Discovery module was removed for the
+# (The Enhanced Causal Discovery module was removed for the
 # geochemistry-only GEODISC build.)
 # Update __all__ with V95 semantic-grounding exports
 __all__ += [
@@ -1745,7 +1745,7 @@ try:
 #         CausalExplanation,
 #         CausalRelationshipType,
 #         create_explainable_causal_reasoner,
-#         explain_causal_discovery_to_astronomer,
+#         explain_causal_discovery_to_expert,
 #         create_visualization_for_paper
 #     )
     V106_AVAILABLE = True
@@ -1756,7 +1756,7 @@ except ImportError:
     CausalExplanation = None
     CausalRelationshipType = None
     create_explainable_causal_reasoner = None
-    explain_causal_discovery_to_astronomer = None
+    explain_causal_discovery_to_expert = None
     create_visualization_for_paper = None
 
 # V107: Discovery Triage and Prioritization
@@ -1894,7 +1894,7 @@ __all__ += [
     'CausalExplanation',
     'CausalRelationshipType',
     'create_explainable_causal_reasoner',
-    'explain_causal_discovery_to_astronomer',
+    'explain_causal_discovery_to_expert',
     'create_visualization_for_paper',
 
     # V107: Discovery Triage and Prioritization

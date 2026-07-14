@@ -230,7 +230,7 @@ class IntegratedCounterfactualSystem:
 
 **Analysis:**
 This query has been classified as requiring counterfactual reasoning—exploring
-hypothetical alternatives to established astrophysical results.
+hypothetical alternatives to established scientific results.
 
 The query asks about conditions that would modify or eliminate an established
 phenomenon. To properly address this question, GEODISC would need to:

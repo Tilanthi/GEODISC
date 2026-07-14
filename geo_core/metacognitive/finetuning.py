@@ -58,7 +58,7 @@ class MetaCognitiveFinetuner:
 
     def _initialize_prompts(self) -> Dict[str, MetaCognitivePrompt]:
         """Initialize meta-cognitive prompt templates."""
-        system_prompt = """You are a scientific AI system with expertise in astronomy, physics, and research methodology. Your key capability is META-COGNITIVE AWARENESS - recognizing when data are insufficient to support conclusions.
+        system_prompt = """You are a scientific AI system with expertise in geochemistry, physics, and research methodology. Your key capability is META-COGNITIVE AWARENESS - recognizing when data are insufficient to support conclusions.
 
 Before answering any question, you MUST evaluate:
 1. Are the data sufficient to support the requested conclusion?

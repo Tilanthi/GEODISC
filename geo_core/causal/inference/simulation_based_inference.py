@@ -2,7 +2,7 @@
 Simulation-Based Inference (SBI) for Causal Discovery
 
 Likelihood-free inference using simulator as forward model.
-Essential for astrophysical problems with intractable likelihoods.
+Essential for scientific problems with intractable likelihoods.
 
 Methods:
 - Approximate Bayesian Computation (ABC)
@@ -76,7 +76,7 @@ class SimulatorInterface(ABC):
     """
     Abstract interface for simulators
 
-    All astrophysical simulators must implement this interface
+    All scientific simulators must implement this interface
     to work with SBI.
     """
 
@@ -112,7 +112,7 @@ class SimulatorInterface(ABC):
 
 class AstrophysicsSimulator(SimulatorInterface):
     """
-    Base class for astrophysics simulators
+    Base class for scientific simulators
 
     Wraps existing simulators in geo_core.theoretical_physics
     """
@@ -126,7 +126,7 @@ class AstrophysicsSimulator(SimulatorInterface):
         parameter_bounds: List[Tuple[float, float]]
     ):
         """
-        Initialize astrophysics simulator
+        Initialize scientific simulator
 
         Args:
             simulator_type: Type of simulator (MHD, radiation, etc.)
@@ -703,7 +703,7 @@ class SimulationBasedInferenceEngine:
     Main engine for simulation-based inference
 
     Integrates multiple SBI methods and provides unified interface.
-    Connects to all existing astrophysics simulators.
+    Connects to all existing scientific simulators.
     """
 
     def __init__(
@@ -841,10 +841,10 @@ def create_sbi_engine(
     return SimulationBasedInferenceEngine(method=method, **kwargs)
 
 
-# Default summary statistics for astrophysics
+# Default summary statistics for scientific data
 def default_summary_statistics(data: np.ndarray) -> np.ndarray:
     """
-    Default summary statistics for astrophysical data
+    Default summary statistics for scientific data
 
     Includes mean, std, and selected percentiles.
     Returns consistent dimension regardless of input size.

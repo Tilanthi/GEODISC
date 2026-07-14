@@ -3,7 +3,7 @@ V102 Scalable Counterfactual Engine - For Large-Scale Intervention Testing
 ==========================================================================
 
 PROBLEM: V98 intervention testing is limited to small-scale scenarios.
-Real astrophysical systems require testing thousands of potential interventions
+Real scientific systems require testing thousands of potential interventions
 across high-dimensional parameter spaces.
 
 SOLUTION: Scalable counterfactual engine with:

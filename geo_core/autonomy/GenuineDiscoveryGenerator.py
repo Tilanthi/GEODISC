@@ -104,7 +104,7 @@ class GenuineDiscoveryGenerator:
 
     This goes beyond generic knowledge gaps by:
     - Integrating with arXiv API for latest research
-    - Analyzing ADS (Astrophysics Data System) for domain context
+    - Analyzing scientific literature databases for domain context
     - Identifying genuine research gaps in contemporary literature
     - Validating novelty against existing research
     - Providing proper attribution and context

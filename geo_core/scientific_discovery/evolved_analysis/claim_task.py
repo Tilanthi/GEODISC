@@ -63,7 +63,7 @@ def run_claim(df_train, df_eval):
 # pair exploring a different real relationship in the SDSS columns, such that the
 # claim is BOTH statistically significant AND plausibly NOT already textbook.
 TASK_SYSTEM = (
-    "You are an expert astronomer searching for a NOVEL, real statistical "
+    "You are an expert scientist searching for a NOVEL, real statistical "
     "relationship in SDSS galaxy photometry that is NOT already a well-known "
     "textbook result. You are given the current candidate (a natural-language "
     "CLAIM plus a `run_claim(df_train, df_eval)` function that tests it on real "

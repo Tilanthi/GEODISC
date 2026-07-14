@@ -186,7 +186,7 @@ class ScientificTermExtractor:
         # Look for key phrases and patterns
         concepts = []
 
-        # Common astronomical concepts/phrases to look for
+        # Common scientific concepts/phrases to look for
         concept_patterns = [
             r'(star formation|stellar evolution|molecular cloud)',
             r'(interstellar medium|ism|dust grain|gas dynamics)',

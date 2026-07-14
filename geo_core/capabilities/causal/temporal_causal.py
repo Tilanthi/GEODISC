@@ -3,7 +3,7 @@ V101 Temporal Causal Discovery - For Time-Series Causal Inference
 ====================================================================
 
 PROBLEM: Standard causal discovery (V98 FCI) assumes static causal structure.
-Real astrophysical systems exhibit time-dependent causality:
+Real scientific systems exhibit time-dependent causality:
 - Time-lagged effects (X[t-k] → Y[t])
 - Feedback loops (X → Y → X)
 - Time-varying causality (causal structure changes)
@@ -31,7 +31,7 @@ INTEGRATION:
 - Compatible with v97_knowledge_isolation
 - Integrates with v4_revolutionary systems
 
-ASTROPHYSICAL APPLICATIONS:
+SCIENTIFIC APPLICATIONS:
 - Stellar variability: Teff → R → L causal chain
 - Accretion disks: dM/dt → L_X with hysteresis
 - Star formation: Delayed triggering, feedback effects
