@@ -46,7 +46,6 @@ class PhysicsDomain(Enum):
     HYDRODYNAMIC = "hydrodynamic"
     THERMODYNAMIC = "thermodynamic"
     PARTICLE = "particle"
-    COSMOLOGICAL = "cosmological"
 
 
 @dataclass

@@ -56,10 +56,13 @@ memory) repurposed from astrophysics to geochemistry.
   split — the §7.3 in-sample trap, run *before* the sandbox eval. It also logs
   one structured JSONL verdict per candidate (pass or fail) to
   `~/.geodisc_persistent/evolved_programs/claim_verdicts.jsonl` (§7.2) so the
-  search funnel (where candidates die) is diagnosable. **Known gap:** the
-  sandbox worker still cannot load real data — `real_data.load_split` was purged
-  with the astrophysics data, so Gate 1 currently always fails; re-grounding it
-  in geochemistry data (EarthChem / PBDB) is the remaining domain task.
+  search funnel (where candidates die) is diagnosable. **Known gap (partially
+  addressed):** a real-data contract (`evolved_analysis/real_data.py`) now
+  provides `load_split(seed)` for the sandbox worker — it loads REAL
+  geochemistry data from `$GEODISC_REAL_DATA` (columns toc, d13c, Fe_Al, S_TOC,
+  depth, Ro, HI) and fails cleanly (never fabricates) when no real-data file is
+  present. Populate that file from a real database (EarthChem / GEOROC / PBDB)
+  to actually enable Gate 1.
 - **Full astrophysics-content purge (2026-07-14):** all residual ASTROPHYSICS
   *content* removed or re-grounded to geochemistry. Identifier renames
   (`astra`→`geo`/`geodisc`, ~14 files). Deleted dead astro modules
@@ -76,15 +79,26 @@ memory) repurposed from astrophysics to geochemistry.
   planetary-nebulae demos, molecular-cloud prior knowledge) replaced with
   geochemistry (TOC / δ¹³C / redox / pyrite-framboid / taphonomy) across
   reasoning / capabilities / theoretical_discovery / autonomy / self_teaching /
-  autonomous_research / retrieval. **Retained intentionally (not astrophysics
-  domain content):** NASA ADS + arXiv `astro-ph` literature-retrieval
-  infrastructure (also indexes geochemistry papers), the migration-spec path
-  reference, the `STAN` identifier, and domain-neutral foundational-physics
-  taxonomy (e.g. the cosmological length-scale tier, gravitational-physics task
-  type). The unrelated `arc_agi/` / `arc_reasoning/` subsystem has pre-existing
-  syntax errors, untouched and out of scope. Gates green throughout: 19 tests,
-  smoke, capability, 16 domains; `python -m compileall geo_core` clean except
-  the pre-existing arc_* errors.
+  autonomous_research / retrieval. The astronomy `astro-ph` category mappings
+  were re-grounded to geochemistry (`physics.geo-ph` / `q-bio.OT` / etc.) in
+  `literature_validator` and `GenuineDiscoveryGenerator`; the dangling
+  migration-spec path reference was fixed to point at the real
+  `2026-07-11-geodisc-migration-design.md`; the cosmological `PhysicsDomain` enum
+  member was removed.
+  **Retained as legitimate infrastructure (NOT astrophysics domain content):**
+  the NASA ADS backend and arXiv *client* (multi-disciplinary literature
+  databases that index geochemistry journals) and `arxiv_integration`'s genuine
+  arXiv taxonomy handling; the `STAN` identifier (the system's core name — 991
+  references incl. the public `create_geo_stan_system` API; renaming is
+  public-API-breaking and not astronomy); and the gravitational-physics task
+  type (geo-relevant: lithostatic pressure, gravity-driven sedimentation).
+  **Pre-existing syntax errors:** `python -m compileall geo_core` reports 26
+  errors — ALL pre-existing truncated/broken files in non-live modules
+  (arc_agi, arc_reasoning, core/v105, gsd, intelligence, mathematical, parts of
+  reasoning / retrieval / symbolic / self_teaching / transformational) inherited
+  from the astrophysics codebase. None are on the live import path (gates +
+  smoke green) and none are safely restorable without the original source, so
+  they are left as-is. Gates green: 19 tests, smoke, capability, 16 domains.
 - **Public repo**: https://github.com/Tilanthi/GEODISC (`main` branch; git
   remotes `origin` and `geodisc` both point here). Published as a clean
   geochemistry-only history. The precursor astrophysics history is preserved

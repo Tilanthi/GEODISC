@@ -7,8 +7,8 @@ the persistent discovery store — including canned/template text (the
 "STAN system initialized…" string) and textbook restatements. That violated the
 project's prime directive ("NO FICTIONAL/SYNTHETIC DISCOVERIES").
 
-The structural fix (see docs/superpowers/specs/2026-07-11-astra-autonomous-
-discovery-rearchitecture-design.md) is a **single write chokepoint**: no record
+The structural fix (see docs/superpowers/specs/2026-07-11-geodisc-migration-design.md)
+is a **single write chokepoint**: no record
 enters any discovery store unless it carries a non-empty machine `verification`
 block — i.e. an objective result produced by executing code on real data (an
 AlphaEvolve-style EVALUATE), never free LLM text or a hardcoded constant.

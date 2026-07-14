@@ -366,12 +366,20 @@ class GenuineDiscoveryGenerator:
     def _get_arxiv_category(self, domain: str) -> str:
         """Get arXiv category for domain"""
         categories = {
-            'astrophysics': 'astro-ph',
-            'astronomy': 'astro-ph',
+            'geochemistry': 'physics.geo-ph',
+            'organic_geochemistry': 'physics.geo-ph',
+            'isotope_geochemistry': 'physics.geo-ph',
+            'redox_geochemistry': 'physics.geo-ph',
+            'mineralogy': 'cond-mat.mtrl-sci',
+            'sedimentology': 'physics.geo-ph',
+            'stratigraphy': 'physics.geo-ph',
+            'precambrian_geology': 'physics.geo-ph',
+            'taphonomy': 'q-bio.OT',
+            'paleontology': 'q-bio.OT',
             'physics': 'physics',
             'mathematics': 'math'
         }
-        return categories.get(domain, 'astro-ph')
+        return categories.get(domain, 'physics.geo-ph')
 
     def _analyze_research_trend(self, papers: List[Dict]) -> ResearchTrend:
         """Analyze research trend from papers"""

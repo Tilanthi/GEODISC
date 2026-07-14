@@ -9,7 +9,7 @@ and wrote the result to the genuine store ~once per 60 s. Because STAN's
 ``answer()`` returns a hardcoded string (geo_core/core/unified.py), every
 record it produced was fiction — a direct violation of GEODISC's prime directive
 ("NO FICTIONAL/SYNTHETIC DISCOVERIES"). See
-docs/superpowers/specs/2026-07-11-astra-autonomous-discovery-rearchitecture-design.md.
+docs/superpowers/specs/2026-07-11-geodisc-migration-design.md.
 
 This supervisor does the opposite by construction. It has exactly two activities,
 both machine-graded:

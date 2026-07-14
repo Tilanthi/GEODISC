@@ -258,7 +258,7 @@ class ArxivClient:
 
         Args:
             query: Search query string
-            categories: arXiv categories (e.g., ['astro-ph.GA', 'astro-ph.HE'])
+            categories: arXiv categories (e.g., ['physics.geo-ph', 'q-bio.OT'])
             max_results: Maximum number of results to return
             sort_by: Sort order ('relevance', 'lastUpdatedDate', 'submittedDate')
 
@@ -719,26 +719,21 @@ class LiteratureValidator:
         self.arxiv_client = ArxivClient(self.cache) if enable_arxiv else None
         self.ads_client = ADSClient(self.cache) if enable_ads else None
 
-        # Domain to arXiv category mapping
+        # Domain to arXiv category mapping (geochemistry / Earth science)
         self.domain_categories = {
-            "astrophysics": ["astro-ph.GA", "astro-ph.HE", "astro-ph.CO", "astro-ph.EP"],
-            "cosmology": ["astro-ph.CO"],
-            "star_formation": ["astro-ph.GA"],
-            "ism": ["astro-ph.GA"],
-            "exoplanets": ["astro-ph.EP"],
-            "high_energy_astro": ["astro-ph.HE"],
-            "galactic_astronomy": ["astro-ph.GA"],
-            "stellar_evolution": ["astro-ph.SR"],
-            "interstellar_medium": ["astro-ph.GA"],
-            "molecular_clouds": ["astro-ph.GA"],
-            "astrochemistry": ["astro-ph.GA"],
-            "compact_objects": ["astro-ph.HE"],
-            "gravitational_waves": ["astro-ph.HE", "gr-qc"],
-            "neutrino_astronomy": ["astro-ph.HE"],
-            "multi_messenger_astronomy": ["astro-ph.HE"],
-            "dark_matter": ["astro-ph.CO", "hep-ph"],
-            "large_scale_structure": ["astro-ph.CO"],
-            "cosmic_microwave_background": ["astro-ph.CO"]
+            "geochemistry": ["physics.geo-ph"],
+            "organic_geochemistry": ["physics.geo-ph", "physics.chem-ph"],
+            "isotope_geochemistry": ["physics.geo-ph", "physics.chem-ph"],
+            "redox_geochemistry": ["physics.geo-ph", "q-bio.OT"],
+            "mineralogy": ["cond-mat.mtrl-sci", "physics.geo-ph"],
+            "sedimentology": ["physics.geo-ph"],
+            "stratigraphy": ["physics.geo-ph"],
+            "precambrian_geology": ["physics.geo-ph", "q-bio.OT"],
+            "taphonomy": ["q-bio.OT"],
+            "paleontology": ["q-bio.OT"],
+            "microbial_ecology": ["q-bio.OT", "physics.ao-ph"],
+            "earth_system_science": ["physics.ao-ph", "physics.geo-ph"],
+            "thermodynamics": ["physics.chem-ph", "cond-mat.stat-mech"],
         }
 
         logger.info(f"LiteratureValidator initialized with arXiv={enable_arxiv}, ADS={enable_ads}")
