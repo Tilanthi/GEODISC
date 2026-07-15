@@ -58,11 +58,14 @@ memory) repurposed from astrophysics to geochemistry.
   `~/.geodisc_persistent/evolved_programs/claim_verdicts.jsonl` (§7.2) so the
   search funnel (where candidates die) is diagnosable. **Real data wired
   (2026-07-15):** `evolved_analysis/real_data.py` loads REAL whole-rock
-  geochemistry (major oxides sio2/tio2/al2o3/feo_tot/mgo/cao/mno/na2o/k2o/p2o5)
-  fetched from the Gard et al. (2019) global compilation (Zenodo 3359791) by
-  `scripts/fetch_geochem_data.py` into `$GEODISC_REAL_DATA`. Gate 1 now runs on
-  real data — verified: the seed (SiO2-MgO Harker trend) gives |r|≈0.82,
-  p≈1e-244 on the held-out split.
+  geochemistry fetched from the Gard et al. (2019) global compilation (Zenodo
+  3359791) by `scripts/fetch_geochem_data.py` into `$GEODISC_REAL_DATA` — major
+  oxides (sio2/tio2/al2o3/feo_tot/mgo/cao/mno/na2o/k2o/p2o5) PLUS 15 trace
+  elements in ppm (V, Cr, Co, Ni, Cu, Zn, Rb, Sr, Y, Zr, Nb, Ba, La, Ce, Nd),
+  merged from major.csv + trace.csv on the shared sample id. The trace elements
+  widen the search niche beyond the textbook-saturated major oxides (sec 7.6).
+  Gate 1 runs on real data — verified: the seed (SiO2-MgO Harker) gives |r|≈0.85
+  on the held-out split; r(Zr,Nb)=0.55 confirms the trace data is real.
 - **Full astrophysics-content purge (2026-07-14):** all residual ASTROPHYSICS
   *content* removed or re-grounded to geochemistry. Identifier renames
   (`astra`→`geo`/`geodisc`, ~14 files). Deleted dead astro modules
@@ -136,15 +139,16 @@ memory) repurposed from astrophysics to geochemistry.
   self-reported heuristic, NOT an external benchmark; trend over level;
   `novel_rate` is bounded by the textbook ceiling; `ci_score=100` means
   saturation of the formula, not a breakthrough. Baseline measurement (119
-  verdicts): CI 73.2, gate2-coverage 0.95, dominant failure `gate2-known`
-  (the textbook ceiling, 48%) -> proposed fix (prime the proposer for residual
-  / partial-correlation relations). **Loop first driven (2026-07-15):** that fix
-  was applied + registered (`proposer-residual-priming`, reduce, targeted
-  `gate2-known`) and re-measured -- effectiveness **-8%** over a 6-verdict
-  window. Honest negative (a vanity metric would hide it): the priming DID shift
-  candidates to residual/partial forms as intended, but residual relations are
-  also often textbook, so the gate2-known rate did not drop on this small
-  sample. The trend over more episodes is the thing to watch.
+  verdicts): CI 73.2 (old weighting), gate2-coverage 0.95, dominant failure
+  `gate2-known` (the textbook ceiling, 48%). **Instrument hardened (2026-07-15):**
+  the CI now uses STABLE weighting (always 0.3/0.4/0.3; an unmeasured learning
+  term is 0, not a re-weighting) so it is comparable over time, AND a min-sample
+  guard (>=20 verdicts per window) stops tiny windows emitting noisy numbers -- a
+  trustworthy CI of 53.1. Priming fixes are measured against the YIELD
+  (`novel_rate`, increase), not `gate2-known` (ceiling-bounded). Applied fixes:
+  proposer-residual-priming + trace-niche-widening (both novel_rate-targeted;
+  both `insufficient sample` until enough post-fix verdicts accrue). The trend
+  over more episodes is the thing to watch.
 - **Spec**: `docs/superpowers/specs/2026-07-11-geodisc-migration-design.md`
 - **Plan**: `docs/superpowers/plans/2026-07-11-geodisc-migration.md`
 
@@ -287,7 +291,7 @@ falls back to fiction.
 
 ## Testing
 ```bash
-python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (8) + Gate-2/OpenAlex (7) + capability-index/RSI (5)
+python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (8) + Gate-2/OpenAlex (7) + capability-index/RSI (7)
 python -c "import geo_core; from geo_core import create_geo_stan_system; create_geo_stan_system()"  # smoke
 python -c "from geo_core import mechanistic_process_graphs as mpg; mpg.explain_preservation()"     # capability
 python -c "from geo_core.domains import geochemistry; print(len(geochemistry.ALL_GEODISC_DOMAINS))" # 16

@@ -28,9 +28,17 @@ from pathlib import Path
 
 DEFAULT_DATA_PATH = Path.home() / ".geodisc_persistent" / "geochem_real.csv"
 
-# Real whole-rock major-oxide columns (wt %) the engine contracts on. The seed
-# claim uses sio2/mgo; the proposer may explore the rest.
-_REQUIRED_COLUMNS = ("sio2", "tio2", "al2o3", "feo_tot", "mgo", "cao", "mno", "na2o", "k2o", "p2o5")
+# Real whole-rock columns the engine contracts on: major oxides (wt %) PLUS key
+# trace elements (ppm). The seed uses sio2/mgo (oxides); the proposer should
+# explore the TRACE elements too -- they have thinner textbook coverage than the
+# saturated major oxides, so that is where genuine novelty lives (sec 7.6).
+_REQUIRED_COLUMNS = (
+    # major oxides (wt %)
+    "sio2", "tio2", "al2o3", "feo_tot", "mgo", "cao", "mno", "na2o", "k2o", "p2o5",
+    # trace elements (ppm) -- transition metals, LILE, HFSE, REE
+    "v_ppm", "cr_ppm", "co_ppm", "ni_ppm", "cu_ppm", "zn_ppm", "rb_ppm",
+    "sr_ppm", "y_ppm", "zr_ppm", "nb_ppm", "ba_ppm", "la_ppm", "ce_ppm", "nd_ppm",
+)
 
 
 def _data_path() -> Path:

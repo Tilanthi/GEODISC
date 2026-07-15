@@ -39,9 +39,9 @@ def test_compute_ci_subscores_and_composite():
     assert abs(ci["gate2_coverage"] - 5 / 6) < 1e-9      # 5 real verdicts / 6 reached
     assert abs(ci["novel_rate"] - 0.2) < 1e-9            # 2/10 emitted
     assert ci["novelty_quality"] is None                 # not auto-computed (human)
-    # composite (no learning fix measured yet -> 0.5/0.5 over the two engineering
-    # sub-scores): 0.5*0.6 + 0.5*(5/6) = 0.71666...*100
-    assert abs(ci["ci_score"] - (0.5 * 0.6 + 0.5 * (5 / 6)) * 100) < 1e-6
+    # STABLE weighting: always 0.3/0.4/0.3; learning term = 0 when unmeasured.
+    # ci = (0.3*0.6 + 0.4*(5/6) + 0.3*0) * 100
+    assert abs(ci["ci_score"] - (0.3 * 0.6 + 0.4 * (5 / 6)) * 100) < 1e-6
     # honesty: boundary notes always present (case-insensitive concept check)
     assert ci["notes"] and any("not an external benchmark" in n.lower() for n in ci["notes"])
     assert any("textbook ceiling" in n.lower() for n in ci["notes"])
@@ -71,28 +71,47 @@ def test_propose_fix_maps_failure_to_actionable_proposal():
 
 
 def test_measure_fix_effectiveness_before_after():
-    # a 'reduce' fix applied at 2026-07-15 targeting gate2-retrieval-failed:
-    # before window heavily retrieval-failed, after window much less so.
-    before = (
-        [_v("gate2-retrieval-failed", "2026-07-14T10:00:00") for _ in range(4)] +
-        [_v("both-pass", "2026-07-14T10:00:00")]
-    )  # 5 verdicts, 4 retrieval-failed -> before rate 0.8
-    after = (
-        [_v("gate2-retrieval-failed", "2026-07-15T12:00:00")] +
-        [_v("gate2-known", "2026-07-15T12:00:00") for _ in range(3)] +
-        [_v("both-pass", "2026-07-15T12:00:00")]
-    )  # 5 verdicts, 1 retrieval-failed -> after rate 0.2
-    vs = before + after
+    # a 'reduce' fix targeting gate2-retrieval-failed; >= MIN_EFFECTIVENESS_SAMPLE
+    # verdicts in each window so it is actually measured.
+    before = ([_v("gate2-retrieval-failed", "2026-07-14T10:00:00") for _ in range(20)] +
+              [_v("gate2-known", "2026-07-14T10:00:00") for _ in range(5)])   # 25, 20 fail -> 0.8
+    after = ([_v("gate2-retrieval-failed", "2026-07-15T12:00:00") for _ in range(5)] +
+             [_v("gate2-known", "2026-07-15T12:00:00") for _ in range(20)])    # 25, 5 fail -> 0.2
     fixes = [{"fix_id": "openalex", "applied_at": "2026-07-15",
               "kind": "reduce", "targeted_outcome": "gate2-retrieval-failed",
               "description": "added OpenAlex geochem source"}]
-    eff = measure_fix_effectiveness(vs, fixes)
-    assert len(eff) == 1
-    e = eff[0]
+    e = measure_fix_effectiveness(before + after, fixes)[0]
     assert e["fix_id"] == "openalex"
     assert abs(e["before_rate"] - 0.8) < 1e-9
     assert abs(e["after_rate"] - 0.2) < 1e-9
     assert abs(e["effectiveness"] - 0.75) < 1e-9   # (0.8-0.2)/0.8
+
+
+def test_measure_min_sample_guard():
+    # too few verdicts in a window -> NOT measured (no noisy number emitted)
+    before = [_v("gate2-retrieval-failed", "2026-07-14T10:00:00") for _ in range(5)]
+    after = [_v("gate2-known", "2026-07-15T12:00:00") for _ in range(5)]
+    fixes = [{"fix_id": "small", "applied_at": "2026-07-15", "kind": "reduce",
+              "targeted_outcome": "gate2-retrieval-failed", "description": "x"}]
+    e = measure_fix_effectiveness(before + after, fixes)[0]
+    assert e["effectiveness"] is None
+    assert "insufficient sample" in e["note"]
+
+
+def test_measure_increase_novel_rate():
+    # a priming fix targets the YIELD (novel_rate), measured as a RISE -- the
+    # correct target for a priming fix (gate2-known is ceiling-bounded).
+    before = ([_v("both-pass", "2026-07-14T10:00:00") for _ in range(2)] +
+              [_v("gate2-known", "2026-07-14T10:00:00") for _ in range(23)])   # 25, 2 -> 0.08
+    after = ([_v("both-pass", "2026-07-15T12:00:00") for _ in range(5)] +
+             [_v("gate2-known", "2026-07-15T12:00:00") for _ in range(20)])    # 25, 5 -> 0.20
+    fixes = [{"fix_id": "priming", "applied_at": "2026-07-15", "kind": "increase",
+              "targeted_outcome": "novel_rate", "description": "residual priming"}]
+    e = measure_fix_effectiveness(before + after, fixes)[0]
+    assert e["fix_id"] == "priming"
+    assert abs(e["before_rate"] - 0.08) < 1e-9
+    assert abs(e["after_rate"] - 0.20) < 1e-9
+    assert abs(e["effectiveness"] - 1.5) < 1e-9   # (0.20-0.08)/0.08
 
 
 def test_measure_skips_non_reduction_fixes_honestly():

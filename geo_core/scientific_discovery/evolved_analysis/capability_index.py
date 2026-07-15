@@ -60,6 +60,11 @@ GATE2_FAILED = {"gate2-retrieval-failed", "gate2-error"}  # Gate 2 couldn't eval
 # CI composite weights (visible + adjustable — Beast discipline).
 W_GATE1, W_COVERAGE, W_LEARNING = 0.30, 0.40, 0.30
 
+# Minimum verdicts in EACH window (before AND after) to trust a fix-effectiveness
+# measurement. Below this the measurement is too noisy and is reported as
+# "insufficient sample" rather than a misleading number.
+MIN_EFFECTIVENESS_SAMPLE = 20
+
 BOUNDARY_NOTES = [
     "Self-reported operational heuristic over the verdict log; NOT an external "
     "benchmark.",
@@ -190,12 +195,14 @@ def compute_ci(verdicts: List[dict], applied_fixes: Optional[List[dict]] = None,
         if measured:
             learning = sum(measured) / len(measured)
 
-    if learning is not None:
-        ci = (W_GATE1 * gate1_pass_rate + W_COVERAGE * gate2_coverage
-              + W_LEARNING * learning) * 100
-    else:
-        # no measured fix yet -> blend the two engineering sub-scores evenly
-        ci = (0.5 * gate1_pass_rate + 0.5 * gate2_coverage) * 100
+    # STABLE WEIGHTING (the CI must be comparable over time): always use the same
+    # weights; an unmeasured learning term contributes 0 (neutral) rather than
+    # re-weighting the other sub-scores. (An earlier version switched between
+    # 0.5/0.5 and 0.3/0.4/0.3 when learning became available, which made the CI
+    # non-comparable across that transition -- a misleading instrument.)
+    learning_term = learning if learning is not None else 0.0
+    ci = (W_GATE1 * gate1_pass_rate + W_COVERAGE * gate2_coverage
+          + W_LEARNING * learning_term) * 100
 
     ts = sorted(_ts(v) for v in verdicts if _ts(v))
     window = (f"{ts[0][:19]} -> {ts[-1][:19]}") if ts else "undated"
@@ -234,39 +241,58 @@ def propose_fix(outcome: str) -> str:
 
 def measure_fix_effectiveness(verdicts: List[dict],
                               applied_fixes: List[dict]) -> List[dict]:
-    """For each applied fix, measure whether its targeted failure class dropped
-    after the fix date. Only 'reduce'-kind fixes are measured; guards/sources are
-    reported honestly as not-reduction fixes.
+    """For each applied fix, measure whether its target moved in the intended
+    direction after the fix date.
 
-    effectiveness = (before_rate - after_rate) / before_rate, where rate is the
-    targeted outcome's share of verdicts in the window. None if the fix is not a
-    reduction fix, or if there was no prior occurrence to compare against.
+    kind='reduce'   -> targeted_outcome is a failure bucket; effectiveness =
+                       (before_rate - after_rate)/before_rate  (did it DROP?).
+    kind='increase' -> targeted_outcome is a yield metric ('novel_rate' counts
+                       'both-pass'); effectiveness = (after_rate -
+                       before_rate)/before_rate  (did it RISE?). Priming fixes
+                       should target novel_rate (a yield), NOT a failure class --
+                       gate2-known is bounded by the textbook ceiling.
+    other kinds     -> not measured (reported as n/a).
+
+    A min-sample guard (MIN_EFFECTIVENESS_SAMPLE in each window) stops a tiny
+    after-window from emitting a confident, noisy number. effectiveness is None
+    when the fix is not directional, the sample is too small, or there is no
+    prior baseline to compare against.
     """
     out = []
     for f in applied_fixes:
+        fix_id = f.get("fix_id")
         kind = f.get("kind")
         target = f.get("targeted_outcome")
         applied_at = f.get("applied_at", "")
-        if kind != "reduce" or not target:
-            out.append({"fix_id": f.get("fix_id"), "kind": kind,
-                        "effectiveness": None,
-                        "note": (f"{kind} fix -- not a reduction fix; "
-                                 "effectiveness not applicable")})
+        if kind not in ("reduce", "increase") or not target:
+            out.append({"fix_id": fix_id, "kind": kind, "effectiveness": None,
+                        "note": f"{kind} fix -- not a directional fix; not measured"})
             continue
+        outcome_to_count = "both-pass" if target == "novel_rate" else target
         before = [v for v in verdicts if _ts(v) and _ts(v) < applied_at]
         after = [v for v in verdicts if _ts(v) and _ts(v) >= applied_at]
-        before_rate = (sum(1 for v in before if _outcome(v) == target) / len(before)
-                       if before else 0.0)
-        after_rate = (sum(1 for v in after if _outcome(v) == target) / len(after)
-                      if after else 0.0)
+        if (len(before) < MIN_EFFECTIVENESS_SAMPLE
+                or len(after) < MIN_EFFECTIVENESS_SAMPLE):
+            out.append({"fix_id": fix_id, "kind": kind, "target": target,
+                        "effectiveness": None, "before_n": len(before),
+                        "after_n": len(after),
+                        "note": (f"insufficient sample (before={len(before)}, "
+                                 f"after={len(after)}); need >="
+                                 f" {MIN_EFFECTIVENESS_SAMPLE} in each window")})
+            continue
+        before_rate = sum(1 for v in before if _outcome(v) == outcome_to_count) / len(before)
+        after_rate = sum(1 for v in after if _outcome(v) == outcome_to_count) / len(after)
         if before_rate <= 0:
-            eff = None
-            note = "no prior occurrences of the targeted failure to compare against"
-        else:
+            eff, note = None, f"no prior occurrences of {target} (before_rate=0)"
+        elif kind == "reduce":
             eff = (before_rate - after_rate) / before_rate
-            note = (f"{target}: {before_rate:.2f} -> {after_rate:.2f} "
+            note = (f"{target}: {before_rate:.3f} -> {after_rate:.3f} "
                     f"({'reduced' if eff > 0 else 'rose' if eff < 0 else 'flat'})")
-        out.append({"fix_id": f.get("fix_id"), "kind": kind, "target": target,
+        else:  # increase
+            eff = (after_rate - before_rate) / before_rate
+            note = (f"{target}: {before_rate:.3f} -> {after_rate:.3f} "
+                    f"({'rose' if eff > 0 else 'fell' if eff < 0 else 'flat'})")
+        out.append({"fix_id": fix_id, "kind": kind, "target": target,
                     "before_rate": before_rate, "after_rate": after_rate,
                     "effectiveness": eff, "note": note})
     return out
