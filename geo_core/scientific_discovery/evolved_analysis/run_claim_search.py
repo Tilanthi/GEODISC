@@ -204,6 +204,38 @@ def _now_iso() -> str:
     return datetime.datetime.now().isoformat()
 
 
+def _verdict_feedback_hints(path=None, n_known: int = 5, n_failed: int = 5) -> list:
+    """Phases 3+4 (closed loop): read recent verdicts and return proposer hints.
+
+    The proposer is fed its own recent failures -- the latest gate2-known claims
+    (textbook families to AVOID regenerating) and gate1-failed claims (generate
+    STRONGER-effect relations). Never raises; returns [] if unreadable.
+    """
+    try:
+        if path is None:
+            path = Path.home() / ".geodisc_persistent" / "evolved_programs" / "claim_verdicts.jsonl"
+        p = Path(path)
+        if not p.is_file():
+            return []
+        rows = [json.loads(l) for l in p.read_text().splitlines() if l.strip()]
+        known = [r["claim"] for r in rows
+                 if r.get("outcome") == "gate2-known" and r.get("claim")][-n_known:]
+        failed = [r["claim"] for r in rows
+                  if r.get("outcome") == "gate1-failed" and r.get("claim")][-n_failed:]
+        hints = []
+        if known:
+            hints.append("Recent candidates REJECTED as already-known textbook -- "
+                         "do NOT propose similar relations:")
+            hints.extend(f"  - {c[:140]}" for c in known)
+        if failed:
+            hints.append("Recent candidates too WEAK to be significant on the data "
+                         "-- generate STRONGER-effect relations:")
+            hints.extend(f"  - {c[:140]}" for c in failed)
+        return hints
+    except Exception:
+        return []
+
+
 # --------------------------------------------------------------------------- #
 # main                                                                         #
 # --------------------------------------------------------------------------- #
@@ -240,9 +272,10 @@ def main():
         return
     parent = NAIVE_CLAIM_SEED
     parent_metrics = verdict["gate1"]["metrics"]
+    hints = _verdict_feedback_hints()   # Phases 3+4: feed recent failures back
     for i in range(args.steps):
         child, _spec, info = proposer.propose(
-            parent, parent_metrics, None, [], context_level="rich")
+            parent, parent_metrics, None, [], context_level="rich", hints=hints)
         if not child:
             logger.info("[claim_search] step %d: proposer returned nothing (%s)",
                         i, info.get("error", "?"))

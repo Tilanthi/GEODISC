@@ -157,6 +157,35 @@ def test_two_gate_short_circuits_on_leaky_candidate():
         rcs.gate1_run = orig
 
 
+# --- Phases 3+4: verdict-feedback to the proposer (closed loop) ------------- #
+def test_verdict_feedback_hints_reads_failures():
+    """The proposer should be fed its recent gate2-known (avoid these textbook
+    families) and gate1-failed (generate stronger-effect relations) claims."""
+    import json as _json, os as _os, tempfile as _tf
+    from geo_core.scientific_discovery.evolved_analysis.run_claim_search import (
+        _verdict_feedback_hints)
+    fd, p = _tf.mkstemp(suffix=".jsonl"); _os.close(fd)
+    rows = [
+        {"outcome": "gate2-known", "claim": "SiO2-MgO Harker trend"},
+        {"outcome": "gate1-failed", "claim": "weak relation A"},
+        {"outcome": "both-pass", "claim": "a genuine novel find"},
+        {"outcome": "gate2-known", "claim": "Fenner Fe-enrichment"},
+        {"outcome": "gate1-failed", "claim": "weak relation B"},
+    ]
+    with open(p, "w") as f:
+        for r in rows:
+            f.write(_json.dumps(r) + "\n")
+    try:
+        hints = _verdict_feedback_hints(path=p, n_known=5, n_failed=5)
+        text = "\n".join(hints)
+        assert any(("already-known" in h.lower() or "textbook" in h.lower()) for h in hints)
+        assert "Harker" in text and "Fenner" in text   # gate2-known claims surfaced
+        assert "weak relation" in text                  # gate1-failed claims surfaced
+        assert "genuine novel find" not in text         # both-pass NOT fed back
+    finally:
+        _os.unlink(p)
+
+
 def _run():
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     passed = 0

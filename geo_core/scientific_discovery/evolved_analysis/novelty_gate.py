@@ -156,6 +156,48 @@ def _filter_relevant(papers: List[Paper]) -> List[Paper]:
 
 
 # --------------------------------------------------------------------------- #
+# textbook blocklist (Phase 1: deterministic Gate-2 fast-path)                 #
+# --------------------------------------------------------------------------- #
+# Canonical geochem textbook relations matched BEFORE retrieval/LLM: saves a
+# network+judge call and removes false-novel risk for the obvious known
+# families. CONSERVATIVE -- only textbook concept NAMES or the most textbook-
+# distinctive simple oxide pairs, and NEVER a relation expressed as partial/
+# residual/conditional (those may be genuinely novel -> judge decides). Trace-
+# element pairs are deliberately NOT blocklisted (they are the widened niche).
+TEXTBOOK_NAMES = ("harker", "fenner", "tas diagram", "total alkali", "total-alkali",
+                  " afm ", "mg#", "mg-number", "bowen", "silica saturation",
+                  "fe-mg covariation", "mg-fe")
+TEXTBOOK_PAIRS = (
+    (("sio2", "mgo"), "Harker (SiO2-MgO fractionation)"),
+    (("feo", "mgo"), "FeO-MgO covariation"),
+    (("na2o", "k2o"), "total-alkali (Na2O+K2O) covariation"),
+)
+_BLOCKLIST_RESIDUAL = ("partial", "residual", "controlling", "remov", "condition",
+                       "among", "within", "subset", "regress", "confound")
+
+
+def _matches_textbook_blocklist(claim: str) -> Optional[dict]:
+    """Deterministic: is ``claim`` an OBVIOUS textbook relation?
+
+    Returns ``{name, reason}`` if matched, else None. Conservative (leans to NOT
+    matching so genuine novelty is not blocked -- the LLM judge handles the rest).
+    Never raises."""
+    try:
+        low = claim.lower()
+        for name in TEXTBOOK_NAMES:
+            if name in low:
+                nm = name.strip()
+                return {"name": nm, "reason": f"textbook concept: {nm}"}
+        if not any(k in low for k in _BLOCKLIST_RESIDUAL):
+            for (a, b), label in TEXTBOOK_PAIRS:
+                if a in low and b in low:
+                    return {"name": label, "reason": f"canonical pairwise: {label}"}
+        return None
+    except Exception:
+        return None
+
+
+# --------------------------------------------------------------------------- #
 # retrieval                                                                    #
 # --------------------------------------------------------------------------- #
 def _http_get(url: str, timeout: int = 25) -> Optional[str]:
@@ -406,6 +448,16 @@ def check_novelty(claim: str, use_s2: bool = True, force: bool = False) -> Novel
         return NoveltyResult(c.get("novel", False), c.get("status", "?"),
                              claim, None, c.get("n_retrieved", 0),
                              c.get("reasoning", ""))
+
+    # Phase 1: deterministic textbook blocklist -- fast-path BEFORE retrieval.
+    blk = _matches_textbook_blocklist(claim)
+    if blk:
+        res = NoveltyResult(False, "known", claim, n_retrieved=0,
+                            reasoning=f"textbook blocklist: {blk['name']}")
+        cache[key] = res.to_dict()
+        _save_cache(cache)
+        logger.info("[novelty] known (textbook blocklist) — %s", claim[:60])
+        return res
 
     query = _extract_query(claim)
     logger.info("[novelty] retrieving for claim (query=%r)", query)

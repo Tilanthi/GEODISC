@@ -61,9 +61,11 @@ memory) repurposed from astrophysics to geochemistry.
   geochemistry fetched from the Gard et al. (2019) global compilation (Zenodo
   3359791) by `scripts/fetch_geochem_data.py` into `$GEODISC_REAL_DATA` — major
   oxides (sio2/tio2/al2o3/feo_tot/mgo/cao/mno/na2o/k2o/p2o5) PLUS 15 trace
-  elements in ppm (V, Cr, Co, Ni, Cu, Zn, Rb, Sr, Y, Zr, Nb, Ba, La, Ce, Nd),
-  merged from major.csv + trace.csv on the shared sample id. The trace elements
-  widen the search niche beyond the textbook-saturated major oxides (sec 7.6).
+  elements in ppm (V, Cr, Co, Ni, Cu, Zn, Rb, Sr, Y, Zr, Nb, Ba, La, Ce, Nd) PLUS
+  OPTIONAL radiogenic isotopes (87Sr/86Sr, 143Nd/144Nd, epsilon_Nd/Sr/Hf, Pb, Hf)
+  and age (Ga) — merged from major.csv + trace.csv + isotope.csv + age.csv on the
+  shared sample id. Oxides+trace are the dense required base; isotopes+age are
+  sparse (~10% / ~2% of rows) optional columns for the thinnest-textbook niche.
   Gate 1 runs on real data — verified: the seed (SiO2-MgO Harker) gives |r|≈0.85
   on the held-out split; r(Zr,Nb)=0.55 confirms the trace data is real.
 - **Full astrophysics-content purge (2026-07-14):** all residual ASTROPHYSICS
@@ -123,6 +125,18 @@ memory) repurposed from astrophysics to geochemistry.
   whole-rock relations are textbook), so the store grows slowly — which is
   correct. To disable evolution: remove the token from `llm_env`, or set
   `GEODISC_DISCOVERY_EVOLUTION_DISABLED=1` and reload. See "Commands".
+- **Discovery-performance improvements (2026-07-15, Phases 1-4):**
+  (1) **Textbook blocklist** -- `novelty_gate._matches_textbook_blocklist` is a
+  deterministic Gate-2 fast-path that marks obvious textbook relations (Harker /
+  Fenner / TAS / Fe-Mg / silica-saturation, or simple canonical oxide pairs)
+  `known` BEFORE retrieval/LLM -- saves a judge call and removes false-novel risk
+  for known families (conservative: partial/residual relations are never
+  blocklisted). (2) **Niche widening** -- the dataset also carries OPTIONAL
+  radiogenic isotopes (Sr/Nd/Pb/Hf) + age, the thinnest-textbook-coverage space.
+  (3)+(4) **Verdict feedback** -- `run_claim_search._verdict_feedback_hints`
+  feeds the proposer its recent gate2-known claims (textbook families to AVOID)
+  and gate1-failed claims (generate STRONGER-effect relations), closing the loop
+  on the proposer itself.
 - **Measurement stack + closed RSI loop (2026-07-15):** `evolved_analysis/
   capability_index.py` turns the verdict log (`claim_verdicts.jsonl`) from a
   passive diagnostic into a measured self-improvement signal (the discipline
@@ -291,7 +305,7 @@ falls back to fiction.
 
 ## Testing
 ```bash
-python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (8) + Gate-2/OpenAlex (7) + capability-index/RSI (7)
+python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (9) + Gate-2/OpenAlex/blocklist (12) + capability-index/RSI (7)
 python -c "import geo_core; from geo_core import create_geo_stan_system; create_geo_stan_system()"  # smoke
 python -c "from geo_core import mechanistic_process_graphs as mpg; mpg.explain_preservation()"     # capability
 python -c "from geo_core.domains import geochemistry; print(len(geochemistry.ALL_GEODISC_DOMAINS))" # 16

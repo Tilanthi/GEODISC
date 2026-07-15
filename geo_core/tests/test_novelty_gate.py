@@ -20,7 +20,8 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 
 from geo_core.scientific_discovery.evolved_analysis.novelty_gate import (  # noqa: E402
-    Paper, _domain_terms_in, _filter_relevant, _openalex_abstract, retrieve_openalex)
+    Paper, _domain_terms_in, _filter_relevant, _openalex_abstract,
+    retrieve_openalex, _matches_textbook_blocklist)
 
 
 # --- domain-term extraction -------------------------------------------------- #
@@ -115,6 +116,51 @@ def test_retrieve_openalex_parses_and_keeps_geochem():
         assert papers[0].year == "1995"
     finally:
         ng._http_get = orig
+
+
+# --- Phase 1: textbook blocklist (deterministic Gate-2 fast-path) ------------ #
+def test_blocklist_matches_textbook_name():
+    assert _matches_textbook_blocklist("Whole-rock SiO2 vs MgO follows the Harker trend") is not None
+    assert _matches_textbook_blocklist("Rocks plot on the TAS diagram by silica vs alkali") is not None
+
+
+def test_blocklist_matches_canonical_oxide_pair():
+    # a SIMPLE pairwise oxide statement -> matched (textbook)
+    m = _matches_textbook_blocklist("SiO2 is negatively correlated with MgO in basalts")
+    assert m is not None
+
+
+def test_blocklist_does_not_match_partial_correlation():
+    # a PARTIAL/residual relation mentioning SiO2+MgO must NOT be blocklisted
+    # (it may be genuinely novel) -- let the judge decide. Conservative.
+    assert _matches_textbook_blocklist(
+        "partial correlation of SiO2 and MgO after controlling for FeO") is None
+    assert _matches_textbook_blocklist(
+        "residual variation of MgO after removing the SiO2 fractionation trend") is None
+
+
+def test_blocklist_does_not_match_trace_novelty():
+    # trace-element relations are the widened niche -- NOT blocklisted (judge handles)
+    assert _matches_textbook_blocklist(
+        "Zr/Nb ratio correlates with La/Ce among arc basalts") is None
+
+
+def test_blocklist_fast_path_short_circuits_retrieval():
+    """A blocklisted claim returns 'known' with NO retrieval (deterministic)."""
+    from geo_core.scientific_discovery.evolved_analysis import novelty_gate as ng
+    called = {"yes": False}
+    def _boom(q, max_results=5):
+        called["yes"] = True
+        return []
+    o_oa, o_ax, o_s2 = ng.retrieve_openalex, ng.retrieve_arxiv, ng.retrieve_s2
+    ng.retrieve_openalex, ng.retrieve_arxiv, ng.retrieve_s2 = _boom, _boom, _boom
+    try:
+        r = ng.check_novelty("SiO2 negatively correlates with MgO (Harker trend)", force=True)
+        assert r.novel is False and r.status == "known"
+        assert called["yes"] is False           # retrieval never ran
+        assert "blocklist" in (r.reasoning or "").lower()
+    finally:
+        ng.retrieve_openalex, ng.retrieve_arxiv, ng.retrieve_s2 = o_oa, o_ax, o_s2
 
 
 def _run():

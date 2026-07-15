@@ -37,14 +37,21 @@ from pathlib import Path
 ZEN = "https://zenodo.org/api/records/3359791/files"
 MAJOR_CSV = f"{ZEN}/major.csv/content"
 TRACE_CSV = f"{ZEN}/trace.csv/content"
+ISO_CSV = f"{ZEN}/isotope.csv/content"
+AGE_CSV = f"{ZEN}/age.csv/content"
 
 # Major oxides (wt%) -- the textbook-saturated niche.
 OXIDES = ["sio2", "tio2", "al2o3", "feo_tot", "mgo", "cao", "mno", "na2o", "k2o", "p2o5"]
-# Trace elements (ppm) -- the thinner-textbook-coverage niche (transition metals,
-# LILE, HFSE, REE). These are the productive search space for genuine novelty.
+# Trace elements (ppm) -- thinner textbook coverage.
 TRACES = ["v_ppm", "cr_ppm", "co_ppm", "ni_ppm", "cu_ppm", "zn_ppm", "rb_ppm",
           "sr_ppm", "y_ppm", "zr_ppm", "nb_ppm", "ba_ppm", "la_ppm", "ce_ppm", "nd_ppm"]
-ALL_COLS = OXIDES + TRACES
+# Radiogenic isotopes -- the THINNEST textbook-coverage niche (source/process
+# tracers: Sr-Nd-Pb-Hf). Their cross-relations with elements + age are far less
+# canonical than oxide trends -> the most productive novelty space.
+ISOTOPES = ["sr87_sr86", "nd143_nd144", "epsilon_nd", "epsilon_sr",
+            "pb206_pb204", "pb207_pb204", "pb208_pb204", "hf176_hf177", "epsilon_hf"]
+AGE = "age"   # central age estimate (Ga) -> enables secular / temporal relations
+ALL_COLS = OXIDES + TRACES + ISOTOPES + [AGE]
 
 DEFAULT_OUT = Path.home() / ".geodisc_persistent" / "geochem_real.csv"
 
@@ -62,56 +69,75 @@ def main() -> int:
 
     import pandas as pd
 
-    with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tf:
-        major_tmp, trace_tmp = Path(tf.name), None
-    trace_tmp = Path(str(major_tmp) + ".t")
-
-    print("fetching REAL geochemistry (major.csv ~50MB + trace.csv ~118MB)...")
+    tmps = []
     try:
+        print("fetching REAL geochemistry (major+trace+isotope+age)...")
+        major_tmp = Path(tempfile.mkstemp(suffix=".csv")[1]); tmps.append(major_tmp)
+        trace_tmp = Path(tempfile.mkstemp(suffix=".csv")[1]); tmps.append(trace_tmp)
+        iso_tmp = Path(tempfile.mkstemp(suffix=".csv")[1]); tmps.append(iso_tmp)
+        age_tmp = Path(tempfile.mkstemp(suffix=".csv")[1]); tmps.append(age_tmp)
         _fetch(MAJOR_CSV, major_tmp)
         _fetch(TRACE_CSV, trace_tmp)
-        major = pd.read_csv(major_tmp, usecols=lambda c: c in ("major_id",) or c in OXIDES,
+        _fetch(ISO_CSV, iso_tmp)
+        _fetch(AGE_CSV, age_tmp)
+        major = pd.read_csv(major_tmp, usecols=lambda c: c == "major_id" or c in OXIDES,
                             low_memory=False).rename(columns={"major_id": "sample_id"})
-        trace = pd.read_csv(trace_tmp, usecols=lambda c: c in ("trace_id",) or c in TRACES,
+        trace = pd.read_csv(trace_tmp, usecols=lambda c: c == "trace_id" or c in TRACES,
                             low_memory=False).rename(columns={"trace_id": "sample_id"})
+        iso = pd.read_csv(iso_tmp, usecols=lambda c: c == "iso_id" or c in ISOTOPES,
+                          low_memory=False).rename(columns={"iso_id": "sample_id"})
+        age = pd.read_csv(age_tmp, usecols=lambda c: c == "age_id" or c == "age",
+                          low_memory=False).rename(columns={"age_id": "sample_id"})
     finally:
-        for t in (major_tmp, trace_tmp):
+        for t in tmps:
             try:
                 t.unlink()
             except OSError:
                 pass
 
-    n_major, n_trace = len(major), len(trace)
-    # Inner join on the shared sample id -> samples with BOTH major + trace.
-    df = major.merge(trace, on="sample_id", how="inner")
-    n_joined = len(df)
+    # Inner-join major+trace (the DENSE base). LEFT-join isotope+age -- they are
+    # sparse (isotopes measured on only ~13% of samples, age on ~2%), so
+    # requiring them would collapse the dataset to ~0. They are kept as OPTIONAL
+    # columns (NaN where absent) so the proposer can search the thin-textbook
+    # isotope niche on the subset that has it.
+    df = (major.merge(trace, on="sample_id", how="inner")
+              .merge(iso, on="sample_id", how="left")
+              .merge(age, on="sample_id", how="left"))
 
-    # CLEAN real data only: numeric, finite, plausible ranges. NO rows invented.
+    # CLEAN real data only (NO rows invented). oxides+trace are REQUIRED (finite +
+    # plausible -> drop bad rows). isotopes+age are coerced; out-of-range values
+    # are masked to NaN (the row is kept for its oxide+trace data).
     for c in ALL_COLS:
         df[c] = pd.to_numeric(df[c], errors="coerce")
-    df = df.dropna(subset=ALL_COLS)
+    df = df.dropna(subset=OXIDES + TRACES)
     for c in OXIDES:
         df = df[(df[c] >= 0) & (df[c] <= 100)]
     for c in TRACES:
-        df = df[(df[c] >= 0) & (df[c] < 50000)]   # ppm plausible upper bound
+        df = df[(df[c] >= 0) & (df[c] < 50000)]        # ppm
+    df.loc[~df[AGE].between(0, 4.6), AGE] = pd.NA      # Ga
+    for c in ("sr87_sr86", "nd143_nd144", "hf176_hf177"):
+        df.loc[~df[c].between(0, 2), c] = pd.NA
+    for c in ("epsilon_nd", "epsilon_sr", "epsilon_hf"):
+        df.loc[~df[c].between(-50, 50), c] = pd.NA
+    for c in ("pb206_pb204", "pb207_pb204", "pb208_pb204"):
+        df.loc[~df[c].between(0, 60), c] = pd.NA
     n_valid = len(df)
+    n_with_iso = int(df[ISOTOPES].notna().any(axis=1).sum())
     if n_valid == 0:
-        print("ERROR: no valid rows after the major+trace merge+clean "
-              "(join schema may differ).", file=sys.stderr)
+        print("ERROR: no valid rows after merge+clean.", file=sys.stderr)
         return 1
 
     df = df.sample(n=min(args.max_rows, n_valid), random_state=42)[ALL_COLS].reset_index(drop=True)
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False)
-    print(f"\nwrote {len(df)} REAL samples (major+trace merged) to\n  {out}")
-    print(f"  major={n_major}, trace={n_trace}, joined(both)={n_joined}, valid={n_valid}")
-    print("  oxides :", OXIDES)
-    print("  traces :", TRACES)
-    # sanity: a trace relation (Zr vs Nb -- HFSE pair) should be real + positive
-    r = df[["zr_ppm", "nb_ppm"]].corr().iloc[0, 1]
-    print(f"  real r(Zr, Nb) = {r:.3f}  (HFSE pair; expect positive)")
+    print(f"\nwrote {len(df)} REAL samples to\n  {out}")
+    print(f"  base(oxides+trace)={n_valid}, of which {n_with_iso} have isotope data; "
+          f"columns={len(ALL_COLS)} (oxides+trace required; isotopes+age optional)")
+    print(f"  oxides:{len(OXIDES)} traces:{len(TRACES)} isotopes:{len(ISOTOPES)} +age")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
