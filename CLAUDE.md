@@ -120,6 +120,25 @@ memory) repurposed from astrophysics to geochemistry.
   whole-rock relations are textbook), so the store grows slowly — which is
   correct. To disable evolution: remove the token from `llm_env`, or set
   `GEODISC_DISCOVERY_EVOLUTION_DISABLED=1` and reload. See "Commands".
+- **Measurement stack + closed RSI loop (2026-07-15):** `evolved_analysis/
+  capability_index.py` turns the verdict log (`claim_verdicts.jsonl`) from a
+  passive diagnostic into a measured self-improvement signal (the discipline
+  borrowed from the *Unleashing the Beast* working paper, adapted to discovery):
+  a **capability index** (engineering health: Gate-1 proposer effectiveness +
+  Gate-2 literature coverage + a measured-fix "learning" sub-score; the
+  domain-bounded `novel_rate` and human-judged `novelty_quality` reported
+  separately), plus the loop **mine the failure ledger -> propose a human-gated
+  fix -> (human applies + registers it) -> measure whether the targeted failure
+  class dropped -> fold into the CI -> watch the trend**. Run it with
+  `python -m evolved_analysis.capability_index`; register an applied fix with
+  `register_applied_fix(...)` (the approval gate is never automatic).
+  **Boundary claims are load-bearing** (attached to every CI): it is a
+  self-reported heuristic, NOT an external benchmark; trend over level;
+  `novel_rate` is bounded by the textbook ceiling; `ci_score=100` means
+  saturation of the formula, not a breakthrough. First real measurement
+  (119 verdicts): CI 73.2, gate2-coverage 0.95, dominant failure `gate2-known`
+  (the textbook ceiling, 48%) with the proposed fix (prime the proposer for
+  residual / partial-correlation relations).
 - **Spec**: `docs/superpowers/specs/2026-07-11-geodisc-migration-design.md`
 - **Plan**: `docs/superpowers/plans/2026-07-11-geodisc-migration.md`
 
@@ -262,7 +281,7 @@ falls back to fiction.
 
 ## Testing
 ```bash
-python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py -q  # fiction-free gate (11) + gate discipline (8) + Gate-2 relevance guard + OpenAlex source (7)
+python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (8) + Gate-2/OpenAlex (7) + capability-index/RSI (5)
 python -c "import geo_core; from geo_core import create_geo_stan_system; create_geo_stan_system()"  # smoke
 python -c "from geo_core import mechanistic_process_graphs as mpg; mpg.explain_preservation()"     # capability
 python -c "from geo_core.domains import geochemistry; print(len(geochemistry.ALL_GEODISC_DOMAINS))" # 16
