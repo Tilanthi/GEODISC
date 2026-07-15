@@ -97,6 +97,63 @@ class NoveltyResult:
 
 
 # --------------------------------------------------------------------------- #
+# geochemistry domain-relevance guard (§7.4: off-topic retrieval != novel)     #
+# --------------------------------------------------------------------------- #
+# Geochemistry journals are poorly indexed on arXiv/Semantic Scholar, so
+# retrieval for a geochem claim often returns OFF-TOPIC papers (stats, finance,
+# ML...). Running the entailment judge on those yields "none entails" -> a FALSE
+# "novel" verdict for textbook relations. The guard requires retrieval to
+# surface at least one on-domain paper before "novel" can be declared; otherwise
+# it returns retrieval-failed (conservative — never promote on bad retrieval).
+GEOCHEM_DOMAIN_TERMS = {
+    # major oxides
+    "sio2", "tio2", "al2o3", "fe2o3", "feo", "feot", "mgo", "cao", "mno",
+    "na2o", "k2o", "p2o5",
+    # rocks
+    "basalt", "basaltic", "granite", "granitic", "andesite", "andesitic",
+    "rhyolite", "dacite", "peridotite", "gabbro", "diorite", "dolerite",
+    "shale", "sandstone", "siltstone", "chert", "limestone", "dolostone",
+    "marble", "schist", "gneiss", "quartzite", "tuff", "breccia",
+    "conglomerate", "evaporite",
+    # rock classes / series
+    "tholeiitic", "calc-alkaline", "calcalkaline", "alkaline", "subalkaline",
+    "ultramafic", "mafic", "felsic", "igneous", "metamorphic", "sedimentary",
+    "volcanic", "plutonic", "pyroclastic",
+    # minerals
+    "quartz", "feldspar", "olivine", "pyroxene", "plagioclase", "amphibole",
+    "biotite", "muscovite", "calcite", "dolomite", "pyrite", "hematite",
+    "magnetite", "ilmenite", "apatite", "zircon", "monazite", "garnet",
+    "zeolite", "smectite", "illite", "kaolinite", "chlorite",
+    # geochemistry / petrology vocabulary
+    "geochem", "geochemistry", "whole-rock", "wholerock", "trace-element",
+    "rare-earth", "major-element", "isotope", "isotopic", "fractionat",
+    "crystalli", "partial melting", "serpentin", "hydrothermal", "metasomat",
+    "diagenesis", "weathering", "petrolog", "petrograph", "mineralog",
+    "magma", "lava", "tephra", "mantle", "crustal", "stratigraph",
+    "depositional", "provenance", "sedimentolog",
+    # classic diagrams / classifications (textbook markers)
+    "harker", "fenner", "mg#", "mg-number", "bowen", "silica saturation",
+}
+
+
+def _domain_terms_in(text: str) -> set:
+    """Which geochemistry domain terms appear in ``text`` (lowercased)."""
+    if not text:
+        return set()
+    t = text.lower()
+    return {term for term in GEOCHEM_DOMAIN_TERMS if term in t}
+
+
+def _filter_relevant(papers: List[Paper]) -> List[Paper]:
+    """Keep only papers that are themselves geochemistry / Earth-science
+    (contain at least one domain term). Off-topic retrievals (finance / stats /
+    ML papers) are dropped so the entailment judge is never fed irrelevant
+    context that would yield a false 'novel'."""
+    return [p for p in papers
+            if _domain_terms_in((p.title or "") + " " + (p.abstract or ""))]
+
+
+# --------------------------------------------------------------------------- #
 # retrieval                                                                    #
 # --------------------------------------------------------------------------- #
 def _http_get(url: str, timeout: int = 25) -> Optional[str]:
@@ -203,8 +260,9 @@ def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper]
     A claim is already-known if EITHER:
       (a) one of the retrieved abstracts states or directly implies it (cite it), OR
       (b) it is a well-established foundational/textbook result the field treats as
-          given (e.g. the Tully–Fisher relation, the basic colour–redshift
-          correlation underpinning photometric redshifts, the luminosity function).
+          given (e.g. the MgO–SiO2 Harker fractionation trend, FeOt enrichment
+          in tholeiitic basalts / the Fenner trend, total-alkali–silica (TAS)
+          classification, Mg#, silica saturation, Bowen's reaction series).
 
     (a) is grounded in retrieved text; (b) is a domain-knowledge judgement. Both
     are auditable via the returned ``reason_label`` and ``reasoning``. Be
@@ -223,16 +281,18 @@ def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper]
         f"[{i}] {p.title} ({p.year})\n{p.abstract[:900]}"
         for i, p in enumerate(papers))
     system = (
-        "You are a strict scientific novelty auditor. A candidate scientific "
+        "You are a strict GEOCHEMISTRY novelty auditor. A candidate scientific "
         "CLAIM is ALREADY-KNOWN (not a new discovery) if EITHER (a) one of the "
         "RETRIEVED ABSTRACTS states or directly implies it — cite that abstract's "
         "index; OR (b) it is a well-established foundational / textbook result "
-        "that the field treats as given (standard scaling relations, the basic "
-        "colour–redshift correlation behind photometric redshifts, Tully–Fisher, "
-        "the luminosity function, magnitude limits, K-corrections, etc.). Use "
-        "retrieved text for (a) and standard domain knowledge for (b). When "
-        "uncertain, lean toward already-known — a borderline claim should not be "
-        "advertised as a new discovery.")
+        "that the field treats as given: the MgO-SiO2 Harker fractionation trend, "
+        "FeOt enrichment in tholeiitic basalts (the Fenner/AFM trend), total-"
+        "alkali-silica (TAS) classification, Fe-Mg covariation, Mg#, silica "
+        "saturation, Bowen's reaction series, standard element partitioning, "
+        "Walther's law, index-fossil stratigraphy, etc. Use retrieved text for "
+        "(a) and standard geochemistry knowledge for (b). When uncertain, lean "
+        "toward already-known — a borderline claim should not be advertised as a "
+        "new discovery.")
     user = (f"CANDIDATE CLAIM:\n{claim}\n\nRETRIEVED ABSTRACTS:\n{abstracts}\n\n"
             "Respond with ONLY JSON: "
             '{"known": true|false, "reason": "entailed"|"foundational"|"novel", '
@@ -325,10 +385,31 @@ def check_novelty(claim: str, use_s2: bool = True, force: bool = False) -> Novel
         _save_cache(cache)
         return res
 
-    known, entailing, label, reasoning = _judge_known(claim, papers)
+    # §7.4 domain-relevance guard: geochemistry is poorly indexed on arXiv/S2,
+    # so retrieval for a geochem claim often returns off-topic papers. If this
+    # is a geochem claim but NO retrieved paper is on-domain, the retrieval is
+    # off-topic — do NOT judge on irrelevant abstracts (that would falsely mark
+    # textbook relations novel). Conservative: retrieval-failed.
+    claim_terms = _domain_terms_in(claim)
+    if claim_terms:
+        relevant = _filter_relevant(papers)
+        if not relevant:
+            res = NoveltyResult(
+                False, "retrieval-failed", claim, n_retrieved=len(papers),
+                reasoning=(f"retrieved {len(papers)} paper(s) but none are "
+                           "geochemistry-relevant (off-topic); novelty unverified"))
+            cache[key] = res.to_dict()
+            _save_cache(cache)
+            logger.info("[novelty] retrieval-failed (off-topic) — %s", claim[:60])
+            return res
+        judge_papers = relevant
+    else:
+        judge_papers = papers  # claim is not clearly geochem; guard N/A
+
+    known, entailing, label, reasoning = _judge_known(claim, judge_papers)
     if not label and not reasoning:
         # judge itself failed -> conservative
-        res = NoveltyResult(False, "judge-failed", claim, n_retrieved=len(papers),
+        res = NoveltyResult(False, "judge-failed", claim, n_retrieved=len(judge_papers),
                             reasoning="LLM novelty judge unavailable")
         cache[key] = res.to_dict()
         _save_cache(cache)
@@ -337,11 +418,11 @@ def check_novelty(claim: str, use_s2: bool = True, force: bool = False) -> Novel
     if known:
         reason = (f"{label}: {reasoning}") if label else reasoning
         res = NoveltyResult(False, "known", claim, entailed_by=entailing,
-                            n_retrieved=len(papers), reasoning=reason,
-                            retrieved=papers)
+                            n_retrieved=len(judge_papers), reasoning=reason,
+                            retrieved=judge_papers)
     else:
-        res = NoveltyResult(True, "novel", claim, n_retrieved=len(papers),
-                            reasoning=reasoning, retrieved=papers)
+        res = NoveltyResult(True, "novel", claim, n_retrieved=len(judge_papers),
+                            reasoning=reasoning, retrieved=judge_papers)
     cache[key] = res.to_dict()
     _save_cache(cache)
     logger.info("[novelty] %s — %s (n=%d)", res.status, claim[:60], len(papers))
@@ -351,6 +432,6 @@ def check_novelty(claim: str, use_s2: bool = True, force: bool = False) -> Novel
 if __name__ == "__main__":
     import sys
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
-    claim = " ".join(sys.argv[1:]) or "Galaxies with redder g-r color are at higher redshift in SDSS"
+    claim = " ".join(sys.argv[1:]) or "Whole-rock SiO2 is negatively correlated with MgO (the Harker fractionation trend)"
     r = check_novelty(claim)
     print(json.dumps(r.to_dict(), indent=2)[:1500])

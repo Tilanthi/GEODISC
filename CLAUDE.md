@@ -104,21 +104,21 @@ memory) repurposed from astrophysics to geochemistry.
   geochemistry-only history. The precursor astrophysics history is preserved
   only on local branch `archive/astra-precursor` and on the unrelated ASTRA-dev
   repository — never push it to GEODISC.
-- **Operating mode: interactive + always-on supervisor (2026-07-15).** GEODISC
-  services user-requested tasks via `create_geo_stan_system()`, AND the
-  autonomous discovery supervisor (`com.geodisc.discovery`) is now INSTALLED in
-  `~/Library/LaunchAgents` and running (launchd, KeepAlive, Background priority,
-  yields to active users). It runs **ingest-only**: the evolutionary engine is
-  INTENTIONALLY OFF because **Gate 2 (literature novelty) is not yet trustworthy
-  for geochemistry** — its arXiv/Semantic-Scholar retrieval barely covers
-  geochemistry journals, so it false-positives textbook relations (e.g. it
-  marked the tholeiitic Fe-enrichment / Fenner trend "novel" because the
-  retrieval returned irrelevant "market-data" papers). Letting it emit would
-  pollute the store with textbook relations mislabeled as discoveries — a
-  prime-directive violation — so evolution stays off until Gate 2 is fixed
-  (geochem-aware retrieval, e.g. GeoRef/EarthChem-linked literature, or an
-  off-topic-relevance guard). To re-enable after that fix: add
-  `ANTHROPIC_AUTH_TOKEN` (+ `ANTHROPIC_BASE_URL`) to
+- **Operating mode: interactive + always-on supervisor (2026-07-15).** The
+  autonomous discovery supervisor (`com.geodisc.discovery`) is INSTALLED and
+  running (launchd, KeepAlive, Background priority, yields to active users) in
+  **ingest-only** mode — the evolutionary engine is OFF. **Gate 2 now has a
+  geochemistry domain-relevance guard** (`novelty_gate.py` `_filter_relevant` /
+  `_domain_terms_in`): off-topic retrieval — the false-positive path — is
+  returned as `retrieval-failed`, so the engine no longer emits textbook
+  relations as false discoveries (verified: the tholeiitic Fe/Fenner case now
+  returns retrieval-failed, not novel; 0 false emissions across a candidate
+  run). **Remaining limitation:** arXiv/Semantic-Scholar coverage of geochemistry
+  is so thin that nearly every candidate retrieval-fails, so re-enabling
+  evolution would emit ~nothing while spending LLM tokens every cycle — it stays
+  OFF until Gate 2 gets a geochemistry literature source (GeoRef / a geochem
+  abstract corpus) that can actually confirm novelty. To re-enable after that:
+  add `ANTHROPIC_AUTH_TOKEN` (+ `ANTHROPIC_BASE_URL`) to
   `~/.geodisc_persistent/llm_env` (chmod 600). See "Commands".
 - **Spec**: `docs/superpowers/specs/2026-07-11-geodisc-migration-design.md`
 - **Plan**: `docs/superpowers/plans/2026-07-11-geodisc-migration.md`
@@ -262,7 +262,7 @@ falls back to fiction.
 
 ## Testing
 ```bash
-python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py -q  # fiction-free gate (11) + gate discipline (8)
+python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py -q  # fiction-free gate (11) + gate discipline (8) + Gate-2 relevance guard (5)
 python -c "import geo_core; from geo_core import create_geo_stan_system; create_geo_stan_system()"  # smoke
 python -c "from geo_core import mechanistic_process_graphs as mpg; mpg.explain_preservation()"     # capability
 python -c "from geo_core.domains import geochemistry; print(len(geochemistry.ALL_GEODISC_DOMAINS))" # 16
