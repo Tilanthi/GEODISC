@@ -67,6 +67,8 @@ def _get_gateway():
 CACHE_PATH = Path.home() / ".geodisc_persistent" / "evolved_programs" / "novelty_cache.json"
 ARXIV_ENDPOINT = "https://export.arxiv.org/api/query"
 S2_ENDPOINT = "https://api.semanticscholar.org/graph/v1/paper/search"
+OPENALEX_ENDPOINT = "https://api.openalex.org/works"
+_OPENALEX_MAILTO = "geodisc-discovery@example.com"  # OpenAlex polite pool
 _RATE_SLEEP = 4.0  # arXiv asks for >=3s between calls
 
 
@@ -214,6 +216,48 @@ def retrieve_s2(query: str, max_results: int = 5) -> List[Paper]:
         return papers
     except Exception as e:
         logger.debug("[novelty] s2 parse failed: %s", e)
+        return []
+
+
+def _openalex_abstract(inv) -> str:
+    """Reconstruct abstract text from an OpenAlex inverted index {word:[pos]}."""
+    if not inv:
+        return ""
+    pos = {}
+    for word, idxs in inv.items():
+        for i in idxs:
+            pos[i] = word
+    return " ".join(pos[i] for i in sorted(pos))
+
+
+def retrieve_openalex(query: str, max_results: int = 5) -> List[Paper]:
+    """Query OpenAlex — the GEOCHEMISTRY literature source. OpenAlex indexes the
+    journals arXiv/S2 miss for geochemistry (Geochimica et Cosmochimica Acta,
+    EPSL, Chemical Geology, J. Petrology, Contrib. Mineral. Petrol., ...), with
+    structured concepts and abstracts. Free; no API key (``mailto`` for the
+    polite pool). This is what lets Gate 2 actually retrieve relevant geochemistry
+    papers to judge novelty against, instead of off-topic arXiv/S2 hits."""
+    q = urllib.parse.quote(query)
+    url = (f"{OPENALEX_ENDPOINT}?search={q}&per-page={max_results}"
+           f"&mailto={_OPENALEX_MAILTO}")
+    raw = _http_get(url)
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+        papers = []
+        for item in data.get("results", []) or []:
+            title = (item.get("display_name") or "").strip()
+            abstract = _openalex_abstract(item.get("abstract_inverted_index"))
+            venue = (((item.get("primary_location") or {}).get("source") or {})
+                     .get("display_name") or "")
+            oa_id = (item.get("id") or "").rsplit("/", 1)[-1]
+            year = str(item.get("publication_year") or "")[:4]
+            label = f"{title} [{venue}]" if venue else title
+            papers.append(Paper("openalex", label, abstract, oa_id, year))
+        return papers
+    except Exception as e:
+        logger.debug("[novelty] openalex parse failed: %s", e)
         return []
 
 
@@ -365,7 +409,8 @@ def check_novelty(claim: str, use_s2: bool = True, force: bool = False) -> Novel
 
     query = _extract_query(claim)
     logger.info("[novelty] retrieving for claim (query=%r)", query)
-    papers = retrieve_arxiv(query, max_results=5)
+    papers = retrieve_openalex(query, max_results=5)   # primary geochemistry source
+    papers += retrieve_arxiv(query, max_results=5)
     if use_s2:
         papers += retrieve_s2(query, max_results=5)
     # de-dup by title
