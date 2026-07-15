@@ -135,10 +135,16 @@ memory) repurposed from astrophysics to geochemistry.
   **Boundary claims are load-bearing** (attached to every CI): it is a
   self-reported heuristic, NOT an external benchmark; trend over level;
   `novel_rate` is bounded by the textbook ceiling; `ci_score=100` means
-  saturation of the formula, not a breakthrough. First real measurement
-  (119 verdicts): CI 73.2, gate2-coverage 0.95, dominant failure `gate2-known`
-  (the textbook ceiling, 48%) with the proposed fix (prime the proposer for
-  residual / partial-correlation relations).
+  saturation of the formula, not a breakthrough. Baseline measurement (119
+  verdicts): CI 73.2, gate2-coverage 0.95, dominant failure `gate2-known`
+  (the textbook ceiling, 48%) -> proposed fix (prime the proposer for residual
+  / partial-correlation relations). **Loop first driven (2026-07-15):** that fix
+  was applied + registered (`proposer-residual-priming`, reduce, targeted
+  `gate2-known`) and re-measured -- effectiveness **-8%** over a 6-verdict
+  window. Honest negative (a vanity metric would hide it): the priming DID shift
+  candidates to residual/partial forms as intended, but residual relations are
+  also often textbook, so the gate2-known rate did not drop on this small
+  sample. The trend over more episodes is the thing to watch.
 - **Spec**: `docs/superpowers/specs/2026-07-11-geodisc-migration-design.md`
 - **Plan**: `docs/superpowers/plans/2026-07-11-geodisc-migration.md`
 
