@@ -186,6 +186,48 @@ def test_verdict_feedback_hints_reads_failures():
         _os.unlink(p)
 
 
+# --- sign-consistency guard (claim direction vs effect sign) ---------------- #
+def test_claim_stated_direction():
+    from geo_core.scientific_discovery.evolved_analysis.claim_task import (
+        _claim_stated_direction as d)
+    assert d("A is positively correlated with B") == "positive"
+    assert d("A is negatively correlated with B") == "negative"
+    assert d("a robust negative partial correlation between A and B") == "negative"
+    assert d("A positively correlates with B") is None          # unstated phrasing
+    assert d("A and B show a relationship") is None             # unstated
+
+
+def test_direction_consistent():
+    from geo_core.scientific_discovery.evolved_analysis.claim_task import (
+        _direction_consistent as c)
+    assert c("A positively correlated with B", 0.5)[0] is True
+    assert c("A negatively correlated with B", -0.5)[0] is True
+    assert c("A positively correlated with B", -0.5)[0] is False   # MISMATCH
+    assert c("A negatively correlated with B", 0.5)[0] is False    # MISMATCH
+    assert c("A correlates with B", 0.5)[0] is True                # unstated -> ok
+    assert c("A correlates with B", -0.5)[0] is True
+
+
+def test_two_gate_rejects_sign_mismatched_claim():
+    """A candidate whose CLAIM asserts positive but whose computed effect is
+    negative must FAIL Gate 1 (sign-consistency guard), not pass through."""
+    from geo_core.scientific_discovery.evolved_analysis import run_claim_search as rcs
+    # run_claim references df_eval (passes the leakage guard) but returns a
+    # NEGATIVE significant effect while the CLAIM asserts POSITIVE.
+    src = ('CLAIM = "A is positively correlated with B"\n\n\n'
+           'def run_claim(df_train, df_eval):\n'
+           '    _ = df_eval\n'
+           '    return {"effect": -0.55, "pvalue": 1e-12}\n')
+    orig = rcs.gate1_run
+    rcs.gate1_run = lambda s, seed=42, timeout=90.0: {"effect": -0.55, "pvalue": 1e-12}
+    try:
+        v = rcs.two_gate_eval(src, run_gate2=False)
+        assert v["gate1"]["pass"] is False
+        assert "mismatch" in v["gate1"]["reason"].lower()
+    finally:
+        rcs.gate1_run = orig
+
+
 def _run():
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     passed = 0

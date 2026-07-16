@@ -171,6 +171,46 @@ def claim_uses_heldout_split(src: str, entry_point: str = ENTRY_POINT) -> Tuple[
         return (False, "leakage: check-failed")
 
 
+# Direction markers a claim may use to assert a correlation's sign.
+_POS_MARKERS = ("positively correlated", "positive correlation", "positive partial",
+                "positive assoc", "positive covar")
+_NEG_MARKERS = ("negatively correlated", "negative correlation", "negative partial",
+                "negative assoc", "negative covar", "anti-correlat", "inverse")
+
+
+def _claim_stated_direction(claim: str) -> Optional[str]:
+    """Return 'positive'/'negative' if the claim asserts a correlation
+    direction, else None (unstated/ambiguous). Never raises."""
+    try:
+        low = (claim or "").lower()
+        pos = any(k in low for k in _POS_MARKERS)
+        neg = any(k in low for k in _NEG_MARKERS)
+        if pos and not neg:
+            return "positive"
+        if neg and not pos:
+            return "negative"
+        return None
+    except Exception:
+        return None
+
+
+def _direction_consistent(claim: str, effect) -> Tuple[bool, str]:
+    """Sign-consistency guard: does the claim's STATED direction match the
+    computed effect's sign? Returns (ok, reason). Unstated direction -> ok."""
+    stated = _claim_stated_direction(claim)
+    if stated is None:
+        return True, "direction unstated"
+    try:
+        e = float(effect)
+    except (TypeError, ValueError):
+        return True, "effect non-numeric"
+    actual = "positive" if e >= 0 else "negative"
+    if stated == actual:
+        return True, "ok"
+    return False, (f"sign-mismatch: claim states {stated}, effect is {actual} "
+                  f"({e:+.3f})")
+
+
 def gate1_significant(metrics: dict) -> Tuple[bool, str]:
     """Gate 1: is the computed effect statistically significant on real data?
 

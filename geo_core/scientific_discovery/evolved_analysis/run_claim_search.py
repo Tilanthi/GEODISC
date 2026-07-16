@@ -30,7 +30,8 @@ import tempfile
 from pathlib import Path
 
 from .claim_task import (NAIVE_CLAIM_SEED, TASK_SYSTEM, ENTRY_POINT,
-                         parse_claim, gate1_significant, claim_uses_heldout_split)
+                         parse_claim, gate1_significant, claim_uses_heldout_split,
+                         _direction_consistent)
 from .proposer import LLMProposer, apply_diff
 from .verdict_log import log_verdict
 
@@ -138,6 +139,16 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
     if not g1_pass:
         log_verdict(result, dataset)
         return result  # fabricated/non-significant claim stops here
+
+    # sign-consistency guard: the claim's STATED direction must match the effect
+    eff = g1_metrics.get("effect")
+    if eff is not None:
+        d_ok, d_reason = _direction_consistent(claim, eff)
+        if not d_ok:
+            result["gate1"] = {"pass": False, "reason": d_reason,
+                               "metrics": result["gate1"]["metrics"]}
+            log_verdict(result, dataset)
+            return result  # claim misstates its own finding's direction
 
     if run_gate2:
         try:

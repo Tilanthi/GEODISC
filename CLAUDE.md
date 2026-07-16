@@ -125,6 +125,16 @@ memory) repurposed from astrophysics to geochemistry.
   whole-rock relations are textbook), so the store grows slowly — which is
   correct. To disable evolution: remove the token from `llm_env`, or set
   `GEODISC_DISCOVERY_EVOLUTION_DISABLED=1` and reload. See "Commands".
+- **Sign-consistency guard + store purge (2026-07-16):** added a Gate-1 check
+  (`claim_task._direction_consistent` / `_claim_stated_direction`, wired into
+  `two_gate_eval`) that rejects candidates whose CLAIM text asserts a correlation
+  direction ('positive'/'negative') opposite to the computed effect's sign — a
+  recurring proposer flaw where the natural-language claim misstates its own
+  finding's direction (Gate 1 previously checked only `|effect|`). Applied
+  retroactively: stopped the supervisor, purged **3** sign-mismatched records
+  from BOTH the verified store and the emit queue (race-safe stop/purge/restart),
+  leaving **3 clean, sign-consistent** discoveries. Future direction-misstated
+  candidates are now rejected at Gate 1.
 - **Discovery-performance improvements (2026-07-15, Phases 1-4):**
   (1) **Textbook blocklist** -- `novelty_gate._matches_textbook_blocklist` is a
   deterministic Gate-2 fast-path that marks obvious textbook relations (Harker /
@@ -305,7 +315,7 @@ falls back to fiction.
 
 ## Testing
 ```bash
-python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (9) + Gate-2/OpenAlex/blocklist (12) + capability-index/RSI (7)
+python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (12) + Gate-2/OpenAlex/blocklist (12) + capability-index/RSI (7)
 python -c "import geo_core; from geo_core import create_geo_stan_system; create_geo_stan_system()"  # smoke
 python -c "from geo_core import mechanistic_process_graphs as mpg; mpg.explain_preservation()"     # capability
 python -c "from geo_core.domains import geochemistry; print(len(geochemistry.ALL_GEODISC_DOMAINS))" # 16
