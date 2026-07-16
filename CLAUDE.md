@@ -125,6 +125,14 @@ memory) repurposed from astrophysics to geochemistry.
   whole-rock relations are textbook), so the store grows slowly — which is
   correct. To disable evolution: remove the token from `llm_env`, or set
   `GEODISC_DISCOVERY_EVOLUTION_DISABLED=1` and reload. See "Commands".
+- **Gate-1 quality fix (2026-07-16):** analysis of 135 recent gate1-failures
+  showed the dominant cause (38%) was the proposer using bare element names
+  (df["nb"]) instead of the actual columns (df["nb_ppm"]) -- KeyError in the
+  sandbox. Fixed: (a) TASK_SYSTEM now lists the EXACT column names with the
+  `_ppm` suffix emphasised + the correct `sklearn.linear_model` import; (b)
+  `_verdict_feedback_hints` now categorises the failure pattern (missing-column
+  / NaN / weak-effect / bad-import) and injects pattern-specific corrective
+  guidance, closing the loop on the proposer's own errors.
 - **Sign-consistency guard + store purge (2026-07-16):** added a Gate-1 check
   (`claim_task._direction_consistent` / `_claim_stated_direction`, wired into
   `two_gate_eval`) that rejects candidates whose CLAIM text asserts a correlation
@@ -315,7 +323,7 @@ falls back to fiction.
 
 ## Testing
 ```bash
-python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (12) + Gate-2/OpenAlex/blocklist (12) + capability-index/RSI (7)
+python -m pytest geo_core/tests/test_discovery_chokepoint.py geo_core/tests/test_claim_gates.py geo_core/tests/test_novelty_gate.py geo_core/tests/test_capability_index.py -q  # chokepoint (11) + gate discipline (13) + Gate-2/OpenAlex/blocklist (12) + capability-index/RSI (7)
 python -c "import geo_core; from geo_core import create_geo_stan_system; create_geo_stan_system()"  # smoke
 python -c "from geo_core import mechanistic_process_graphs as mpg; mpg.explain_preservation()"     # capability
 python -c "from geo_core.domains import geochemistry; print(len(geochemistry.ALL_GEODISC_DOMAINS))" # 16

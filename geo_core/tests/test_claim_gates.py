@@ -228,6 +228,32 @@ def test_two_gate_rejects_sign_mismatched_claim():
         rcs.gate1_run = orig
 
 
+def test_verdict_feedback_detects_column_name_failures():
+    """When recent candidates fail with KeyError on bare element names, the
+    feedback must tell the proposer the EXACT column names (the _ppm suffix)."""
+    import json as _json, os as _os, tempfile as _tf
+    from geo_core.scientific_discovery.evolved_analysis.run_claim_search import (
+        _verdict_feedback_hints)
+    fd, p = _tf.mkstemp(suffix=".jsonl"); _os.close(fd)
+    rows = [
+        {"outcome": "gate1-failed", "claim": "X vs nb",
+         "gate1": {"reason": "gate1-failed: no valid metric (KeyError: ['nb'])",
+                   "metrics": {"error": "KeyError: ['nb']", "effect": 0.0}}},
+        {"outcome": "gate1-failed", "claim": "Y vs nd",
+         "gate1": {"reason": "gate1-failed: no valid metric (KeyError: ['nd'])",
+                   "metrics": {"error": "KeyError: ['nd']", "effect": 0.0}}},
+    ]
+    with open(p, "w") as f:
+        for r in rows:
+            f.write(_json.dumps(r) + "\n")
+    try:
+        hints = _verdict_feedback_hints(path=p)
+        text = "\n".join(hints)
+        assert "_ppm" in text, f"feedback should name the _ppm columns: {text[:200]}"
+    finally:
+        _os.unlink(p)
+
+
 def _run():
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     passed = 0

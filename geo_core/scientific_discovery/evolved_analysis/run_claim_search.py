@@ -215,12 +215,13 @@ def _now_iso() -> str:
     return datetime.datetime.now().isoformat()
 
 
-def _verdict_feedback_hints(path=None, n_known: int = 5, n_failed: int = 5) -> list:
-    """Phases 3+4 (closed loop): read recent verdicts and return proposer hints.
+def _verdict_feedback_hints(path=None, n_known: int = 5, n_failed: int = 8) -> list:
+    """Closed loop: read recent verdicts and return proposer hints.
 
-    The proposer is fed its own recent failures -- the latest gate2-known claims
-    (textbook families to AVOID regenerating) and gate1-failed claims (generate
-    STRONGER-effect relations). Never raises; returns [] if unreadable.
+    The proposer is fed its own recent failures: gate2-known claims (textbook
+    families to AVOID) and gate1-failed claims (generate STRONGER-effect
+    relations). Also detects the dominant failure PATTERN (e.g. KeyError from
+    wrong column names) and injects specific corrective guidance.
     """
     try:
         if path is None:
@@ -231,17 +232,58 @@ def _verdict_feedback_hints(path=None, n_known: int = 5, n_failed: int = 5) -> l
         rows = [json.loads(l) for l in p.read_text().splitlines() if l.strip()]
         known = [r["claim"] for r in rows
                  if r.get("outcome") == "gate2-known" and r.get("claim")][-n_known:]
-        failed = [r["claim"] for r in rows
-                  if r.get("outcome") == "gate1-failed" and r.get("claim")][-n_failed:]
+        failed_rows = [r for r in rows
+                       if r.get("outcome") == "gate1-failed"
+                       and "sign-mismatch" not in ((r.get("gate1") or {}).get("reason") or "")
+                       and r.get("claim")][-n_failed:]
+        failed = [r["claim"] for r in failed_rows]
         hints = []
         if known:
             hints.append("Recent candidates REJECTED as already-known textbook -- "
                          "do NOT propose similar relations:")
             hints.extend(f"  - {c[:140]}" for c in known)
         if failed:
-            hints.append("Recent candidates too WEAK to be significant on the data "
-                         "-- generate STRONGER-effect relations:")
+            hints.append("Recent candidates FAILED Gate 1 (weak or errored) -- "
+                         "generate STRONGER-effect relations using EXACT column names:")
             hints.extend(f"  - {c[:140]}" for c in failed)
+        # detect the dominant failure pattern + inject corrective guidance
+        from collections import Counter
+        cats = Counter()
+        for r in failed_rows:
+            g1 = r.get("gate1") or {}; m = g1.get("metrics") or {}
+            reason = ((g1.get("reason") or "") + " " + str(m.get("error") or "")).lower()
+            if "keyerror" in reason or "not in index" in reason:
+                cats["missing-column"] += 1
+            elif "nan" in reason:
+                cats["nan"] += 1
+            elif "module" in reason and ("not found" in reason or "no module" in reason):
+                cats["bad-import"] += 1
+            elif "not significant" in reason:
+                cats["weak"] += 1
+            else:
+                cats["other"] += 1
+        if cats:
+            top_cat, top_n = cats.most_common(1)[0]
+            total = sum(cats.values())
+            if top_cat == "missing-column":
+                hints.append(
+                    f"FAILURE PATTERN ({top_n}/{total}): KeyError on bare element names. "
+                    "The EXACT DataFrame columns are: oxides sio2/tio2/al2o3/feo_tot/mgo/"
+                    "cao/mno/na2o/k2o/p2o5; traces v_ppm/cr_ppm/co_ppm/ni_ppm/cu_ppm/"
+                    "zn_ppm/rb_ppm/sr_ppm/y_ppm/zr_ppm/nb_ppm/ba_ppm/la_ppm/ce_ppm/"
+                    "nd_ppm (the _ppm suffix is REQUIRED -- NOT bare 'nd'/'nb'); isotopes "
+                    "sr87_sr86/nd143_nd144/epsilon_nd/epsilon_sr/pb206_pb204/pb207_pb204/"
+                    "pb208_pb204/hf176_hf177/epsilon_hf; age. Use these EXACT names.")
+            elif top_cat == "nan":
+                hints.append(
+                    f"FAILURE PATTERN ({top_n}/{total}): NaN in computation. ALWAYS "
+                    "df=df.dropna(subset=[your_cols]) before spearmanr/corr -- isotope/"
+                    "age columns are sparse (~10% of rows).")
+            elif top_cat == "weak":
+                hints.append(
+                    f"FAILURE PATTERN ({top_n}/{total}): |effect| < 0.30. Aim for |r|"
+                    " >= 0.4; prefer co-varying element groups (HFSE Zr-Nb-Y, LREE "
+                    "La-Ce-Nd, LILE Rb-Sr-Ba) and PARTIAL correlations.")
         return hints
     except Exception:
         return []
