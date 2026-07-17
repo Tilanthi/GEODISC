@@ -28,10 +28,10 @@ memory) repurposed from astrophysics to geochemistry.
 - **Codebase:** geochemistry-only, fully purged of astrophysics.
   `compileall` 0 errors; full module import sweep clean (0 broken); 43 gate
   tests green; smoke + 16 domains + mechanistic process-graph capability OK.
-  Zero "ASTRA"/"RASTI" references in code; legacy astrophysics `data/` purged.
-  (The only remaining "ASTRA" mentions in the repo are the protective fence
-  below — invariant #1/#2 — and the migration-history docs that record how
-  GEODISC was created from the geochemistry repurposing.)
+  Zero predecessor-project references in code; legacy astrophysics `data/`
+  purged. (The only remaining predecessor-name mentions in the repo are the
+  protective fence below — invariant #1/#2 — which exists precisely to keep
+  GEODISC free of the separate predecessor project.)
 - **Code hardening (2026-07-17 audit):** emit path is now atomic (temp +
   `os.replace`; a timeout-kill can no longer truncate the staging file and
   silently drop both-gate survivors). Restored broken public APIs:

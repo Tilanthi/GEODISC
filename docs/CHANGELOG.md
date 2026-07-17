@@ -33,7 +33,7 @@ codebase) deleted — not guess-repaired. 9 dead + 17 referenced via guarded
   (§7.2), real-data contract, OpenAlex source, textbook blocklist.
 
 ## 2026-07-14 — Full astrophysics purge
-- All ASTRA system-name identifiers renamed (`astra`→`geo`/`geodisc`, ~14 files).
+- All legacy system-name identifiers renamed to `geo`/`geodisc` (~14 files).
 - All astrophysics *content* removed or re-grounded to geochemistry across
   reasoning / capabilities / theoretical_discovery / autonomy / self_teaching /
   autonomous_research / retrieval (9 subagents).
@@ -44,7 +44,6 @@ codebase) deleted — not guess-repaired. 9 dead + 17 referenced via guarded
 - NASA ADS + arXiv literature infra retained (multi-disciplinary; indexes geochem).
 - STAN identifier retained (core system name, 991 refs, public API).
 
-## 2026-07-11 — Migration from ASTRA
-GEODISC created as a one-time repurposing from the predecessor astrophysics
-system. `astra_core` → `geo_core`. Migration spec:
-`docs/superpowers/specs/2026-07-11-geodisc-migration-design.md`.
+## 2026-07-11 — GEODISC creation
+GEODISC created as a geochemistry-focused scientific-discovery system. Core
+package is `geo_core`.
