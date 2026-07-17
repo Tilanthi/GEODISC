@@ -367,9 +367,10 @@ def register_real_discoveries():
         analysis_code=[],
         result_files=[],
         figure_files=[
-            "/Users/gjw255/astrodata/SWARM/GEODISC/RASTI/figures_v41/fig_causal_chain.png",
-            "/Users/gjw255/astrodata/SWARM/GEODISC/RASTI/figures_v41/fig_dop_correlation.png",
-            "/Users/gjw255/astrodata/SWARM/GEODISC/RASTI/figures_v41/fig_framboid_pattern.png"
+            # Illustrative (non-existent) figure paths for this HALLUCINATED example
+            "examples/mount_mcrae/fig_causal_chain.png",
+            "examples/mount_mcrae/fig_dop_correlation.png",
+            "examples/mount_mcrae/fig_framboid_pattern.png"
         ],
         provenance_level=ProvenanceLevel.HALLUCINATED,
         description="Illustrative figures created for paper, not real analysis",

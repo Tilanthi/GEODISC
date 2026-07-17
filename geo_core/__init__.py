@@ -175,7 +175,7 @@ except ImportError:
 # =============================================================================
 # PHASE 2-4 ENHANCEMENTS: Domain Expansion, Physics Integration, Validation
 # =============================================================================
-# These represent the enhanced capabilities added to address RASTI paper limitations
+# Enhanced capabilities: geochemistry domain expansion, physics integration, validation
 
 # -----------------------------------------------------------------------------
 # Domain System (Phase 2): Modular domain architecture for specialized geochemistry
