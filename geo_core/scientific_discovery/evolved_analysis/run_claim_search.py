@@ -34,6 +34,10 @@ from .claim_task import (NAIVE_CLAIM_SEED, TASK_SYSTEM, ENTRY_POINT,
                          _direction_consistent)
 from .proposer import LLMProposer, apply_diff
 from .verdict_log import log_verdict
+try:
+    from ..discovery_store import _atomic_write  # when imported within geo_core
+except ImportError:
+    from discovery_store import _atomic_write     # standalone (evolved_analysis as top-level)
 
 logger = logging.getLogger(__name__)
 
@@ -196,15 +200,25 @@ def _emit(verdict: dict) -> None:
             "pvalue": verdict["gate1"]["metrics"].get("pvalue"),
         },
     }
+    EVOLVED_STORE.parent.mkdir(parents=True, exist_ok=True)
+    # Robust load: a truncated/corrupt staging file (e.g. process killed mid-write)
+    # must not silently drop this survivor AND every future one. Default to [] and
+    # continue rather than propagating JSONDecodeError into the broad except below.
     try:
-        EVOLVED_STORE.parent.mkdir(parents=True, exist_ok=True)
         data = json.loads(EVOLVED_STORE.read_text()) if EVOLVED_STORE.exists() else []
-        if not isinstance(data, list):
-            data = []
+    except (json.JSONDecodeError, OSError):
+        logger.warning("[claim_search] staging file unreadable, starting fresh: %s",
+                       EVOLVED_STORE)
+        data = []
+    if not isinstance(data, list):
+        data = []
+    try:
         if not any((r.get("verification") or {}).get("program_hash")
                    == verdict["program_hash"] for r in data if isinstance(r, dict)):
             data.append(record)
-            EVOLVED_STORE.write_text(json.dumps(data, indent=2))
+            # Atomic write (temp + os.replace): a timeout-kill cannot truncate the
+            # staging file and poison all subsequent emits.
+            _atomic_write(EVOLVED_STORE, json.dumps(data, indent=2))
             logger.info("[claim_search] ✅ EMITTED both-gate survivor: %s", claim[:70])
     except Exception as e:
         logger.warning("[claim_search] emit failed: %s", e)
