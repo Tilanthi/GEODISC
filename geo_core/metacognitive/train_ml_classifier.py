@@ -6,11 +6,7 @@ Train ML Classifier on Benchmark Tasks
 Trains the meta-cognitive ML classifier on SciEval-Meta tasks.
 """
 
-import sys
 from pathlib import Path
-
-# Add RASTI_AI to path for tasks file
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "RASTI_AI"))
 
 from geo_core.metacognitive.ml_classifier import MetaCognitiveClassifier
 
