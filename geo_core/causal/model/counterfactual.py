@@ -72,14 +72,16 @@ class CounterfactualEngine:
         Returns:
             Counterfactual result with value and explanation
         """
-        # Step 1: Abduction - infer exogenous variables
-        try:
-            exogenous_unit = self._abduce(query.observation)
-        except Exception as e:
-            return CounterfactualResult(
-                value=0.0,
-                confidence=0.0,
-                reasoning=f"Abduction failed: {e}",
-                factual=query.observation,
-                counterfactual={}
-            )
+        # Counterfactual estimation (abduction -> action -> prediction) is not
+        # implemented in this peripheral causal package. The previous body called
+        # a non-existent ``_abduce`` and, via the broad except, silently returned
+        # a misleading "Abduction failed" CounterfactualResult whose value=0.0 /
+        # confidence=0.0 looked like a real estimate. Fail honestly instead.
+        # The live counterfactual implementation lives in
+        # geo_core.reasoning.counterfactual_reasoning and
+        # geo_core.capabilities.synthesis.counterfactual_engine.
+        raise NotImplementedError(
+            "CounterfactualEngine.compute() is not implemented in "
+            "geo_core.causal.model.counterfactual; use the live "
+            "counterfactual reasoning in geo_core.reasoning / capabilities."
+        )

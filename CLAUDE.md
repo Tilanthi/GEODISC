@@ -26,8 +26,23 @@ memory) repurposed from astrophysics to geochemistry.
 ## Current State (2026-07-17)
 
 - **Codebase:** geochemistry-only, fully purged of astrophysics.
-  `compileall` 0 errors. 43 gate tests green; smoke + construct + 16 domains +
-  mechanistic process-graph capability OK.
+  `compileall` 0 errors; full module import sweep clean (0 broken); 43 gate
+  tests green; smoke + 16 domains + mechanistic process-graph capability OK.
+  Zero "ASTRA" refs in `.py` code.
+- **Code hardening (2026-07-17 audit):** emit path is now atomic (temp +
+  `os.replace`; a timeout-kill can no longer truncate the staging file and
+  silently drop both-gate survivors). Restored broken public APIs:
+  `geo_core.MORKOntology` + kernel-memory block, physics autodiff
+  (`DualNumber`/`GradientTape`), `VectorRecord` `@dataclass`, and capabilities
+  `__all__` (None-pruned, 207 honest names). Fixed the legacy `process_query`
+  crash via an `AdvancedMetaCognitiveReasoner.evaluate_task` adapter. Peripheral
+  `causal/` made honest (counterfactual `compute()` raises `NotImplementedError`
+  instead of a silent fake result; `scm.do_intervention` late-binding closure
+  bug fixed so multi-var `do(X=5,Z=10)` no longer collapses to the last value;
+  `InterventionPlanner._compute_confidence` implemented). Orphan modules whose
+  siblings were purged in the truncated-file cleanup (605f55b) are import-guarded
+  so package surfaces stay clean. Removed confirmed-dead trees: `arc_reasoning/`,
+  `gsd/`, duplicate `intelligence/mind_arbitrator.py` + `mind_synergy.py`.
 - **Discovery pipeline:** autonomous, running via launchd with evolution ENABLED.
   Two-gate EVALUATE: Gate 1 (real-data significance + held-out leakage guard +
   sign-consistency guard); Gate 2 (OpenAlex geochem literature + textbook

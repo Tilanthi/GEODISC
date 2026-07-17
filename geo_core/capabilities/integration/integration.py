@@ -16,12 +16,11 @@ Date: 2026-02-20
 from typing import Dict, Any, Optional, Callable
 from functools import wraps
 
-from .v95_semantic_grounding import (
-    SemanticGroundingLayer,
-    GroundedOutputGenerator,
-    VerificationLevel,
-    GroundingReport
-)
+try:
+    from .v95_semantic_grounding import SemanticGroundingLayer, GroundedOutputGenerator, VerificationLevel, GroundingReport
+except ImportError:
+    # v95_semantic_grounding purged (605f55b); capability unavailable.
+    SemanticGroundingLayer = GroundedOutputGenerator = VerificationLevel = GroundingReport = None
 
 
 def grounded_answer(

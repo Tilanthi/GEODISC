@@ -18,7 +18,11 @@ import hashlib
 import time
 
 from .grid_dsl import Grid, GridObject, empty_grid
-from .pattern_library import PatternPrimitives
+try:
+    from .pattern_library import PatternPrimitives
+except ImportError:
+    # pattern_library purged (605f55b); capability unavailable.
+    PatternPrimitives = None
 
 
 @dataclass

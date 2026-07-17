@@ -130,6 +130,21 @@ class AdvancedMetaCognitiveReasoner:
             except:
                 pass
 
+    def evaluate_task(
+        self,
+        scenario: str,
+        question: str
+    ) -> MetaCognitiveAssessment:
+        """Adapter for the legacy `evaluate_task(scenario, question)` contract.
+
+        Some callers (notably ``core/unified.py``'s ``process_query`` data
+        sufficiency check) dispatch via ``data_sufficiency_evaluator.evaluate_task``.
+        The advanced reasoner's real entry point is
+        ``evaluate_with_rich_justification`` (identical signature); delegate to it
+        so the advanced-reasoner path does not raise AttributeError.
+        """
+        return self.evaluate_with_rich_justification(scenario, question)
+
     def evaluate_with_rich_justification(
         self,
         scenario: str,

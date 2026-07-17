@@ -1927,6 +1927,11 @@ __all__ += [
     'monitor_streaming_data',
 ]
 
+# Prune names that failed to import (optional capabilities whose dependencies
+# are unavailable). Keeps `from geo_core.capabilities import *` honest and
+# prevents None entries from polluting the public surface.
+__all__ = [n for n in __all__ if globals().get(n) is not None]
+
 
 def utility_function_7(*args, **kwargs):
     """Utility function 7."""

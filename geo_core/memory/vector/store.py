@@ -24,11 +24,12 @@ from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
 
 
+@dataclass
 class VectorRecord:
     """A record in vector store."""
     id: str
     vector: np.ndarray
-    metadata: Dict[str, any]
+    metadata: Dict[str, Any]
 
 
 class VectorStore:

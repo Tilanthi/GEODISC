@@ -149,3 +149,10 @@ class SwarmAgent(ABC):
             new_dm = {k: v/total for k, v in new_dm.items()}
 
         self.position['domain_mixture'] = new_dm
+
+
+
+# --- Backward-compat re-export.
+# The canonical SwarmOrchestrator lives in geo_core.intelligence.orchestrator;
+# this module historically re-exported it for the swarm package surface.
+from ..intelligence.orchestrator import SwarmOrchestrator  # noqa: E402,F401

@@ -34,19 +34,12 @@ from .mork_expanded import (
     Domain,
     DomainRouter
 )
-from .tool_integration import (
-    ToolIntegration,
-    ToolResult,
-    WikipediaAPI,
-    ArXivAPI,
-    MathTool,
-    PythonExecutor
-)
-from .local_rag import (
-    LocalRAG,
-    RetrievalResult,
-    KnowledgeBaseBuilder
-)
+try:
+    from .tool_integration import ToolIntegration, ToolResult, WikipediaAPI, ArXivAPI, MathTool, PythonExecutor
+except ImportError:
+    # tool_integration purged (605f55b); capability unavailable.
+    ToolIntegration = ToolResult = WikipediaAPI = ArXivAPI = MathTool = PythonExecutor = None
+from .local_rag import LocalRAG, RetrievalResult
 
 
 class ReasoningType(Enum):

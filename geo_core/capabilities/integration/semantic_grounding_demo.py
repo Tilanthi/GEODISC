@@ -17,14 +17,11 @@ its ability to detect and prevent hallucinations.
 Run with: python -m geo_core.capabilities.v95_semantic_grounding_demo
 """
 
-from geo_core.capabilities.v95_semantic_grounding import (
-    SemanticGroundingLayer,
-    GroundedOutputGenerator,
-    VerificationLevel,
-    validate_scientific_content,
-    check_formula,
-    register_hallucination
-)
+try:
+    from geo_core.capabilities.v95_semantic_grounding import SemanticGroundingLayer, GroundedOutputGenerator, VerificationLevel, validate_scientific_content, check_formula, register_hallucination
+except ImportError:
+    # geo_core.capabilities.v95_semantic_grounding purged (605f55b); capability unavailable.
+    SemanticGroundingLayer = GroundedOutputGenerator = VerificationLevel = validate_scientific_content = check_formula = register_hallucination = None
 
 
 def demo_hallucination_detection():

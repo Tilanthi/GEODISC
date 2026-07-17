@@ -123,6 +123,20 @@ class InterventionPlanner:
         # Simplified - in practice would use domain knowledge
         return [-1.0, 0.0, 1.0]
 
+    def _compute_confidence(self, best: Dict) -> float:
+        """Confidence in the selected intervention.
+
+        This is a documented heuristic, not a calibrated uncertainty estimate:
+        real confidence estimation (e.g. bootstrapping the SCM, propagated
+        structural-equation variance) is not implemented in this peripheral
+        package. We map the predicted effect magnitude onto [0, 1] via a
+        logistic centred at a nominal effect scale so that larger predicted
+        effects yield higher (but never extreme) confidence.
+        """
+        import math
+        effect = float(best.get('effect', 0.0))
+        return 1.0 / (1.0 + math.exp(-abs(effect)))
+
     def _compute_causal_effect(self,
                                intervention: Intervention,
                                target: str) -> float:

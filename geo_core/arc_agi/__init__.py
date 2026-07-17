@@ -19,45 +19,49 @@ from .grid_dsl import (
     empty_grid, from_objects
 )
 
-from .hypothesis_engine import (
-    TransformationHypothesis, TransformationType,
-    HypothesisGenerator, HypothesisTester
-)
+from .hypothesis_engine import TransformationHypothesis, TransformationType, HypothesisGenerator
 
-from .pattern_library import (
-    Pattern, PatternType,
-    PatternDetector, PatternPrimitives,
-    ObjectRelationships, CompositeTransform
-)
+try:
+    from .pattern_library import Pattern, PatternType, PatternDetector, PatternPrimitives, ObjectRelationships, CompositeTransform
+except ImportError:
+    # pattern_library purged (605f55b); capability unavailable.
+    Pattern = PatternType = PatternDetector = PatternPrimitives = ObjectRelationships = CompositeTransform = None
 
-from .systematic_search import (
-    SearchState, TaskAnalysis,
-    ConstraintPropagator, ProgramSynthesizer,
-    BeamSearchSolver, AnalogicalTransfer,
-    ARCSolver
-)
+try:
+    from .systematic_search import SearchState, TaskAnalysis, ConstraintPropagator, ProgramSynthesizer, BeamSearchSolver, AnalogicalTransfer, ARCSolver
+except ImportError:
+    # systematic_search: names removed; capability unavailable.
+    SearchState = TaskAnalysis = ConstraintPropagator = ProgramSynthesizer = BeamSearchSolver = AnalogicalTransfer = ARCSolver = None
 
-from .extended_generators import ExtendedGenerators
+try:
+    from .extended_generators import ExtendedGenerators
+except ImportError:
+    # extended_generators: names removed; capability unavailable.
+    ExtendedGenerators = None
 
-from .deep_synthesis import (
-    DeepProgramSynthesizer, EnumerativeSynthesizer,
-    ProgramNode, TypedPrimitive
-)
+try:
+    from .deep_synthesis import DeepProgramSynthesizer, EnumerativeSynthesizer, ProgramNode, TypedPrimitive
+except ImportError:
+    # deep_synthesis: names removed; capability unavailable.
+    DeepProgramSynthesizer = EnumerativeSynthesizer = ProgramNode = TypedPrimitive = None
 
-from .neural_patterns import (
-    GridEmbedding, GridEncoder,
-    TransformationEmbedding, PatternMatcher,
-    PatternCluster, TransformationPrioritizer
-)
+try:
+    from .neural_patterns import GridEmbedding, GridEncoder, TransformationEmbedding, PatternMatcher, PatternCluster, TransformationPrioritizer
+except ImportError:
+    # neural_patterns: names removed; capability unavailable.
+    GridEmbedding = GridEncoder = TransformationEmbedding = PatternMatcher = PatternCluster = TransformationPrioritizer = None
 
-from .iterative_refinement import (
-    SolutionAttempt, ErrorAnalysis,
-    ErrorAnalyzer, SolutionRefiner,
-    IterativeRefinementSolver, HypothesisCombiner,
-    ConstraintBasedRepair
-)
+try:
+    from .iterative_refinement import SolutionAttempt, ErrorAnalysis, ErrorAnalyzer, SolutionRefiner, IterativeRefinementSolver, HypothesisCombiner, ConstraintBasedRepair
+except ImportError:
+    # iterative_refinement: names removed; capability unavailable.
+    SolutionAttempt = ErrorAnalysis = ErrorAnalyzer = SolutionRefiner = IterativeRefinementSolver = HypothesisCombiner = ConstraintBasedRepair = None
 
-from .enhanced_solver import EnhancedARCSolver, SolveResult
+try:
+    from .enhanced_solver import EnhancedARCSolver, SolveResult
+except ImportError:
+    # enhanced_solver: names removed; capability unavailable.
+    EnhancedARCSolver = SolveResult = None
 
 __all__ = [
     # Grid DSL

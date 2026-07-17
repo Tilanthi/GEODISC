@@ -23,46 +23,46 @@ from enum import Enum, auto
 import logging
 
 # Import all V70 components
-from .v70_algorithmic_discovery import (
-    AlgorithmicDiscoveryEngine,
-    create_algorithmic_discovery_engine,
-    DiscoveredAlgorithm
-)
-from .v70_universal_causal import (
-    UniversalCausalSubstrate,
-    create_universal_causal_substrate,
-    CausalStructure
-)
-from .v70_predictive_geometry import (
-    PredictiveInformationGeometry,
-    create_predictive_geometry,
-    InformationPoint
-)
-from .v70_meta_scientific import (
-    MetaScientificReasoner,
-    create_meta_scientific_reasoner,
-    ScientificQuestion,
-    QuestionType
-)
-from .v70_emergent_computation import (
-    EmergentComputationLayer,
-    create_emergent_computation_layer,
-    EmergentPattern
-)
-from .v70_temporal_hierarchy import (
-    TemporalHierarchyLearner,
-    create_temporal_hierarchy_learner,
-    TemporalPattern
-)
-from .v70_analogical_transfer import (
-    DeepAnalogicalTransferEngine,
-    create_analogical_transfer_engine
-)
-from .v70_hypothesis_generator import (
-    HypothesisSpaceGenerator,
-    create_hypothesis_generator,
-    Hypothesis
-)
+try:
+    from .v70_algorithmic_discovery import AlgorithmicDiscoveryEngine, create_algorithmic_discovery_engine, DiscoveredAlgorithm
+except ImportError:
+    # v70_algorithmic_discovery purged (605f55b); capability unavailable.
+    AlgorithmicDiscoveryEngine = create_algorithmic_discovery_engine = DiscoveredAlgorithm = None
+try:
+    from .v70_universal_causal import UniversalCausalSubstrate, create_universal_causal_substrate, CausalStructure
+except ImportError:
+    # v70_universal_causal purged (605f55b); capability unavailable.
+    UniversalCausalSubstrate = create_universal_causal_substrate = CausalStructure = None
+try:
+    from .v70_predictive_geometry import PredictiveInformationGeometry, create_predictive_geometry, InformationPoint
+except ImportError:
+    # v70_predictive_geometry purged (605f55b); capability unavailable.
+    PredictiveInformationGeometry = create_predictive_geometry = InformationPoint = None
+try:
+    from .v70_meta_scientific import MetaScientificReasoner, create_meta_scientific_reasoner, ScientificQuestion, QuestionType
+except ImportError:
+    # v70_meta_scientific purged (605f55b); capability unavailable.
+    MetaScientificReasoner = create_meta_scientific_reasoner = ScientificQuestion = QuestionType = None
+try:
+    from .v70_emergent_computation import EmergentComputationLayer, create_emergent_computation_layer, EmergentPattern
+except ImportError:
+    # v70_emergent_computation purged (605f55b); capability unavailable.
+    EmergentComputationLayer = create_emergent_computation_layer = EmergentPattern = None
+try:
+    from .v70_temporal_hierarchy import TemporalHierarchyLearner, create_temporal_hierarchy_learner, TemporalPattern
+except ImportError:
+    # v70_temporal_hierarchy purged (605f55b); capability unavailable.
+    TemporalHierarchyLearner = create_temporal_hierarchy_learner = TemporalPattern = None
+try:
+    from .v70_analogical_transfer import DeepAnalogicalTransferEngine, create_analogical_transfer_engine
+except ImportError:
+    # v70_analogical_transfer purged (605f55b); capability unavailable.
+    DeepAnalogicalTransferEngine = create_analogical_transfer_engine = None
+try:
+    from .v70_hypothesis_generator import HypothesisSpaceGenerator, create_hypothesis_generator, Hypothesis
+except ImportError:
+    # v70_hypothesis_generator purged (605f55b); capability unavailable.
+    HypothesisSpaceGenerator = create_hypothesis_generator = Hypothesis = None
 
 logger = logging.getLogger(__name__)
 

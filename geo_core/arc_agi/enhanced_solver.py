@@ -15,24 +15,27 @@ from dataclasses import dataclass
 import time
 
 from .grid_dsl import Grid, GridObject, empty_grid
-from .hypothesis_engine import (
-    TransformationHypothesis, TransformationType,
-    HypothesisGenerator, HypothesisTester
-)
-from .pattern_library import PatternDetector, PatternPrimitives, CompositeTransform
-from .systematic_search import (
-    ConstraintPropagator, ProgramSynthesizer, BeamSearchSolver,
-    AnalogicalTransfer, TaskAnalysis
-)
-from .extended_generators import ExtendedGenerators
-from .deep_synthesis import DeepProgramSynthesizer, EnumerativeSynthesizer
+from .hypothesis_engine import TransformationHypothesis, TransformationType, HypothesisGenerator
+try:
+    from .pattern_library import PatternDetector, PatternPrimitives, CompositeTransform
+except ImportError:
+    # pattern_library purged (605f55b); capability unavailable.
+    PatternDetector = PatternPrimitives = CompositeTransform = None
+try:
+    from .systematic_search import ConstraintPropagator, ProgramSynthesizer, BeamSearchSolver, AnalogicalTransfer, TaskAnalysis
+except ImportError:
+    # systematic_search: names removed.
+    ConstraintPropagator = ProgramSynthesizer = BeamSearchSolver = AnalogicalTransfer = TaskAnalysis = None
+try:
+    from .extended_generators import ExtendedGenerators
+except ImportError:
+    # extended_generators: names removed.
+    ExtendedGenerators = None
+from .deep_synthesis import DeepProgramSynthesizer
 from .neural_patterns import (
     GridEncoder, PatternMatcher, TransformationPrioritizer, PatternCluster
 )
-from .iterative_refinement import (
-    ErrorAnalyzer, SolutionRefiner, IterativeRefinementSolver,
-    HypothesisCombiner, ConstraintBasedRepair
-)
+from .iterative_refinement import ErrorAnalyzer, SolutionRefiner, IterativeRefinementSolver
 
 
 @dataclass

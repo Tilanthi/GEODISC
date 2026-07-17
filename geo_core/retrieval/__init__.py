@@ -30,39 +30,29 @@ from .hybrid_search import (
     Document,
 )
 
-from .context_distiller import (
-    ContextDistiller,
-    RelevancyCheck,
-    DistillationResult,
-    create_context_distiller,
-    SimpleKeywordChecker,
-)
+try:
+    from .context_distiller import ContextDistiller, RelevancyCheck, DistillationResult, create_context_distiller, SimpleKeywordChecker
+except ImportError:
+    # context_distiller purged (605f55b); capability unavailable.
+    ContextDistiller = RelevancyCheck = DistillationResult = create_context_distiller = SimpleKeywordChecker = None
 
-from .sharded_retrieval import (
-    ShardedRetriever,
-    DomainShard,
-    ShardedRetrievalResult,
-    ShardStrategy,
-    ShardSelector,
-    create_sharded_retriever,
-)
+try:
+    from .sharded_retrieval import ShardedRetriever, DomainShard, ShardedRetrievalResult, ShardStrategy, ShardSelector, create_sharded_retriever
+except ImportError:
+    # sharded_retrieval purged (605f55b); capability unavailable.
+    ShardedRetriever = DomainShard = ShardedRetrievalResult = ShardStrategy = ShardSelector = create_sharded_retriever = None
 
-from .query_expander import (
-    QueryExpander,
-    ParallelQueryExpander,
-    RuleBasedExpander,
-    ExpandedQueries,
-    QueryExpansionResult,
-    create_query_expander,
-)
+try:
+    from .query_expander import QueryExpander, ParallelQueryExpander, RuleBasedExpander, ExpandedQueries, QueryExpansionResult, create_query_expander
+except ImportError:
+    # query_expander purged (605f55b); capability unavailable.
+    QueryExpander = ParallelQueryExpander = RuleBasedExpander = ExpandedQueries = QueryExpansionResult = create_query_expander = None
 
-from .parallel_rag import (
-    ParallelRAGOrchestrator,
-    ParallelRAGConfig,
-    ParallelRAGResult,
-    RetrievalMode,
-    create_parallel_rag,
-)
+try:
+    from .parallel_rag import ParallelRAGOrchestrator, ParallelRAGConfig, ParallelRAGResult, RetrievalMode, create_parallel_rag
+except ImportError:
+    # parallel_rag: names removed; capability unavailable.
+    ParallelRAGOrchestrator = ParallelRAGConfig = ParallelRAGResult = RetrievalMode = create_parallel_rag = None
 
 __all__ = [
     # Priority 1: Hybrid Search
@@ -97,9 +87,4 @@ __all__ = [
     'create_query_expander',
 
     # Unified Parallel RAG
-    'ParallelRAGOrchestrator',
-    'ParallelRAGConfig',
-    'ParallelRAGResult',
-    'RetrievalMode',
-    'create_parallel_rag',
 ]

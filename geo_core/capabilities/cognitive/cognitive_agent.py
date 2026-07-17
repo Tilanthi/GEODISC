@@ -19,49 +19,41 @@ import numpy as np
 import time
 
 # Import V60 components
-from .v60_predictive_world_models import (
-    PredictiveWorldModelSystem,
-    WorldModelLibrary,
-    create_world_model_system,
-    DomainType
-)
+try:
+    from .v60_predictive_world_models import PredictiveWorldModelSystem, WorldModelLibrary, create_world_model_system, DomainType
+except ImportError:
+    # v60_predictive_world_models purged (605f55b); capability unavailable.
+    PredictiveWorldModelSystem = WorldModelLibrary = create_world_model_system = DomainType = None
 
-from .v60_grounded_representations import (
-    GroundedRepresentationSystem,
-    ConceptRepresentation,
-    create_representation_system,
-    CompositionType
-)
+try:
+    from .v60_grounded_representations import GroundedRepresentationSystem, ConceptRepresentation, create_representation_system, CompositionType
+except ImportError:
+    # v60_grounded_representations purged (605f55b); capability unavailable.
+    GroundedRepresentationSystem = ConceptRepresentation = create_representation_system = CompositionType = None
 
-from .v60_persistent_memory import (
-    PersistentMemorySystem,
-    WorkingMemory,
-    EpisodicMemory,
-    SemanticMemory,
-    create_memory_system,
-    RetrievalStrategy
-)
+try:
+    from .v60_persistent_memory import PersistentMemorySystem, WorkingMemory, EpisodicMemory, SemanticMemory, create_memory_system, RetrievalStrategy
+except ImportError:
+    # v60_persistent_memory purged (605f55b); capability unavailable.
+    PersistentMemorySystem = WorkingMemory = EpisodicMemory = SemanticMemory = create_memory_system = RetrievalStrategy = None
 
-from .v60_active_knowledge import (
-    ActiveKnowledgeSystem,
-    KnowledgeGap,
-    Hypothesis,
-    create_active_knowledge_system
-)
+try:
+    from .v60_active_knowledge import ActiveKnowledgeSystem, KnowledgeGap, Hypothesis, create_active_knowledge_system
+except ImportError:
+    # v60_active_knowledge purged (605f55b); capability unavailable.
+    ActiveKnowledgeSystem = KnowledgeGap = Hypothesis = create_active_knowledge_system = None
 
-from .v60_cognitive_self_modification import (
-    CognitiveSelfModificationSystem,
-    PerformanceMetric,
-    Strategy,
-    create_self_modification_system
-)
+try:
+    from .v60_cognitive_self_modification import CognitiveSelfModificationSystem, PerformanceMetric, Strategy, create_self_modification_system
+except ImportError:
+    # v60_cognitive_self_modification purged (605f55b); capability unavailable.
+    CognitiveSelfModificationSystem = PerformanceMetric = Strategy = create_self_modification_system = None
 
-from .v60_active_inference import (
-    ActiveInferenceController,
-    Belief,
-    Policy,
-    create_active_inference_controller
-)
+try:
+    from .v60_active_inference import ActiveInferenceController, Belief, Policy, create_active_inference_controller
+except ImportError:
+    # v60_active_inference purged (605f55b); capability unavailable.
+    ActiveInferenceController = Belief = Policy = create_active_inference_controller = None
 
 
 class CognitiveMode(Enum):

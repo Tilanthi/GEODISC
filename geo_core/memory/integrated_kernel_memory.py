@@ -47,8 +47,8 @@ except ImportError:
     CounterfactualQuery = None
 
 try:
-    from ..intelligence.swarm_orchestrator import SwarmOrchestrator
-    from ..intelligence.digital_pheromones import DigitalPheromoneField
+    from ..intelligence.orchestrator import SwarmOrchestrator
+    from ..intelligence.pheromone_dynamics import DigitalPheromoneField
     SWARM_AVAILABLE = True
 except ImportError:
     SWARM_AVAILABLE = False

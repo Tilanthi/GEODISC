@@ -84,6 +84,10 @@ try:
         # Backwards compatibility
         TemporalScale,  # Alias for MemoryTemporalScale
     )
+    # NOTE: create_integrated_memory / create_causal_aware_memory /
+    # create_swarm_integrated_memory / create_metacognitive_memory were never
+    # defined in integrated_kernel_memory. Asking for them in this atomic import
+    # failed the whole block and silently disabled the kernel-memory public API.
     from .integrated_kernel_memory import (
         CausalMemoryMode,
         CausalMemoryTrace,
@@ -91,10 +95,6 @@ try:
         SwarmMemoryIntegration,
         MetacognitiveMemory,
         FullyIntegratedMemorySystem,
-        create_integrated_memory,
-        create_causal_aware_memory,
-        create_swarm_integrated_memory,
-        create_metacognitive_memory,
     )
     _KERNEL_MEMORY_AVAILABLE = True
 except ImportError:
@@ -105,10 +105,10 @@ except ImportError:
 # Legacy Memory Components (V36-V39)
 try:
     from .mork_ontology import MORKOntology, OntologyNode, SemanticRelation, SemanticRelationType
-    from .memory_graph import MemoryGraph, NodeType, EdgeType
-    from .milvus_store import MilvusVectorStore, VectorBackend
+    from .memory_graph import MemoryGraph, NodeType, EdgeType, GraphNode, GraphEdge
+    from .milvus_store import MilvusVectorStore, VectorBackend, DistanceMetric, InMemoryVectorIndex
     from .mork_expanded import ExpandedMORK, MORKConcept, ScientificDomain
-    from .rrf_fusion import ThreeWayRRF, RankingConfig
+    from .rrf_fusion import ThreeWayRRF, RankingConfig, RRFResult
     _LEGACY_MEMORY_AVAILABLE = True
 except ImportError:
     _LEGACY_MEMORY_AVAILABLE = False
@@ -187,10 +187,6 @@ if _KERNEL_MEMORY_AVAILABLE:
         "SwarmMemoryIntegration",
         "MetacognitiveMemory",
         "FullyIntegratedMemorySystem",
-        "create_integrated_memory",
-        "create_causal_aware_memory",
-        "create_swarm_integrated_memory",
-        "create_metacognitive_memory",
         # Backwards compatibility
         "TemporalScale",  # Alias for MemoryTemporalScale
     ])
@@ -203,15 +199,20 @@ if _LEGACY_MEMORY_AVAILABLE:
         "SemanticRelation",
         "SemanticRelationType",
         "MemoryGraph",
+        "GraphNode",
+        "GraphEdge",
         "NodeType",
         "EdgeType",
         "MilvusVectorStore",
         "VectorBackend",
+        "DistanceMetric",
+        "InMemoryVectorIndex",
         "ExpandedMORK",
         "MORKConcept",
         "ScientificDomain",
         "ThreeWayRRF",
         "RankingConfig",
+        "RRFResult",
     ])
 
 # Add NetworkX integration exports if available

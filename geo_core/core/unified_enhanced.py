@@ -916,11 +916,9 @@ class EnhancedUnifiedSTANSystem:
         model_name = context.get('model', 'newtonian_gravity')
         parameters = context.get('parameters', {})
 
-        # Add default values if needed
-        if 'mass' not in parameters:
-            parameters['mass'] = self.physics_engine.constants.get('M_sun', 1.989e33)
-        if 'distance' not in parameters:
-            parameters['distance'] = self.physics_engine.constants.get('AU', 1.496e13)
+        # GEODISC note: the caller supplies model-specific parameters. The geochem
+        # physics.constants (G, c, h, k_B, ...) deliberately carry no solar-mass or
+        # AU scales, so we do not inject astrophysical defaults here.
 
         try:
             physics_result = self.physics_engine.compute(

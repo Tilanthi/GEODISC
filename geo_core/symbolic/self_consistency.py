@@ -214,3 +214,6 @@ Please think through this carefully:
         # Use CoT to get a better answer
         cot_result = llm_fn(cot_prompt)
         return cot_result, 0.8, result
+
+# --- Backward-compat alias (symbolic/__init__ exposes EnhancedSelfConsistency as public API) ---
+EnhancedSelfConsistency = SelfConsistencyEngine

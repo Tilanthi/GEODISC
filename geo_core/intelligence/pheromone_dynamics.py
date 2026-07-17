@@ -703,3 +703,10 @@ __all__ = [
     'PheromoneDeposit',
     'PheromoneFieldConfig'
 ]
+
+
+
+# --- Backward-compat factory (expected by scientific_discovery.genuine_discovery_swarm) ---
+def create_pheromone_field(config=None):
+    """Construct a DigitalPheromoneField over the hypothesis space."""
+    return DigitalPheromoneField(config=config)

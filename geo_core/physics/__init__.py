@@ -21,14 +21,15 @@ logger = logging.getLogger(__name__)
 
 # Try to import existing components
 try:
-    from ..reasoning.differentiable_physics import (
-        DualNumber, GradientTape, PhysicsModel,
-        fisher_information_matrix
-    )
+    # DualNumber/GradientTape are defined and used (gradient sites below); the
+    # former import also named PhysicsModel/fisher_information_matrix which do
+    # NOT exist in differentiable_physics — one bad name flipped all four to
+    # None in this atomic import, silently disabling autodiff. Import only what
+    # exists.
+    from ..reasoning.differentiable_physics import DualNumber, GradientTape
 except ImportError:
     DualNumber = None
     GradientTape = None
-    PhysicsModel = None
     logger.warning("Differentiable physics module not available, using fallbacks")
 
 try:

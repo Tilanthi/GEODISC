@@ -325,9 +325,13 @@ class StructuralCausalModel:
             if var not in mutilated.endogenous:
                 raise ValueError(f"Cannot intervene on non-endogenous variable '{var}'")
 
-            # Replace structural equation with constant function
+            # Replace structural equation with constant function.
+            # NOTE: bind `value` as a default arg so each lambda captures its own
+            # value. The previous `lambda pa: value` closed over the loop variable
+            # by reference, so a multi-variable do(X=5, Z=10) made BOTH equations
+            # return the last value (10) — a classic late-binding closure bug.
             mutilated.structural_equations[var] = StructuralEquation(
-                function=lambda pa: value,
+                function=lambda pa, _v=value: _v,
                 description=f"Intervention: {var} = {value}"
             )
 

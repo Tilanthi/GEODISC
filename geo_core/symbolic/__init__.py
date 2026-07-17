@@ -38,34 +38,30 @@ from .mork_expanded import (
     DomainRouter
 )
 
-from .tool_integration import (
-    ToolIntegration,
-    ToolResult,
-    WikipediaAPI,
-    ArXivAPI,
-    MathTool,
-    PythonExecutor
-)
+try:
+    from .tool_integration import ToolIntegration, ToolResult, WikipediaAPI, ArXivAPI, MathTool, PythonExecutor
+except ImportError:
+    # tool_integration purged (605f55b); capability unavailable.
+    ToolIntegration = ToolResult = WikipediaAPI = ArXivAPI = MathTool = PythonExecutor = None
 
-from .local_rag import (
-    LocalRAG,
-    RetrievalResult,
-    KnowledgeBaseBuilder
-)
+try:
+    from .local_rag import LocalRAG, RetrievalResult, KnowledgeBaseBuilder
+except ImportError:
+    # local_rag: names removed; capability unavailable.
+    LocalRAG = RetrievalResult = KnowledgeBaseBuilder = None
 
-from .stan_enhanced import (
-    STANEnhanced,
-    EnhancedAnswer,
-    V38CompleteSystem
-)
+try:
+    from .stan_enhanced import STANEnhanced, EnhancedAnswer, V38CompleteSystem
+except ImportError:
+    # stan_enhanced: names removed; capability unavailable.
+    STANEnhanced = EnhancedAnswer = V38CompleteSystem = None
 
 # Import V36 components for backward compatibility
-from .v36_system import (
-    SymbolicCausalAbstraction,
-    CrossDomainAnalogyEngine,
-    MechanismDiscoveryEngine,
-    V36CompleteSystem as _V36CompleteSystem
-)
+try:
+    from .v36_system import SymbolicCausalAbstraction, CrossDomainAnalogyEngine, MechanismDiscoveryEngine, V36CompleteSystem
+except ImportError:
+    # v36_system: names removed; capability unavailable.
+    SymbolicCausalAbstraction = CrossDomainAnalogyEngine = MechanismDiscoveryEngine = V36CompleteSystem = None
 
 __all__ = [
     # Self-Consistency

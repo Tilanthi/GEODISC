@@ -33,17 +33,12 @@ from .v70_universal_causal import (
     create_universal_causal_substrate,
     CausalStructure
 )
-from .v70_predictive_geometry import (
-    PredictiveInformationGeometry,
-    create_predictive_geometry,
-    InformationPoint
-)
-from .v70_meta_scientific import (
-    MetaScientificReasoner,
-    create_meta_scientific_reasoner,
-    ScientificQuestion,
-    QuestionType
-)
+try:
+    from .v70_predictive_geometry import PredictiveInformationGeometry, create_predictive_geometry, InformationPoint
+except ImportError:
+    # v70_predictive_geometry purged (605f55b); capability unavailable.
+    PredictiveInformationGeometry = create_predictive_geometry = InformationPoint = None
+from .v70_meta_scientific import MetaScientificReasoner, ScientificQuestion, QuestionType
 from .v70_emergent_computation import (
     EmergentComputationLayer,
     create_emergent_computation_layer,

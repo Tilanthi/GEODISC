@@ -17,14 +17,12 @@ import heapq
 import time
 
 from .grid_dsl import Grid, GridObject, BoundingBox, empty_grid
-from .hypothesis_engine import (
-    TransformationHypothesis, TransformationType,
-    HypothesisGenerator, HypothesisTester
-)
-from .pattern_library import (
-    PatternDetector, PatternPrimitives, ObjectRelationships,
-    CompositeTransform
-)
+from .hypothesis_engine import TransformationHypothesis, TransformationType, HypothesisGenerator
+try:
+    from .pattern_library import PatternDetector, PatternPrimitives, ObjectRelationships, CompositeTransform
+except ImportError:
+    # pattern_library purged (605f55b); capability unavailable.
+    PatternDetector = PatternPrimitives = ObjectRelationships = CompositeTransform = None
 
 
 @dataclass

@@ -42,19 +42,9 @@ from .v60_persistent_memory import (
     RetrievalStrategy
 )
 
-from .v60_active_knowledge import (
-    ActiveKnowledgeSystem,
-    KnowledgeGap,
-    Hypothesis,
-    create_active_knowledge_system
-)
+from .v60_active_knowledge import KnowledgeGap, Hypothesis
 
-from .v60_cognitive_self_modification import (
-    CognitiveSelfModificationSystem,
-    PerformanceMetric,
-    Strategy,
-    create_self_modification_system
-)
+from .v60_cognitive_self_modification import PerformanceMetric, Strategy
 
 from .v60_active_inference import (
     ActiveInferenceController,

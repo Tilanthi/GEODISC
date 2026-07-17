@@ -20,11 +20,16 @@ from enum import Enum
 from collections import defaultdict
 import re
 
-from .unified_world_model import (
-    UnifiedWorldModel, Hypothesis, Evidence, EvidenceSource,
-    AbstractionTemplate, get_world_model
-)
-from .integration_bus import IntegrationBus, EventType, get_integration_bus
+try:
+    from .unified_world_model import UnifiedWorldModel, Hypothesis, Evidence, EvidenceSource, AbstractionTemplate, get_world_model
+except ImportError:
+    # unified_world_model purged (605f55b); capability unavailable.
+    UnifiedWorldModel = Hypothesis = Evidence = EvidenceSource = AbstractionTemplate = get_world_model = None
+try:
+    from .integration_bus import IntegrationBus, EventType, get_integration_bus
+except ImportError:
+    # integration_bus purged (605f55b); capability unavailable.
+    IntegrationBus = EventType = get_integration_bus = None
 
 
 class AnalogyType(Enum):

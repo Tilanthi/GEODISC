@@ -555,3 +555,15 @@ class ConditionalComputationEngine:
         # Execute only selected experts (conditional computation!)
         results = {}
         execution_times = {}
+
+
+# --- Backward-compat factory (expected by causal.routing.__init__ + moe tests) ---
+def create_moe_router(top_k: int = 3, min_score_threshold: float = 0.1):
+    """Construct a MoECapabilityRouter (default experts registered separately)."""
+    return MoECapabilityRouter(top_k=top_k, min_score_threshold=min_score_threshold)
+
+
+# --- Backward-compat factory (expected by causal.routing.__init__) ---
+def create_conditional_engine(router=None, top_k: int = 3, min_score_threshold: float = 0.1):
+    """Construct a ConditionalComputationEngine wrapping a (default) MoE router."""
+    return ConditionalComputationEngine(router=router, top_k=top_k, min_score_threshold=min_score_threshold)

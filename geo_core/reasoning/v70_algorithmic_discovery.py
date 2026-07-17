@@ -672,3 +672,16 @@ class AlgorithmEvaluator:
     ) -> AlgorithmEvaluation:
         """Evaluate algorithm on problem instances"""
         passed = 0
+
+
+
+# --- Backward-compat surface (expected by v70_synthetic_intelligence).
+# GeneticAlgorithmEvolver is the concrete algorithmic-discovery engine; the
+# names below are thin alias/factory so older call sites keep working.
+AlgorithmicDiscoveryEngine = GeneticAlgorithmEvolver
+
+def create_algorithmic_discovery_engine():
+    """Construct an algorithmic-discovery engine with a default primitive library."""
+    library = PrimitiveLibrary()
+    generator = AlgorithmGenerator(library)
+    return GeneticAlgorithmEvolver(library, generator)

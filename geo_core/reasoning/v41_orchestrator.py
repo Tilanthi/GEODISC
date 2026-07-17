@@ -58,9 +58,7 @@ from .active_knowledge_acquisition import (
 from .multi_agent_deliberation import (
     get_deliberator, MultiAgentDeliberator, ConsensusLevel
 )
-from .continuous_learning import (
-    get_continuous_learner, ContinuousLearner, Experience
-)
+from .continuous_learning import ContinuousLearner, Experience
 
 
 class ReasoningMode(Enum):

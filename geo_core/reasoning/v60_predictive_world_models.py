@@ -836,3 +836,9 @@ class PredictiveWorldModelSystem:
 
             # Trigger model updates
             self.library.update_all(observation, [last_pred])
+
+
+# --- Backward-compat factory (expected by v60_cognitive_agent) ---
+def create_world_model_system():
+    """Construct the predictive world-model system."""
+    return PredictiveWorldModelSystem()

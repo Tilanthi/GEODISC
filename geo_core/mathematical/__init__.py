@@ -1,28 +1,9 @@
 """
 GEODISC Mathematical Reasoning Module
 
-This module contains enhanced mathematical reasoning capabilities for STAN,
-including the Aletheia-style 3-agent architecture for IMO-ProofBench problems.
-
-Components:
-- AletheiaSTANSystem: Enhanced 3-agent architecture (Generator-Verifier-Reviser)
-- AletheiaProofSystem: Basic 3-agent architecture
+The Aletheia-style 3-agent architecture (aletheia_stan_architecture.py) was
+removed in the truncated-file purge (605f55b). This package is kept as an empty,
+importable namespace until the capability is restored or formally retired.
 """
 
-from .aletheia_stan_architecture import (
-    AletheiaSTANSystem,
-    ProofStrategy,
-    VerdictType,
-    ProofAttempt,
-    ValidationResult,
-    GeneratorOutput
-)
-
-__all__ = [
-    'AletheiaSTANSystem',
-    'ProofStrategy',
-    'VerdictType',
-    'ProofAttempt',
-    'ValidationResult',
-    'GeneratorOutput'
-]
+__all__: list = []

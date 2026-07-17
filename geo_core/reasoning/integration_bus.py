@@ -345,3 +345,14 @@ class IntegrationBus:
 
         for sub_id in subscription_ids:
             subscription = self.subscriptions.get(sub_id)
+
+
+# --- Backward-compat singleton accessor (expected by V41 orchestrator + 3 reasoning modules) ---
+_integration_bus_singleton = None
+
+def get_integration_bus(async_mode: bool = False):
+    """Return the process-wide IntegrationBus singleton (created on first call)."""
+    global _integration_bus_singleton
+    if _integration_bus_singleton is None:
+        _integration_bus_singleton = IntegrationBus(async_mode=async_mode)
+    return _integration_bus_singleton

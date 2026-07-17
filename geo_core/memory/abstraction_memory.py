@@ -13,6 +13,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 import time
 
+import numpy as np
+
 
 class AbstractionType(Enum):
     """Types of abstraction content"""
