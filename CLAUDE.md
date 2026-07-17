@@ -97,13 +97,12 @@ memory) repurposed from astrophysics to geochemistry.
   references incl. the public `create_geo_stan_system` API; renaming is
   public-API-breaking and not astronomy); and the gravitational-physics task
   type (geo-relevant: lithostatic pressure, gravity-driven sedimentation).
-  **Pre-existing syntax errors:** `python -m compileall geo_core` reports 26
-  errors — ALL pre-existing truncated/broken files in non-live modules
-  (arc_agi, arc_reasoning, core/v105, gsd, intelligence, mathematical, parts of
-  reasoning / retrieval / symbolic / self_teaching / transformational) inherited
-  from the astrophysics codebase. None are on the live import path (gates +
-  smoke green) and none are safely restorable without the original source, so
-  they are left as-is. Gates green: 19 tests, smoke, capability, 16 domains.
+  **Truncated-file cleanup (2026-07-17):** all 26 pre-existing truncated/broken
+  files inherited from the astrophysics codebase have been DELETED (not
+  guess-repaired — the original content is lost). 9 were dead (0 references);
+  17 were referenced only via guarded `try/except` imports (their breakage was
+  already handled gracefully). `python -m compileall geo_core` now reports **0
+  errors**. Gates green: 43 tests, smoke, capability, 16 domains.
 - **Public repo**: https://github.com/Tilanthi/GEODISC (`main` branch; git
   remotes `origin` and `geodisc` both point here). Published as a clean
   geochemistry-only history. The precursor astrophysics history is preserved
