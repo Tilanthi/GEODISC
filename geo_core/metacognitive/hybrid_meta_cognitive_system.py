@@ -80,12 +80,17 @@ except ImportError:
 
 
 class ConfidenceLevel(Enum):
-    """Confidence levels for meta-cognitive assessments."""
-    VERY_LOW = 0.0 - 0.2
-    LOW = 0.2 - 0.4
-    MEDIUM = 0.4 - 0.6
-    HIGH = 0.6 - 0.8
-    VERY_HIGH = 0.8 - 1.0
+    """Confidence levels for meta-cognitive assessments.
+
+    Values are the midpoint of each confidence band. (The previous
+    ``= lo - hi`` form was parsed as subtraction, so every member evaluated to
+    a negative number and they silently aliased each other.)
+    """
+    VERY_LOW = 0.1      # band 0.0-0.2
+    LOW = 0.3           # band 0.2-0.4
+    MEDIUM = 0.5        # band 0.4-0.6
+    HIGH = 0.7          # band 0.6-0.8
+    VERY_HIGH = 0.9     # band 0.8-1.0
 
 
 @dataclass
