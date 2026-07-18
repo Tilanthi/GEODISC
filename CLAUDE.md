@@ -85,9 +85,18 @@ memory) repurposed from astrophysics to geochemistry.
   required/optional/on-mission columns + task-system framing; `$GEODISC_DATA_PROFILE`
   selects `gard` (default, byte-identical) or `proterozoic_redox` (Fe-speciation
   FeHR/FeT + FePy/FeHR + TOC + age). All additive/guidance-only — gate pass/fail
-  untouched; gard default means zero regression. **Part 3.2 (the Proterozoic
-  fetcher) is gated on confirming the source dataset** (Sperling 2015 Fe-speciation
-  is the primary candidate).
+  untouched; gard default means zero regression.
+- **Proterozoic data fetch (Part 3.2):** `scripts/fetch_proterozoic_data.py` is an
+  autonomous, resilient fetcher for SGP Phase 2 (Farrell et al. 2026; CC BY 4.0;
+  the Paleoproterozoic-Mesoproterozoic Fe-speciation + TOC + age record) via the
+  documented public API (`POST sgp-search.io/api/v1/post`). It paginates by age
+  window, retries 504/timeouts with exponential backoff, is checkpoint/resumable,
+  and refuses to write all-empty required columns (a wrong attribute name is
+  detected, never producing fiction). The SGP gateway was intermittently
+  unresponsive during development, so a durable auto-retry
+  (`com.geodisc.proterozoic-fetch`) re-runs it until the CSV lands; then
+  `GEODISC_DATA_PROFILE=proterozoic_redox` switches the pipeline to it. No manual
+  export step.
 - **Discovery pipeline:** autonomous, running via launchd with evolution ENABLED.
   Two-gate EVALUATE: Gate 1 (real-data significance + held-out leakage guard +
   sign-consistency guard); Gate 2 (OpenAlex geochem literature + textbook

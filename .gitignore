@@ -84,3 +84,5 @@ Thumbs.db
 *_backup*.py
 temp_geo_clone/
 tmp*.py
+.geodisc_fetch_logs/
+proterozoic_fetch/
