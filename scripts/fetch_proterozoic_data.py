@@ -142,11 +142,37 @@ def main():
                     help="per-run wall-clock budget; stops fetching NEW windows after "
                          "this (cached windows still load) so periodic auto-retries "
                          "accumulate progress without overlapping")
+    ap.add_argument("--max-rows", type=int, default=0, help="0 = no cap")
+    ap.add_argument("--max-runtime-sec", type=float, default=900.0,
+                    help="per-run wall-clock budget; stops fetching NEW windows after "
+                         "this (cached windows still load) so periodic auto-retries "
+                         "accumulate progress without overlapping")
+    ap.add_argument("--max-failed-runs", type=int, default=10,
+                    help="after this many consecutive runs that fetch ZERO new "
+                         "samples, self-park: subsequent runs do only a cheap 1-window "
+                         "recovery probe until the source responds (finite retry, no "
+                         "infinite loop on a permanently stalled source)")
     args = ap.parse_args()
 
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    fail_state_path = CHECKPOINT_DIR / "fail_state.json"
+
+    def _load_fail_state():
+        try:
+            return json.loads(fail_state_path.read_text())
+        except Exception:
+            return {"consecutive_empty": 0, "parked": False}
+
+    def _save_fail_state(s):
+        try:
+            fail_state_path.write_text(json.dumps(s))
+        except Exception:
+            pass
+
+    fail_state = _load_fail_state()
+    parked = bool(fail_state.get("parked"))
 
     cols = ["sample_id", "fe_t", "fe_hr", "fe_py", "toc", "age"]
     windows = []
@@ -154,12 +180,20 @@ def main():
     while lo < args.age_max:
         windows.append((lo, min(lo + args.window, args.age_max)))
         lo += args.window
-    print(f"[prot-fetch] {len(windows)} age windows ({args.age_min}-{args.age_max} Ma, "
+
+    # Self-park: if the source has stalled for many runs, do only a cheap 1-window
+    # recovery probe instead of the full sweep (bounded retries; revisit later).
+    if parked:
+        windows = windows[:1]
+        print(f"[prot-fetch] PARKED (source stalled {fail_state.get('consecutive_empty')} "
+              f"runs) — running a cheap 1-window recovery probe only.")
+    print(f"[prot-fetch] {len(windows)} age window(s) ({args.age_min}-{args.age_max} Ma, "
           f"width {args.window}); retries={args.retries} timeout={args.timeout}s "
           f"budget={args.max_runtime_sec}s")
 
     t_start = time.time()
     all_rows = {}
+    new_this_run = 0  # samples from NON-cached windows (drives the park/probe logic)
     for lo, hi in windows:
         ck = CHECKPOINT_DIR / f"window_{int(lo)}_{int(hi)}.json"
         if ck.exists():
@@ -177,10 +211,25 @@ def main():
         print(f"[prot-fetch] window {lo}-{hi} Ma ...")
         stitched = fetch_window(lo, hi, args.retries, args.timeout, args.politeness)
         all_rows.update(stitched)
+        new_this_run += len(stitched)
         try:
             ck.write_text(json.dumps(stitched))
         except Exception as e:
             print(f"    checkpoint write failed: {e}")
+
+    # Park/probe bookkeeping: a run that fetched NEW samples resets the stall
+    # counter (and unparks); an empty run increments it, parking after the cap.
+    if new_this_run > 0:
+        fail_state = {"consecutive_empty": 0, "parked": False}
+    else:
+        c = int(fail_state.get("consecutive_empty", 0)) + 1
+        fail_state = {"consecutive_empty": c,
+                      "parked": c >= args.max_failed_runs}
+    _save_fail_state(fail_state)
+    if fail_state["parked"] and new_this_run == 0:
+        print(f"[prot-fetch] no new samples; parking after {fail_state['consecutive_empty']} "
+              f"empty run(s) — will cheap-probe on subsequent ticks until the source "
+              f"responds.")
 
     # keep only rows with the required on-mission columns
     clean = []
