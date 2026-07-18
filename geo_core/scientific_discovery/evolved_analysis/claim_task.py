@@ -139,6 +139,22 @@ SURPRISE_GUIDANCE = (
 if os.environ.get("GEODISC_SURPRISE_GUIDANCE", "1") not in ("0", "false", "False"):
     TASK_SYSTEM = TASK_SYSTEM + SURPRISE_GUIDANCE
 
+# Tier 3 — broader repertoire (guidance; always on). These forms surface
+# MECHANISMS, not confirmations, and are what the inspirations bank demonstrates.
+REPERTOIRE_EXPANSION = (
+    "\n\nBROADER REPERTOIRE: beyond partial/residual correlations, preferentially "
+    "explore these forms -- they surface MECHANISMS, not confirmations:\n"
+    "  (v) THRESHOLD / non-monotonic -- a relation that peaks or reverses above a "
+    "value of Z (e.g. a ratio saturates past an element's median).\n"
+    "  (vi) ANOMALY subpopulation -- a subset defined by W that shows an outlier "
+    "relation the bulk population does not.\n"
+    "  (vii) PREDICTIVE validity -- a ratio/combination that predicts a held-out "
+    "property better than a baseline (report the R2/accuracy GAIN as `effect`).\n"
+    "  (viii) LOG-RATIO systematics -- log(X/Y) vs log(Z/Y), a process-ratio array.\n"
+    "Vary the analytical FORM, not just the element pair."
+)
+TASK_SYSTEM = TASK_SYSTEM + REPERTOIRE_EXPANSION
+
 
 def parse_claim(src: str) -> Optional[str]:
     """Extract the CLAIM string from a candidate module (None if absent).

@@ -72,6 +72,22 @@ memory) repurposed from astrophysics to geochemistry.
   positive novelty signal, not just retrieval-absence. Both are **additive
   annotations + guidance, never new rejections**; Gate-2 pass/fail is unchanged.
   Toggles: `GEODISC_SURPRISE_GUIDANCE=0`, `GEODISC_MECHANISTIC_CONTRAST=0`.
+- **Discovery-pipeline search breadth (2026-07-18, Tier 3):** stop the proposer
+  re-mining one vein + one pattern. (A) **Diversity cap** (`diversity.py`): tracks
+  candidate families (Tier-1 canonical element-pair) and nudges the proposer to a
+  different family/repertoire form when one dominates the recent window
+  (`GEODISC_DIVERSITY_CAP`). (B) **Broader repertoire + populated inspirations**
+  (`inspirations.py`): `TASK_SYSTEM` now names 8 repertoire forms (partial /
+  conditional / threshold / anomaly / predictive / log-ratio / …) and the loop
+  rotates real example `run_claim`s through the previously-empty `inspirations`
+  channel. (C) **Data-driven column contract** (`data_profile.py`): the pipeline
+  is no longer hard-wired to the Gard igneous CSV — profiles define a dataset's
+  required/optional/on-mission columns + task-system framing; `$GEODISC_DATA_PROFILE`
+  selects `gard` (default, byte-identical) or `proterozoic_redox` (Fe-speciation
+  FeHR/FeT + FePy/FeHR + TOC + age). All additive/guidance-only — gate pass/fail
+  untouched; gard default means zero regression. **Part 3.2 (the Proterozoic
+  fetcher) is gated on confirming the source dataset** (Sperling 2015 Fe-speciation
+  is the primary candidate).
 - **Discovery pipeline:** autonomous, running via launchd with evolution ENABLED.
   Two-gate EVALUATE: Gate 1 (real-data significance + held-out leakage guard +
   sign-consistency guard); Gate 2 (OpenAlex geochem literature + textbook

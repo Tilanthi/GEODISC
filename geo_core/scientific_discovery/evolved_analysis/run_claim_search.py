@@ -46,6 +46,10 @@ try:
     from . import surprise                              # Tier 2: surprise objective
 except ImportError:
     import surprise                                     # standalone
+try:
+    from . import diversity, inspirations, data_profile  # Tier 3
+except ImportError:
+    import diversity, inspirations, data_profile          # standalone
 
 logger = logging.getLogger(__name__)
 
@@ -405,16 +409,23 @@ def main():
     logger.info("[claim_search] === evolving %d LLM-proposed claim(s) ===",
                 args.steps)
     try:
-        proposer = LLMProposer(task_system=TASK_SYSTEM, entry_point=ENTRY_POINT)
+        proposer = LLMProposer(task_system=data_profile.build_task_system(),
+                               entry_point=ENTRY_POINT)
     except Exception as e:
         logger.warning("[claim_search] LLM proposer unavailable: %s", e)
         return
     parent = NAIVE_CLAIM_SEED
     parent_metrics = verdict["gate1"]["metrics"]
-    hints = _verdict_feedback_hints()   # Phases 3+4: feed recent failures back
+    base_hints = _verdict_feedback_hints()   # Phases 3+4: feed recent failures back
+    tracker = diversity.FamilyTracker()       # Tier 3: per-family diversity pressure
     for i in range(args.steps):
+        hints = list(base_hints)
+        dhint = tracker.hint()
+        if dhint:
+            hints.append(dhint)
         child, _spec, info = proposer.propose(
-            parent, parent_metrics, None, [], context_level="rich", hints=hints)
+            parent, parent_metrics, None, inspirations.pick(i),
+            context_level="rich", hints=hints)
         if not child:
             logger.info("[claim_search] step %d: proposer returned nothing (%s)",
                         i, info.get("error", "?"))
@@ -423,6 +434,7 @@ def main():
         logger.info("[claim_search] step %d claim: %s", i, (v["claim"] or "")[:70])
         _log_verdict(v, prefix=f"  step {i}: ")
         _emit(v)
+        tracker.note(v.get("claim") or parse_claim(child) or "")  # Tier 3
         # adopt as parent if it passed gate 1 (a real effect to build on)
         if v["gate1"]["pass"]:
             parent, parent_metrics = child, v["gate1"]["metrics"]

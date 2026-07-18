@@ -45,12 +45,24 @@ def _data_path() -> Path:
     return Path(os.environ.get("GEODISC_REAL_DATA", DEFAULT_DATA_PATH))
 
 
+try:
+    from . import data_profile  # Tier 3: data-driven column contract
+except ImportError:
+    import data_profile          # standalone
+
+
+def required_columns() -> tuple:
+    """Required columns for the ACTIVE data profile (default gard = _REQUIRED_COLUMNS)."""
+    return data_profile.required_cols()
+
+
 def load_split(seed: int = 42) -> dict:
     """Load REAL geochemistry data and return deterministic train/eval splits.
 
     Returns ``{"train": DataFrame, "eval": DataFrame}``. Raises RuntimeError
     if no real-data file is available or required columns are missing — it
-    NEVER fabricates data.
+    NEVER fabricates data. Required columns are those of the active data profile
+    (``$GEODISC_DATA_PROFILE``, default ``gard`` -> ``_REQUIRED_COLUMNS``).
     """
     path = _data_path()
     if not path.is_file():
@@ -58,7 +70,7 @@ def load_split(seed: int = 42) -> dict:
             f"real_data: no real geochemistry data found at {path}. GEODISC does "
             f"not synthesise data (prime directive: no fictional/synthetic data). "
             f"Populate this file from a real database (e.g. EarthChem / GEOROC / "
-            f"PBDB) as CSV with columns {list(_REQUIRED_COLUMNS)} (one sample per "
+            f"PBDB) as CSV with columns {list(required_columns())} (one sample per "
             f"row), or set GEODISC_REAL_DATA to point at it."
         )
     import pandas as pd
@@ -66,11 +78,12 @@ def load_split(seed: int = 42) -> dict:
         df = pd.read_parquet(path)
     else:
         df = pd.read_csv(path)
-    missing = [c for c in _REQUIRED_COLUMNS if c not in df.columns]
+    required = required_columns()
+    missing = [c for c in required if c not in df.columns]
     if missing:
         raise RuntimeError(
-            f"real_data: {path} is missing required columns {missing}; expected "
-            f"at least the geochemistry columns {list(_REQUIRED_COLUMNS)}."
+            f"real_data: {path} is missing required columns {missing} for the "
+            f"'{data_profile.active_name()}' profile; expected {list(required)}."
         )
     if len(df) < 10:
         raise RuntimeError(
