@@ -57,7 +57,21 @@ memory) repurposed from astrophysics to geochemistry.
   was `known` and another `novel`. Dry-run on held-out recent candidates:
   **74% of sandbox evals eliminated (180→47)**. Toggle
   `GEODISC_CANONICAL_PREFILTER=0` to disable. New funnel bucket
-  `canonical-known`; tests in `test_canonical_signature.py` (gate suite now 52).
+  `canonical-known`; tests in `test_canonical_signature.py`.
+- **Discovery-pipeline paradigm-shift lever (2026-07-18, Tier 2):** redirect the
+  freed CPU from re-deriving textbook confirmations toward anomalies. (A) A
+  *surprise objective* (`evolved_analysis/surprise.py`): a curated
+  expectations table (element-pair → textbook sign) scores each survivor —
+  confirmed sign that CONTRADICTS expectation = 1.0 (anomaly), matches = 0.0
+  (confirmation), unstudied = 0.5. The proposer's `TASK_SYSTEM` gains a
+  SURPRISE_GUIDANCE paragraph nudging it to assert opposite-sign hypotheses that
+  survive Gate 1's sign check; survivors are annotated `surprise` for triage.
+  (B) A *mechanistic-contrast* Gate-2 signal: the novelty judge now also decides
+  whether the claim "requires a process NOT in the literature," yielding a
+  `novelty_tier` (`strong-novel` / `weak-novel` / `known`) on survivors — a
+  positive novelty signal, not just retrieval-absence. Both are **additive
+  annotations + guidance, never new rejections**; Gate-2 pass/fail is unchanged.
+  Toggles: `GEODISC_SURPRISE_GUIDANCE=0`, `GEODISC_MECHANISTIC_CONTRAST=0`.
 - **Discovery pipeline:** autonomous, running via launchd with evolution ENABLED.
   Two-gate EVALUATE: Gate 1 (real-data significance + held-out leakage guard +
   sign-consistency guard); Gate 2 (OpenAlex geochem literature + textbook

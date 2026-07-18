@@ -72,6 +72,8 @@ def log_verdict(verdict: dict, dataset: str = "default", path=None) -> None:
             "program_hash": verdict.get("program_hash"),
             "outcome": outcome(verdict),
             "both_pass": bool(verdict.get("both_pass")),
+            "surprise": verdict.get("surprise"),           # Tier 2
+            "novelty_tier": verdict.get("novelty_tier"),   # Tier 2
             "gate1": {
                 "pass": g1.get("pass") if isinstance(g1, dict) else None,
                 "reason": (g1.get("reason") if isinstance(g1, dict) else None),

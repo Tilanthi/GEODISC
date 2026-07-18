@@ -35,6 +35,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 import re
 import time
 import urllib.parse
@@ -94,12 +95,37 @@ class NoveltyResult:
     n_retrieved: int = 0
     reasoning: str = ""
     retrieved: List[Paper] = None
+    # Tier 2: does the claim require a process NOT in the literature/standard
+    # geochem? None = not asked / unclear. Used only to TIER survivors, never to
+    # change pass/fail.
+    mechanistic_contrast: Optional[bool] = None
 
     def to_dict(self) -> dict:
         d = asdict(self)
         if self.entailed_by:
             d["entailed_by"] = asdict(self.entailed_by)
         return d
+
+
+def novelty_tier(nr: "NoveltyResult") -> str:
+    """Tier 2: classify a Gate-2 result for ranking/triage (never affects pass/fail).
+
+    'known'        -> not novel (existing semantics).
+    'strong-novel' -> novel AND requires a process not in the literature/standard
+                      geochem (the paradigm-shift-shaped candidate).
+    'weak-novel'   -> novel but mechanistically ordinary (unstated, not surprising).
+    Anything else (retrieval-failed / judge-failed / empty) -> 'unverified'.
+    """
+    if nr.status == "known":
+        return "known"
+    if nr.novel and nr.status == "novel":
+        return "strong-novel" if nr.mechanistic_contrast is True else "weak-novel"
+    return "unverified"
+
+
+def _mechanistic_contrast_enabled() -> bool:
+    """Tier 2 judge question on by default; GEODISC_MECHANISTIC_CONTRAST=0 to disable."""
+    return os.environ.get("GEODISC_MECHANISTIC_CONTRAST", "1") not in ("0", "false", "False")
 
 
 # --------------------------------------------------------------------------- #
@@ -344,7 +370,7 @@ def _extract_query(claim: str) -> str:
 # --------------------------------------------------------------------------- #
 # the grounded entailment judge                                                #
 # --------------------------------------------------------------------------- #
-def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper], str, str]:
+def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper], str, str, Optional[bool]]:
     """Ask the LLM whether ``claim`` is ALREADY-KNOWN (not a new discovery).
 
     A claim is already-known if EITHER:
@@ -359,17 +385,22 @@ def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper]
     conservative: borderline claims lean toward 'known' (we would rather drop a
     marginal result than emit a textbook restatement as a 'discovery').
 
-    Returns (known, entailing_paper, reason_label, reasoning). reason_label is
-    'entailed' | 'foundational' | 'novel'. On judge failure returns
-    (False, None, '', '') — caller treats that conservatively (judge-failed)."""
+    Tier 2 (env-gated): also asks whether the claim requires a process NOT in the
+    literature/standard geochem. This ONLY tiers survivors (strong- vs weak-novel)
+    via novelty_tier(); it never changes the known/novel pass-fail.
+
+    Returns (known, entailing_paper, reason_label, reasoning, requires_unstated).
+    reason_label is 'entailed' | 'foundational' | 'novel'. On judge failure returns
+    (False, None, '', '', None) — caller treats that conservatively (judge-failed)."""
     if not papers:
-        return False, None, "", ""
+        return False, None, "", "", None
     gw = _get_gateway()
     if gw is None:
-        return False, None, "", ""
+        return False, None, "", "", None
     abstracts = "\n\n".join(
         f"[{i}] {p.title} ({p.year})\n{p.abstract[:900]}"
         for i, p in enumerate(papers))
+    mc = _mechanistic_contrast_enabled()
     system = (
         "You are a strict GEOCHEMISTRY novelty auditor. A candidate scientific "
         "CLAIM is ALREADY-KNOWN (not a new discovery) if EITHER (a) one of the "
@@ -382,18 +413,26 @@ def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper]
         "Walther's law, index-fossil stratigraphy, etc. Use retrieved text for "
         "(a) and standard geochemistry knowledge for (b). When uncertain, lean "
         "toward already-known — a borderline claim should not be advertised as a "
-        "new discovery.")
+        "new discovery."
+        + ("\nAdditionally (independent of the known/novel judgement): decide "
+           "whether the claim REQUIRES a process or mechanism that is NOT present "
+           "in the retrieved abstracts or standard geochemistry. Set "
+           "'requires_unstated_process' to true only if a genuinely new mechanism "
+           "is needed to explain it; false if existing processes suffice; null if "
+           "unclear." if mc else ""))
+    schema = ('{"known": true|false, "reason": "entailed"|"foundational"|"novel", '
+              '"by_abstract": <int|null>, "reasoning": "<one sentence>"'
+              + (', "requires_unstated_process": true|false|null' if mc else '')
+              + '}')
     user = (f"CANDIDATE CLAIM:\n{claim}\n\nRETRIEVED ABSTRACTS:\n{abstracts}\n\n"
-            "Respond with ONLY JSON: "
-            '{"known": true|false, "reason": "entailed"|"foundational"|"novel", '
-            '"by_abstract": <int|null>, "reasoning": "<one sentence>"}')
+            "Respond with ONLY JSON: " + schema)
     try:
         text, _ = gw.complete(
             system=system, messages=[{"role": "user", "content": user}],
             max_tokens=300)
         m = re.search(r"\{.*\}", text, re.DOTALL)
         if not m:
-            return False, None, "", ""
+            return False, None, "", "", None
         verdict = json.loads(m.group(0))
         known = bool(verdict.get("known"))
         label = str(verdict.get("reason", ""))[:24]
@@ -402,10 +441,15 @@ def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper]
         entailing = None
         if known and isinstance(idx, int) and 0 <= idx < len(papers):
             entailing = papers[idx]
-        return known, entailing, label, reasoning
+        requires_unstated = None
+        if mc:
+            raw = verdict.get("requires_unstated_process")
+            if isinstance(raw, bool):
+                requires_unstated = raw
+        return known, entailing, label, reasoning, requires_unstated
     except Exception as e:
         logger.warning("[novelty] judge failed: %s", e)
-        return False, None, "", ""
+        return False, None, "", "", None
 
 
 # --------------------------------------------------------------------------- #
@@ -465,7 +509,8 @@ def check_novelty(claim: str, use_s2: bool = True, force: bool = False) -> Novel
         c = cache[key]
         return NoveltyResult(c.get("novel", False), c.get("status", "?"),
                              claim, None, c.get("n_retrieved", 0),
-                             c.get("reasoning", ""))
+                             c.get("reasoning", ""),
+                             mechanistic_contrast=c.get("mechanistic_contrast"))
 
     # Phase 1: deterministic textbook blocklist -- fast-path BEFORE retrieval.
     blk = _matches_textbook_blocklist(claim)
@@ -521,7 +566,7 @@ def check_novelty(claim: str, use_s2: bool = True, force: bool = False) -> Novel
     else:
         judge_papers = papers  # claim is not clearly geochem; guard N/A
 
-    known, entailing, label, reasoning = _judge_known(claim, judge_papers)
+    known, entailing, label, reasoning, requires_unstated = _judge_known(claim, judge_papers)
     if not label and not reasoning:
         # judge itself failed -> conservative
         res = NoveltyResult(False, "judge-failed", claim, n_retrieved=len(judge_papers),
@@ -534,10 +579,11 @@ def check_novelty(claim: str, use_s2: bool = True, force: bool = False) -> Novel
         reason = (f"{label}: {reasoning}") if label else reasoning
         res = NoveltyResult(False, "known", claim, entailed_by=entailing,
                             n_retrieved=len(judge_papers), reasoning=reason,
-                            retrieved=judge_papers)
+                            retrieved=judge_papers, mechanistic_contrast=requires_unstated)
     else:
         res = NoveltyResult(True, "novel", claim, n_retrieved=len(judge_papers),
-                            reasoning=reasoning, retrieved=judge_papers)
+                            reasoning=reasoning, retrieved=judge_papers,
+                            mechanistic_contrast=requires_unstated)
     cache[key] = res.to_dict()
     _save_cache(cache)
     logger.info("[novelty] %s — %s (n=%d)", res.status, claim[:60], len(papers))

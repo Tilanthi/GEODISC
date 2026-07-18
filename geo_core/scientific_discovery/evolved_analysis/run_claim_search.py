@@ -42,6 +42,10 @@ try:
     from . import canonical_signature as canonical  # Tier 1: known-signature pre-filter
 except ImportError:
     import canonical_signature as canonical         # standalone
+try:
+    from . import surprise                              # Tier 2: surprise objective
+except ImportError:
+    import surprise                                     # standalone
 
 logger = logging.getLogger(__name__)
 
@@ -190,15 +194,24 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
             log_verdict(result, dataset)
             return result  # claim misstates its own finding's direction
 
+    # Tier 2 — surprise score: does the CONFIRMED sign contradict the textbook
+    # expectation for this element pair? (1.0 anomaly / 0.0 confirmation / 0.5
+    # unstaged). Pure annotation for ranking/triage — never affects pass/fail.
+    try:
+        result["surprise"] = surprise.surprise_score(claim, surprise.sign_of(eff))
+    except Exception:
+        result["surprise"] = None
+
     if run_gate2:
         try:
-            from .novelty_gate import check_novelty
+            from .novelty_gate import check_novelty, novelty_tier
             nr = check_novelty(claim)
             result["gate2"] = {
                 "pass": nr.novel, "status": nr.status, "n_retrieved": nr.n_retrieved,
                 "reasoning": nr.reasoning[:200],
                 "entailed_by": nr.entailed_by.title[:80] if nr.entailed_by else None,
             }
+            result["novelty_tier"] = novelty_tier(nr)  # Tier 2: strong/weak-novel tier
             # Tier 1 — learn: a full Gate 2 'known' verdict (textbook blocklist or
             # literature-entailed) means re-phrasings of this relation should be
             # skipped before the sandbox next time. register_known is a no-op if
@@ -243,6 +256,8 @@ def _emit(verdict: dict) -> None:
             "claim": claim,
             "effect": verdict["gate1"]["metrics"].get("effect"),
             "pvalue": verdict["gate1"]["metrics"].get("pvalue"),
+            "surprise": verdict.get("surprise"),           # Tier 2
+            "novelty_tier": verdict.get("novelty_tier"),   # Tier 2
         },
     }
     EVOLVED_STORE.parent.mkdir(parents=True, exist_ok=True)
@@ -343,6 +358,18 @@ def _verdict_feedback_hints(path=None, n_known: int = 5, n_failed: int = 8) -> l
                     f"FAILURE PATTERN ({top_n}/{total}): |effect| < 0.30. Aim for |r|"
                     " >= 0.4; prefer co-varying element groups (HFSE Zr-Nb-Y, LREE "
                     "La-Ce-Nd, LILE Rb-Sr-Ba) and PARTIAL correlations.")
+        # Tier 2 — surprise nudge: if recent survivors were confirmations of a
+        # textbook pair, push the proposer toward the opposite sign / an anomaly.
+        try:
+            recent_survivors = [(r.get("claim"), r.get("surprise"))
+                                for r in rows
+                                if r.get("outcome") == "both-pass"
+                                and r.get("claim")][-8:]
+            shint = surprise.surprise_hint(recent_survivors)
+            if shint:
+                hints.append(shint)
+        except Exception:
+            pass
         return hints
     except Exception:
         return []

@@ -30,6 +30,7 @@ scripts/fetch_geochem_data.py into $GEODISC_REAL_DATA. See real_data.py.
 from __future__ import annotations
 
 import ast
+import os
 import re
 from typing import Optional, Tuple
 
@@ -119,6 +120,24 @@ TASK_SYSTEM = (
     "  (b) one complete ```python``` module (CLAIM + run_claim).\n"
     "Output ONLY the diff or code, no explanation."
 )
+
+# Tier 2 — surprise / anomaly objective (env-gated, default on).
+# The proposer is nudged away from significant-but-textbook confirmations toward
+# claims that CONTRADICT a known expectation and still hold on the data.
+SURPRISE_GUIDANCE = (
+    "\n\nSURPRISE OBJECTIVE: the rarest, highest-value result is one that "
+    "CONTRADICTS a textbook expectation and is STILL real on the held-out data. "
+    "Known expected signs: Ce/Nd/La vs Nb/Zr/Y all co-vary POSITIVELY (incompatible "
+    "coherence); Rb/Sr/Ba POSITIVELY (LILE coherence); Cr-Ni POSITIVELY; MgO-SiO2 "
+    "NEGATIVE (Harker); FeO-MgO POSITIVE; Na2O-K2O POSITIVE (TAS). A claim that "
+    "asserts the OPPOSITE sign for one of these pairs -- and Gate 1 confirms that "
+    "opposite sign -- is a strong paradigm-shift candidate. Pure confirmations of "
+    "expected signs are rarely novel even if highly significant; prefer an "
+    "anomaly/decoupling, or an unstudied pair (isotopes, age-conditional, ratio "
+    "systematics)."
+)
+if os.environ.get("GEODISC_SURPRISE_GUIDANCE", "1") not in ("0", "false", "False"):
+    TASK_SYSTEM = TASK_SYSTEM + SURPRISE_GUIDANCE
 
 
 def parse_claim(src: str) -> Optional[str]:
