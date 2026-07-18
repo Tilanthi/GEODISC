@@ -38,6 +38,10 @@ try:
     from ..discovery_store import _atomic_write  # when imported within geo_core
 except ImportError:
     from discovery_store import _atomic_write     # standalone (evolved_analysis as top-level)
+try:
+    from . import canonical_signature as canonical  # Tier 1: known-signature pre-filter
+except ImportError:
+    import canonical_signature as canonical         # standalone
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +58,11 @@ _PROFILE = Path(__file__).resolve().parent / "geo_worker.sb"
 
 def _program_hash(src: str) -> str:
     return hashlib.sha1(src.encode()).hexdigest()[:10]
+
+
+def _canonical_prefilter_enabled() -> bool:
+    """Tier 1 pre-filter on by default; set GEODISC_CANONICAL_PREFILTER=0 to disable."""
+    return os.environ.get("GEODISC_CANONICAL_PREFILTER", "1") not in ("0", "false", "False")
 
 
 # --------------------------------------------------------------------------- #
@@ -128,6 +137,33 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
         log_verdict(result, dataset)
         return result
 
+    # Tier 1 — canonical-signature pre-filter: SKIP the 90-second sandbox for
+    # any claim whose MEANING Gate 2 has already ruled 'known' on some prior
+    # phrasing. Provably conservative: a signature only enters the registry
+    # after a full Gate 2 (retrieval + LLM judge) verdict of 'known', so this
+    # never blocks a relation Gate 2 hasn't already rejected — it only kills
+    # re-phrasings of textbook/known relations before spending a sandbox eval.
+    # Disable with GEODISC_CANONICAL_PREFILTER=0.
+    if _canonical_prefilter_enabled():
+        try:
+            _known = canonical.is_known(claim)
+        except Exception:
+            _known = False
+        if _known:
+            result = {
+                "claim": claim,
+                "program_hash": program_hash,
+                "gate1": {"pass": None,
+                          "reason": "skipped:canonical-known-signature",
+                          "metrics": {}},
+                "gate2": {"pass": False, "status": "known", "n_retrieved": 0,
+                          "reasoning": "canonical signature previously judged "
+                                       "known by Gate 2 (sandbox skipped)"},
+                "both_pass": False,
+            }
+            log_verdict(result, dataset)
+            return result
+
     g1_metrics = gate1_run(src, seed=seed)
     g1_pass, g1_reason = gate1_significant(g1_metrics)
 
@@ -163,6 +199,15 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
                 "reasoning": nr.reasoning[:200],
                 "entailed_by": nr.entailed_by.title[:80] if nr.entailed_by else None,
             }
+            # Tier 1 — learn: a full Gate 2 'known' verdict (textbook blocklist or
+            # literature-entailed) means re-phrasings of this relation should be
+            # skipped before the sandbox next time. register_known is a no-op if
+            # the signature is already in the registry.
+            if nr.status == "known":
+                try:
+                    canonical.register_known(claim)
+                except Exception:
+                    pass
         except Exception as e:
             # Gate-2 failure is conservative: do NOT promote as novel.
             result["gate2"] = {"pass": False, "status": "gate2-error",

@@ -43,6 +43,10 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Optional
+try:
+    from . import canonical_signature as canonical  # Tier 1: phrasing-invariant cache key
+except ImportError:
+    import canonical_signature as canonical          # standalone
 
 logger = logging.getLogger(__name__)
 
@@ -408,8 +412,22 @@ def _judge_known(claim: str, papers: List[Paper]) -> tuple[bool, Optional[Paper]
 # caching                                                                      #
 # --------------------------------------------------------------------------- #
 def _cache_key(claim: str) -> str:
+    """Phrasing-invariant cache key (Tier 1).
+
+    Prefers the canonical signature so a re-phrased claim hits the SAME cache
+    entry — this is the fix for the Ce-Nb escape (one phrasing gate2=known,
+    another gate2=novel). Falls back to a normalized text hash for claims the
+    canonical extractor can't parse. The 'canon:'/'text:' prefix keeps the two
+    key spaces disjoint (legacy text-keyed entries are simply re-evaluated once).
+    """
+    try:
+        sig = canonical.signature(claim)
+    except Exception:
+        sig = None
+    if sig is not None:
+        return "canon:" + sig
     norm = re.sub(r"\s+", " ", re.sub(r"[^A-Za-z0-9 ]", " ", claim.lower())).strip()
-    return hashlib.sha1(norm.encode()).hexdigest()[:16]
+    return "text:" + hashlib.sha1(norm.encode()).hexdigest()[:16]
 
 
 def _load_cache() -> dict:

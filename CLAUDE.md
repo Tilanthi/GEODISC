@@ -46,6 +46,18 @@ memory) repurposed from astrophysics to geochemistry.
   siblings were purged in the truncated-file cleanup (605f55b) are import-guarded
   so package surfaces stay clean. Removed confirmed-dead trees: `arc_reasoning/`,
   `gsd/`, duplicate `intelligence/mind_arbitrator.py` + `mind_synergy.py`.
+- **Discovery-pipeline efficiency (2026-07-18, Tier 1):** the two-gate EVALUATE
+  now consults a phrasing-invariant *canonical-signature* pre-filter
+  (`evolved_analysis/canonical_signature.py`) BEFORE the 90-s Gate-1 sandbox.
+  The known-signature registry is learned from Gate-2's own `known` verdicts
+  (seeded from the verdict log on deploy), so re-phrasings of textbook/known
+  relations are skipped at near-zero CPU — provably conservative (a signature is
+  only "known" after the full Gate-2 ruled it so on some phrasing). Gate-2's
+  novelty cache key is canonical too, closing the escape where one Ce-Nb wording
+  was `known` and another `novel`. Dry-run on held-out recent candidates:
+  **74% of sandbox evals eliminated (180→47)**. Toggle
+  `GEODISC_CANONICAL_PREFILTER=0` to disable. New funnel bucket
+  `canonical-known`; tests in `test_canonical_signature.py` (gate suite now 52).
 - **Discovery pipeline:** autonomous, running via launchd with evolution ENABLED.
   Two-gate EVALUATE: Gate 1 (real-data significance + held-out leakage guard +
   sign-consistency guard); Gate 2 (OpenAlex geochem literature + textbook
