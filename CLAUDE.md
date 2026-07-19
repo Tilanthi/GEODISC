@@ -107,6 +107,14 @@ memory) repurposed from astrophysics to geochemistry.
   (claim direction must match effect sign); (3) textbook blocklist (Gate-2
   fast-path); (4) verdict-feedback (proposer sees its own failures + corrective
   guidance); (5) domain-relevance guard (off-topic retrieval → retrieval-failed).
+  *(2026-07-19 integrity fix: the sign-consistency guard's direction markers were
+  broadened — the surprise objective had induced the proposer to phrase a
+  direction as a bare adjective ("significantly negative") that the narrow
+  markers missed, so claims whose stated sign contradicted their computed effect
+  entered the store. Broadened + a regression test; 7 misstated/misframed store
+  entries quarantined with reasons. Known follow-up: `canonical_signature`
+  doesn't recognize bare symbols for Cr/Ni/V/Co/Cu/Zn/Y — only `chromium`/
+  `cr_ppm` etc. — so surprise/framing checks are blind to those pairs.)*
 - **Measurement stack:** `evolved_analysis/capability_index.py` — CI-score +
   closed RSI loop over the verdict log. Run: `python -m
   evolved_analysis.capability_index`.

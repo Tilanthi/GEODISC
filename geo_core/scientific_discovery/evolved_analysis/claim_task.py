@@ -134,7 +134,14 @@ SURPRISE_GUIDANCE = (
     "opposite sign -- is a strong paradigm-shift candidate. Pure confirmations of "
     "expected signs are rarely novel even if highly significant; prefer an "
     "anomaly/decoupling, or an unstudied pair (isotopes, age-conditional, ratio "
-    "systematics)."
+    "systematics). "
+    "INTEGRITY: state the sign HONESTLY -- exactly what your run_claim computed. "
+    "The surprise reward comes from the DATA genuinely contradicting the textbook "
+    "sign, NOT from the claim text asserting a contradiction the data does not "
+    "support. The sign-consistency guard compares your STATED sign to the computed "
+    "effect; a claim whose stated direction disagrees with its own effect is "
+    "REJECTED (e.g. writing 'significantly negative' when the computed correlation "
+    "is positive). Do not frame a confirmation as 'contrary to expectation'."
 )
 if os.environ.get("GEODISC_SURPRISE_GUIDANCE", "1") not in ("0", "false", "False"):
     TASK_SYSTEM = TASK_SYSTEM + SURPRISE_GUIDANCE
@@ -208,10 +215,23 @@ def claim_uses_heldout_split(src: str, entry_point: str = ENTRY_POINT) -> Tuple[
 
 
 # Direction markers a claim may use to assert a correlation's sign.
+# Broadened (2026-07-19 integrity fix): the surprise objective induced the
+# proposer to phrase a direction as a bare adjective ("significantly negative",
+# "is NEGATIVE") which the narrow original markers ("negatively correlated"...)
+# missed, letting claims whose stated sign contradicted their computed effect
+# through the sign-consistency guard. The bare direction words + residual/
+# covariance/relat variants close that evasion. If BOTH a positive and a negative
+# marker appear, direction is treated as unstated (conservative).
 _POS_MARKERS = ("positively correlated", "positive correlation", "positive partial",
-                "positive assoc", "positive covar")
+                "positive assoc", "positive covar", "positively covar",
+                "positive residual", "positive covari", "positive relat",
+                "significantly positive", "is positive", "are positive",
+                "r > 0", "r>0", "positively", "positive")
 _NEG_MARKERS = ("negatively correlated", "negative correlation", "negative partial",
-                "negative assoc", "negative covar", "anti-correlat", "inverse")
+                "negative assoc", "negative covar", "anti-correlat", "anticorrel",
+                "inverse", "negative residual", "negative covari", "negative relat",
+                "significantly negative", "is negative", "are negative",
+                "r < 0", "r<0", "negatively", "negative")
 
 
 def _claim_stated_direction(claim: str) -> Optional[str]:

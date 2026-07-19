@@ -193,8 +193,27 @@ def test_claim_stated_direction():
     assert d("A is positively correlated with B") == "positive"
     assert d("A is negatively correlated with B") == "negative"
     assert d("a robust negative partial correlation between A and B") == "negative"
-    assert d("A positively correlates with B") is None          # unstated phrasing
-    assert d("A and B show a relationship") is None             # unstated
+    # Broadened (2026-07-19): bare direction adjectives are now recognized so the
+    # proposer cannot evade the sign-consistency guard with "significantly negative".
+    assert d("A positively correlates with B") == "positive"
+    assert d("the residual covariation ... is significantly negative") == "negative"
+    assert d("the covariance is significantly NEGATIVE.") == "negative"
+    assert d("a robust positive residual after removing MgO") == "positive"
+    assert d("A and B show a relationship") is None             # genuinely unstated
+
+
+def test_guard_rejects_direction_misstatement():
+    """Regression: a claim whose stated sign contradicts its computed effect is
+    rejected (the surprise-objective evasion that let 'significantly negative'
+    claims with positive data into the store)."""
+    from geo_core.scientific_discovery.evolved_analysis.claim_task import (
+        _direction_consistent as g)
+    # claim says negative, effect is positive -> REJECT
+    ok, reason = g("residual Nd-Ce covariation is significantly negative", 0.939)
+    assert ok is False and "sign-mismatch" in reason
+    # honest in both directions -> pass
+    assert g("X is negatively correlated with Y", -0.4)[0] is True
+    assert g("X is positively correlated with Y", 0.4)[0] is True
 
 
 def test_direction_consistent():
