@@ -125,6 +125,34 @@ def test_prefilter_disabled_via_env(monkeypatch):
     assert verdict_log.outcome(verdict) != "canonical-known"
 
 
+# --- bare-symbol recognition (Cr/Ni/V/Co/Cu/Zn/Y) + collision avoidance -------- #
+def test_bare_symbols_recognized():
+    # claims use bare symbols (not just full names / _ppm); without these the
+    # surprise/framing/diversity logic was blind to Cr-Ni, Zr-Y, V, etc.
+    assert set(cs.components("Cr and Ni are coupled during fractionation")["primary"]) == {"cr", "ni"}
+    assert {"v", "cr"}.issubset(cs.components("residual V and Cr positively correlate")["primary"])
+    c = cs.components("residual Zr and Y after accounting for MgO is negative")
+    assert set(c["primary"]) == {"y", "zr"}          # Y recognized; MgO is conditioning
+    assert set(c["conditioning"]) == {"mgo"}
+
+
+def test_collision_words_do_not_false_match_cobalt():
+    # "co-vary"/"covariance"/"coupled" must NOT register as cobalt (or copper).
+    for txt in ["the two elements co-vary positively",
+                "robust covariance after removing MgO",
+                "compatible elements are coupled during fractionation"]:
+        c = cs.components(txt)
+        elems = (set(c["primary"]) | set(c["conditioning"])) if c else set()
+        assert "co" not in elems, f"false cobalt match in {txt!r}: {elems}"
+        assert "cu" not in elems, f"false copper match in {txt!r}: {elems}"
+
+
+def test_cobalt_bare_symbol_matched_but_co_prefix_not():
+    # "Co" the element matches; the "co-" prefix in the same sentence does not.
+    primary = set(cs.components("Co and Ni co-vary")["primary"])
+    assert "co" in primary and "ni" in primary
+
+
 if __name__ == "__main__":
     # Self-run: execute every test_* function.
     import inspect

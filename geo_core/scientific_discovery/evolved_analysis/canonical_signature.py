@@ -67,15 +67,18 @@ _ELEMENTS: Dict[str, Tuple[str, ...]] = {
     "k2o":   (r"k2o", r"\bpotassium\b"),
     "p2o5":  (r"p2o5", r"\bphosphorus\b", r"\bphosphate\b"),
     # trace elements (ppm) — the widened, thinner-textbook niche
-    "v":  (r"v_ppm", r"\bvanadium\b"),
-    "cr": (r"cr_ppm", r"\bchromium\b"),
-    "co": (r"co_ppm", r"\bcobalt\b"),
-    "ni": (r"ni_ppm", r"\bnickel\b"),
-    "cu": (r"cu_ppm", r"\bcopper\b"),
-    "zn": (r"zn_ppm", r"\bzinc\b"),
+    "v":  (r"v_ppm", r"\bvanadium\b", r"\bv\b"),
+    "cr": (r"cr_ppm", r"\bchromium\b", r"\bcr\b"),
+    # bare 'co' uses a negative lookahead so the "co-" prefix (co-vary, co-enrich,
+    # co-variation) is NOT matched as cobalt; "covariance"/"coupled" are single
+    # words (no internal word boundary) so \bco\b never matches them anyway.
+    "co": (r"co_ppm", r"\bcobalt\b", r"\bco\b(?!-)"),
+    "ni": (r"ni_ppm", r"\bnickel\b", r"\bni\b"),
+    "cu": (r"cu_ppm", r"\bcopper\b", r"\bcu\b"),
+    "zn": (r"zn_ppm", r"\bzinc\b", r"\bzn\b"),
     "rb": (r"rb_ppm", r"\brubidium\b", r"\brb\b"),
     "sr": (r"sr_ppm", r"\bstrontium\b", r"\bsr\b"),
-    "y":  (r"y_ppm", r"\byttrium\b"),
+    "y":  (r"y_ppm", r"\byttrium\b", r"\by\b"),
     "zr": (r"zr_ppm", r"\bzirconium\b", r"\bzr\b"),
     "nb": (r"nb_ppm", r"\bniobium\b", r"\bnb\b"),
     "ba": (r"ba_ppm", r"\bbarium\b", r"\bba\b"),
@@ -102,6 +105,7 @@ _COND_MARKERS = (
     "controlling for", "control for", "controlled for",
     "after removing", "removing the", "after correcting",
     "correcting for", "correct for", "corrected for",
+    "after accounting", "accounting for",
     "adjusting for", "adjust for",
     "conditioning on", "condition on", "partiall",
 )

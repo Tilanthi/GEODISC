@@ -112,9 +112,11 @@ memory) repurposed from astrophysics to geochemistry.
   direction as a bare adjective ("significantly negative") that the narrow
   markers missed, so claims whose stated sign contradicted their computed effect
   entered the store. Broadened + a regression test; 7 misstated/misframed store
-  entries quarantined with reasons. Known follow-up: `canonical_signature`
-  doesn't recognize bare symbols for Cr/Ni/V/Co/Cu/Zn/Y — only `chromium`/
-  `cr_ppm` etc. — so surprise/framing checks are blind to those pairs.)*
+  entries quarantined with reasons. Also fixed: `canonical_signature` now
+  recognizes bare symbols Cr/Ni/V/Co/Cu/Zn/Y (claims say "Cr and Ni", "Zr/Y",
+  not just chromium/cr_ppm) — Co uses a negative-lookahead so the "co-" prefix
+  (co-vary, covariance, coupled) doesn't false-match; verified no false matches
+  on collision words.)*
 - **Measurement stack:** `evolved_analysis/capability_index.py` — CI-score +
   closed RSI loop over the verdict log. Run: `python -m
   evolved_analysis.capability_index`.
