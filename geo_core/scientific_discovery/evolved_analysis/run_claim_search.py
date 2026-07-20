@@ -391,6 +391,22 @@ def _verdict_feedback_hints(path=None, n_known: int = 5, n_failed: int = 8) -> l
                     f"FAILURE PATTERN ({top_n}/{total}): |effect| < 0.30. Aim for |r|"
                     " >= 0.4; prefer co-varying element groups (HFSE Zr-Nb-Y, LREE "
                     "La-Ce-Nd, LILE Rb-Sr-Ba) and PARTIAL correlations.")
+        # Integrity corrective: if recent gate1 rejections were for misstating the
+        # direction or recycling a p-value (the surprise-objective's failure mode),
+        # tell the proposer to compute-then-report. Closes the behavior loop.
+        try:
+            recent = rows[-40:]
+            mm = sum("sign-mismatch" in ((r.get("gate1") or {}).get("reason") or "") for r in recent)
+            pv = sum("pvalue-implausible" in ((r.get("gate1") or {}).get("reason") or "") for r in recent)
+            if mm + pv >= 2:
+                hints.append(
+                    f"INTEGRITY ({mm} sign-mismatch + {pv} implausible-p rejections recently): "
+                    "those claims were rejected because their STATED direction disagreed with the "
+                    "computed effect, or their p-value was recycled/implausible. COMPUTE the relation "
+                    "on the data first, then state EXACTLY the sign and p your run_claim measured. "
+                    "Do not write a direction or p-value the data does not show.")
+        except Exception:
+            pass
         # Tier 2 — surprise nudge: if recent survivors were confirmations of a
         # textbook pair, push the proposer toward the opposite sign / an anomaly.
         try:

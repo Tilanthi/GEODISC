@@ -122,7 +122,12 @@ memory) repurposed from astrophysics to geochemistry.
   separate file — the supervisor rewrites the store + emit queue each cycle and
   drops any in-store quarantine field, so a purge must clean both
   `genuine_discoveries.json` AND `evolved_discoveries.json` and log to the
-  separate file.))*
+  separate file). 2026-07-20 (design): reworded SURPRISE_GUIDANCE from "assert a
+  contradiction" to "compute first, report honestly" — the assert framing was
+  inducing ~10% misstatement rate with zero real anomalies on the Gard data (all
+  survivors surprise=0.5); added an integrity-corrective feedback hint when recent
+  rejections were sign/p-value misstatements. Active surprise-seeking only pays off
+  where real anomalies exist (e.g. the Proterozoic redox data).)*
 - **Measurement stack:** `evolved_analysis/capability_index.py` — CI-score +
   closed RSI loop over the verdict log. Run: `python -m
   evolved_analysis.capability_index`.
