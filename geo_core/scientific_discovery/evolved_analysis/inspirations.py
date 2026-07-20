@@ -90,12 +90,25 @@ def run_claim(df_train, df_eval):
     return {"effect": float(gain), "pvalue": 0.0, "effect_type": "predictive_gain_mgo", "summary": f"R2 gain (ratio vs SiO2)={gain:.3f}"}
 '''
 
+# --- isotope / source-tracer (the under-used, less-saturated, on-mission niche) -
+_ISOTOPE = '''CLAIM = "After dropna, radiogenic Sr and Nd isotopes (sr87_sr86 vs nd143_nd144) are negatively correlated across the global compilation, reflecting the depleted-mantle array."
+def run_claim(df_train, df_eval):
+    import numpy as np
+    from scipy.stats import spearmanr
+    d = df_eval.dropna(subset=["sr87_sr86", "nd143_nd144"])
+    if len(d) < 20:
+        return {"effect": 0.0, "pvalue": 1.0, "effect_type": "isotope_sr_nd", "summary": "too few isotope rows"}
+    r, p = spearmanr(d["sr87_sr86"], d["nd143_nd144"])
+    return {"effect": float(r), "pvalue": float(p), "effect_type": "isotope_sr_nd", "summary": f"Sr-Nd isotope spearman r={r:.3f}, n={len(d)}"}
+'''
+
 BANK = [
     ("partial-residual", _PARTIAL),
     ("conditional-subset", _CONDITIONAL),
     ("threshold-nonmonotonic", _THRESHOLD),
     ("ratio-systematics", _RATIO),
     ("predictive-validity", _PREDICTIVE),
+    ("isotope-source-tracer", _ISOTOPE),
 ]
 
 

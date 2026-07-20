@@ -161,6 +161,30 @@ REPERTOIRE_EXPANSION = (
 )
 TASK_SYSTEM = TASK_SYSTEM + REPERTOIRE_EXPANSION
 
+# 2026-07-20: pivot the proposer to the under-used, least-textbook-saturated,
+# on-mission niche — radiogenic isotopes + age — in the data we already have,
+# while the Proterozoic sedimentary substrate (SGP) is unavailable. This uses CPU
+# productively on available, unstalled data instead of re-deriving saturated HFSE
+# correlations. Disable with GEODISC_ISOTOPE_NICHE=0.
+ISOTOPE_NICHE_GUIDANCE = (
+    "\n\nISOTOPE / AGE NICHE (PRIORITY): the oxide/trace residual-correlation vein "
+    "(Ce-Nb, Zr-Y, Cr-Ni after MgO) is TEXTBOOK-SATURATED — stop re-deriving it. "
+    "Instead PREFERENTIALLY use the radiogenic-isotope columns (sr87_sr86, "
+    "nd143_nd144, pb206_pb204/pb207_pb204/pb208_pb204, hf176_hf177) and the age "
+    "column. These have the THINNEST textbook coverage (source/provenance tracers, "
+    "on-mission for crustal evolution), and the proposer has been under-using them. "
+    "Forms to try: (i) isotope-isotope coupling (e.g. Sr vs Nd isotope co-variation "
+    "by rock type); (ii) isotope vs trace-element residual after MgO (does a source "
+    "tracer decouple from a fractionation proxy?); (iii) age-conditional relations "
+    "(does a correlation strengthen/weaken across an age threshold?); (iv) isotope "
+    "ratios as predictors of a major-oxide property. ALWAYS df.dropna(subset=[your_"
+    "isotope_cols]) first — these columns are SPARSE (Sr ~10%, Nd ~10%, Pb ~6%, age "
+    "~2% of rows), so the held-out n will be smaller but the question is far less "
+    "saturated. State the sign + p your run_claim actually computes."
+)
+if os.environ.get("GEODISC_ISOTOPE_NICHE", "1") not in ("0", "false", "False"):
+    TASK_SYSTEM = TASK_SYSTEM + ISOTOPE_NICHE_GUIDANCE
+
 
 def parse_claim(src: str) -> Optional[str]:
     """Extract the CLAIM string from a candidate module (None if absent).
