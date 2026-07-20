@@ -43,6 +43,8 @@ def outcome(verdict: dict) -> str:
     if isinstance(g1, dict) and not g1.get("pass"):
         if g1_reason.startswith("leakage"):
             return "leakage-blocked"
+        if "pvalue-implausible" in g1_reason:
+            return "gate1-pvalue-implausible"
         return "gate1-failed"
     if g2 is None:
         return "gate2-skipped"

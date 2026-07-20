@@ -284,6 +284,48 @@ def gate1_significant(metrics: dict) -> Tuple[bool, str]:
                    f"not significant (need |effect|>={EFFECT_MIN} and p<={PMAX})")
 
 
+def gate1_pvalue_consistent(effect, pvalue, n_max) -> Tuple[bool, str]:
+    """Independently sanity-check a candidate's self-reported ``pvalue`` against
+    the correlation magnitude it reports, given the max available sample size.
+
+    WHY: Gate 1 trusts the candidate's returned pvalue. A proposer can satisfy
+    "significant" by returning a recycled/hardcoded tiny p — observed in the
+    store (the SAME p = 5.98e-82 for r = +0.555 AND r = -0.426, which is
+    impossible for two different correlations). This re-derives the p that the
+    reported |r| could yield at ``n_max`` (the held-out split size — a candidate
+    cannot legitimately use more) and rejects p-values that are implausibly MORE
+    significant than |r| allows.
+
+    Note: p = 0.0 for a STRONG correlation (e.g. r=0.94, n=1000) is legitimate
+    underflow — scipy spearmanr returns 0.0 when the survival function underflows
+    — and is NOT rejected. p = 0.0 (or any tiny p) for a WEAK correlation is caught.
+
+    Conservative: returns (True, 'ok') if the check cannot be computed, so it
+    never blocks the gate on a check-side failure."""
+    try:
+        if effect is None or pvalue is None or n_max is None or n_max < 5:
+            return True, "ok"
+        r = float(effect)
+        p = float(pvalue)
+        if not (-1.0 < r < 1.0):
+            return True, "ok"  # |r|>=1 is degenerate; cannot bound the p
+        import math
+        from scipy import stats
+        df = int(n_max) - 2
+        t = abs(r) * math.sqrt(df / max(1e-12, 1.0 - r * r))
+        recomp = 2.0 * stats.t.sf(t, df)        # smallest p |r| could yield at n_max
+        FLOOR = 1e-300
+        rep = max(p, FLOOR)                      # treat 0.0 (underflow) as the floor
+        recomp_f = max(float(recomp), FLOOR)
+        if rep < recomp_f * 1e-6:                # >6 orders too significant -> recycled/hardcoded
+            return False, (f"pvalue-implausible: reported p={p:.3e} but |r|={abs(r):.3f} "
+                           f"at n<={int(n_max)} implies p>={recomp_f:.3e} "
+                           f"(recycled/hardcoded p-value suspected)")
+        return True, "ok"
+    except Exception:
+        return True, "ok"
+
+
 if __name__ == "__main__":
     # self-test: the seed claim parses
     print("seed CLAIM:", parse_claim(NAIVE_CLAIM_SEED)[:60], "...")

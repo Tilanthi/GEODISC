@@ -106,17 +106,23 @@ memory) repurposed from astrophysics to geochemistry.
 - **Quality guards:** (1) held-out leakage guard; (2) sign-consistency guard
   (claim direction must match effect sign); (3) textbook blocklist (Gate-2
   fast-path); (4) verdict-feedback (proposer sees its own failures + corrective
-  guidance); (5) domain-relevance guard (off-topic retrieval → retrieval-failed).
-  *(2026-07-19 integrity fix: the sign-consistency guard's direction markers were
-  broadened — the surprise objective had induced the proposer to phrase a
-  direction as a bare adjective ("significantly negative") that the narrow
-  markers missed, so claims whose stated sign contradicted their computed effect
-  entered the store. Broadened + a regression test; 7 misstated/misframed store
-  entries quarantined with reasons. Also fixed: `canonical_signature` now
-  recognizes bare symbols Cr/Ni/V/Co/Cu/Zn/Y (claims say "Cr and Ni", "Zr/Y",
-  not just chromium/cr_ppm) — Co uses a negative-lookahead so the "co-" prefix
-  (co-vary, covariance, coupled) doesn't false-match; verified no false matches
-  on collision words.)*
+  guidance); (5) domain-relevance guard (off-topic retrieval → retrieval-failed);
+  (6) **p-value provenance guard** — Gate 1 independently re-derives the p the
+  reported |r| could yield at the held-out n and rejects implausibly more-
+  significant p (recycled/hardcoded), since the candidate self-reports p and
+  could otherwise fake significance (`gate1_pvalue_consistent`; outcome bucket
+  `gate1-pvalue-implausible`). p=0.0 for a *strong* correlation is legit underflow
+  and is not rejected.
+  *(Integrity fixes: 2026-07-19 broadened the sign-consistency markers — the
+  surprise objective had induced bare-adjective directions ("significantly
+  negative") that evaded the guard — + canonical_signature now recognizes bare
+  symbols Cr/Ni/V/Co/Cu/Zn/Y. 2026-07-20 added the p-value provenance guard after
+  the store showed the SAME p for r=+0.555 and r=-0.426. Quarantined entries live
+  in `~/.geodisc_persistent/genuine_discoveries_quarantined.json` (a DURABLE
+  separate file — the supervisor rewrites the store + emit queue each cycle and
+  drops any in-store quarantine field, so a purge must clean both
+  `genuine_discoveries.json` AND `evolved_discoveries.json` and log to the
+  separate file.))*
 - **Measurement stack:** `evolved_analysis/capability_index.py` — CI-score +
   closed RSI loop over the verdict log. Run: `python -m
   evolved_analysis.capability_index`.

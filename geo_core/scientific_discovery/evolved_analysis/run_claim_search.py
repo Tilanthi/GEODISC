@@ -31,7 +31,7 @@ from pathlib import Path
 
 from .claim_task import (NAIVE_CLAIM_SEED, TASK_SYSTEM, ENTRY_POINT,
                          parse_claim, gate1_significant, claim_uses_heldout_split,
-                         _direction_consistent)
+                         _direction_consistent, gate1_pvalue_consistent)
 from .proposer import LLMProposer, apply_diff
 from .verdict_log import log_verdict
 try:
@@ -71,6 +71,23 @@ def _program_hash(src: str) -> str:
 def _canonical_prefilter_enabled() -> bool:
     """Tier 1 pre-filter on by default; set GEODISC_CANONICAL_PREFILTER=0 to disable."""
     return os.environ.get("GEODISC_CANONICAL_PREFILTER", "1") not in ("0", "false", "False")
+
+
+_EVAL_N_CACHE: dict = {}
+
+def _eval_n(seed: int = 42):
+    """Max sample size available to a candidate (the held-out eval split), cached.
+
+    Used by the p-value provenance guard to bound the smallest p a reported |r|
+    could legitimately yield. Returns None if real data is unavailable (the guard
+    then no-ops conservatively)."""
+    if seed not in _EVAL_N_CACHE:
+        try:
+            from . import real_data
+            _EVAL_N_CACHE[seed] = len(real_data.load_split(seed=seed)["eval"])
+        except Exception:
+            _EVAL_N_CACHE[seed] = None
+    return _EVAL_N_CACHE[seed]
 
 
 # --------------------------------------------------------------------------- #
@@ -187,6 +204,18 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
     if not g1_pass:
         log_verdict(result, dataset)
         return result  # fabricated/non-significant claim stops here
+
+    # p-value provenance guard: independently re-derive the p the reported |r|
+    # could yield at the max available n; reject recycled/hardcoded p-values (a
+    # proposer can otherwise satisfy "significant" by returning a copied tiny p).
+    pv_ok, pv_reason = gate1_pvalue_consistent(g1_metrics.get("effect"),
+                                               g1_metrics.get("pvalue"),
+                                               _eval_n(seed))
+    if not pv_ok:
+        result["gate1"] = {"pass": False, "reason": pv_reason,
+                           "metrics": result["gate1"]["metrics"]}
+        log_verdict(result, dataset)
+        return result  # self-reported p is implausible for its own |r|
 
     # sign-consistency guard: the claim's STATED direction must match the effect
     eff = g1_metrics.get("effect")

@@ -216,6 +216,27 @@ def test_guard_rejects_direction_misstatement():
     assert g("X is positively correlated with Y", 0.4)[0] is True
 
 
+def test_gate1_pvalue_consistent():
+    """Regression: Gate 1 independently verifies a candidate's self-reported
+    p-value against its reported |r|. Recycled/hardcoded p (the same p for
+    different correlations) is rejected; legitimate strong-correlation underflow
+    (p=0.0) is NOT."""
+    from geo_core.scientific_discovery.evolved_analysis.claim_task import (
+        gate1_pvalue_consistent as c)
+    # legit: strong correlation, p=0.0 is genuine underflow -> PASS
+    assert c(0.94, 0.0, 1000)[0] is True
+    # legit: p consistent with r -> PASS
+    assert c(0.555, 5.976e-82, 1000)[0] is True
+    # FAKE: r=-0.426 cannot yield p=5.98e-82 (that's the r=+0.555 p) -> REJECT
+    ok, reason = c(-0.426, 5.976e-82, 1000)
+    assert ok is False and "pvalue-implausible" in reason
+    # FAKE: weak correlation claiming p=0.0 -> REJECT
+    assert c(0.30, 0.0, 1000)[0] is False
+    # conservative: missing/uncomputable -> PASS (never block on check failure)
+    assert c(None, 0.01, 1000)[0] is True
+    assert c(0.5, 0.01, None)[0] is True
+
+
 def test_direction_consistent():
     from geo_core.scientific_discovery.evolved_analysis.claim_task import (
         _direction_consistent as c)
