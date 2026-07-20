@@ -91,16 +91,77 @@ _PROTEROZOIC_TASK_SYSTEM = (
     "Output ONLY the diff or code, no explanation."
 )
 
+# --------------------------------------------------------------------------- #
+# PALEO — fossil collections from the Paleobiology Database (PBDB).           #
+# Paleontology / fossil record / early-Earth atmosphere focus.                #
+# --------------------------------------------------------------------------- #
+PALEO_REQUIRED = ("mid_age_ma", "n_occurrences")
+PALEO_OPTIONAL = (
+    "late_age_ma", "early_age_ma", "paleolatitude", "paleolongitude",
+    "latitude", "longitude", "environment", "lithology", "epoch",
+    "formation", "country", "n_references",
+)
+
+_PALEO_TASK_SYSTEM = (
+    "You are an expert PALEONTOLOGIST and Earth-system scientist searching for a "
+    "NOVEL, real statistical relationship in a FOSSIL COLLECTION database (from the "
+    "Paleobiology Database, PBDB) spanning the Proterozoic-early Paleozoic (the "
+    "window of early life, the Great Oxidation Event, Snowball Earth, and the "
+    "Cambrian explosion).\n"
+    "The available REAL data columns (use these EXACT names in df[col]):\n"
+    "  mid_age_ma (geological age of each fossil collection, Ma)\n"
+    "  n_occurrences (number of fossil occurrences at the collection -- a diversity/"
+    "abundance proxy)\n"
+    "  paleolatitude / paleolongitude (paleogeographic position)\n"
+    "  environment (depositional environment, e.g. 'carbonate', 'deep-water', "
+    "'peritidal', 'fluvial')\n"
+    "  lithology (rock type, e.g. 'limestone', 'shale', 'sandstone')\n"
+    "  epoch / formation / country\n"
+    "ALWAYS df.dropna(subset=[your_cols]) before computing. "
+    "You may use numpy/scipy/pandas/sklearn only.\n"
+    "HARD RULES:\n"
+    "- Keep the EXACT signature: def run_claim(df_train, df_eval)\n"
+    "- Set a module-level CLAIM = \"...\" string: a specific, quantitative claim.\n"
+    "- Return a dict with keys effect (correlation/contrast in [-1,1] or normalized), "
+    "pvalue (a real significance), effect_type, summary.\n"
+    "- DO NOT propose a textbook restatement.\n"
+    "INSTEAD explore these on-mission question types:\n"
+    "  (i) DIVERSITY through time -- does occurrence density shift across key "
+    "transitions (GOE ~2400 Ma, Snowball Earth ~700 Ma, Cambrian explosion ~540 Ma)?\n"
+    "  (ii) PRESERVATION bias -- does environment or lithology predict fossil "
+    "occurrence density? Compare mean n_occurrences across environments.\n"
+    "  (iii) PALEOGEOGRAPHIC gradients -- does diversity vary with paleolatitude?\n"
+    "  (iv) AGE-CONDITIONAL patterns -- does a relationship strengthen or reverse "
+    "across an age threshold (e.g. before vs after the Cambrian explosion)?\n"
+    "  (v) PREDICTIVE validity -- does a combination of environment + lithology + "
+    "age predict occurrence density better than age alone?\n"
+    "- The relationship must be genuinely significant on the held-out data.\n"
+    "- No file I/O, no network, no plotting. Correct and self-contained.\n"
+    "RESPOND WITH EITHER:\n"
+    "  (a) one or more diff blocks (<<<SEARCH>>>...<<<REPLACE>>>...<<<END>>>)\n"
+    "  (b) one complete ```python``` module (CLAIM + run_claim).\n"
+    "Output ONLY the diff or code, no explanation.\n"
+    "INTEGRITY: state the sign HONESTLY. The sign-consistency guard rejects claims "
+    "whose stated direction disagrees with their computed effect; the p-value guard "
+    "rejects recycled/hardcoded p-values. Compute first, report honestly."
+)
+
 _PROFILES = {
     "gard": {
         "required_cols": GARD_REQUIRED,
         "optional_cols": GARD_OPTIONAL,
-        "on_mission_cols": GARD_OPTIONAL,  # isotopes + age are the on-mission niche
+        "on_mission_cols": GARD_OPTIONAL,
     },
     "proterozoic_redox": {
         "required_cols": PROTEROZOIC_REDOX_REQUIRED,
         "optional_cols": PROTEROZOIC_REDOX_OPTIONAL,
         "on_mission_cols": ("fe_hr", "fe_t", "fe_py", "toc", "age"),
+    },
+    "paleo": {
+        "required_cols": PALEO_REQUIRED,
+        "optional_cols": PALEO_OPTIONAL,
+        "on_mission_cols": ("mid_age_ma", "n_occurrences", "environment",
+                             "lithology", "paleolatitude"),
     },
 }
 
@@ -137,6 +198,8 @@ def build_task_system(profile: str = None):
         except Exception:
             pass
         return base
+    if name == "paleo":
+        return _PALEO_TASK_SYSTEM
     # unknown profile -> fall back to gard's task system
     from . import claim_task
     return claim_task.TASK_SYSTEM
