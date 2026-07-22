@@ -290,10 +290,13 @@ def _direction_consistent(claim: str, effect) -> Tuple[bool, str]:
                   f"({e:+.3f})")
 
 
-def gate1_significant(metrics: dict) -> Tuple[bool, str]:
+def gate1_significant(metrics: dict, effect_min: float = EFFECT_MIN,
+                      pmax: float = PMAX) -> Tuple[bool, str]:
     """Gate 1: is the computed effect statistically significant on real data?
 
-    Returns (passed, reason). Conservative: missing/invalid fields fail."""
+    Returns (passed, reason). Conservative: missing/invalid fields fail.
+    The threshold is profile-aware (paleo data has weaker correlations than
+    igneous trace-elements — see data_profile thresholds)."""
     if not isinstance(metrics, dict) or "error" in metrics:
         return False, f"gate1-failed: no valid metric ({metrics.get('error', 'missing') if isinstance(metrics, dict) else 'not a dict'})"
     try:
@@ -301,10 +304,10 @@ def gate1_significant(metrics: dict) -> Tuple[bool, str]:
         pvalue = float(metrics.get("pvalue", 1.0))
     except (TypeError, ValueError):
         return False, "gate1-failed: non-numeric effect/pvalue"
-    if effect >= EFFECT_MIN and pvalue <= PMAX:
-        return True, f"gate1-pass: |effect|={effect:.3f}>={EFFECT_MIN}, p={pvalue:.1e}<={PMAX}"
+    if effect >= effect_min and pvalue <= pmax:
+        return True, f"gate1-pass: |effect|={effect:.3f}>={effect_min}, p={pvalue:.1e}<={pmax}"
     return False, (f"gate1-failed: |effect|={effect:.3f} or p={pvalue:.1e} "
-                   f"not significant (need |effect|>={EFFECT_MIN} and p<={PMAX})")
+                   f"not significant (need |effect|>={effect_min} and p<={pmax})")
 
 
 def gate1_pvalue_consistent(effect, pvalue, n_max) -> Tuple[bool, str]:

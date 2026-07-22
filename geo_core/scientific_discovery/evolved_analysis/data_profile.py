@@ -119,6 +119,14 @@ _PALEO_TASK_SYSTEM = (
     "  epoch / formation / country\n"
     "ALWAYS df.dropna(subset=[your_cols]) before computing. "
     "You may use numpy/scipy/pandas/sklearn only.\n"
+    "DATA HANDLING (critical for PBDB): n_occurrences is LONG-TAILED (most "
+    "collections have 1-5; a few have 50+). ALWAYS log10-transform it before "
+    "correlating: df['log_occ'] = np.log10(df['n_occurrences'] + 1). Correlate "
+    "log_occ, not raw n_occurrences. Use EXACT column names: 'mid_age_ma' (not "
+    "'age'), 'n_occurrences' (not 'diversity' or 'abundance'). String columns "
+    "('environment', 'lithology') need encoding: use groupby + mean contrast "
+    "(e.g. compare log_occ between environment groups) or one-hot encoding, not "
+    "direct correlation.\n"
     "HARD RULES:\n"
     "- Keep the EXACT signature: def run_claim(df_train, df_eval)\n"
     "- Set a module-level CLAIM = \"...\" string: a specific, quantitative claim.\n"
@@ -151,17 +159,23 @@ _PROFILES = {
         "required_cols": GARD_REQUIRED,
         "optional_cols": GARD_OPTIONAL,
         "on_mission_cols": GARD_OPTIONAL,
+        "effect_min": 0.30,
+        "pmax": 1e-3,
     },
     "proterozoic_redox": {
         "required_cols": PROTEROZOIC_REDOX_REQUIRED,
         "optional_cols": PROTEROZOIC_REDOX_OPTIONAL,
         "on_mission_cols": ("fe_hr", "fe_t", "fe_py", "toc", "age"),
+        "effect_min": 0.25,
+        "pmax": 1e-3,
     },
     "paleo": {
         "required_cols": PALEO_REQUIRED,
         "optional_cols": PALEO_OPTIONAL,
         "on_mission_cols": ("mid_age_ma", "n_occurrences", "environment",
                              "lithology", "paleolatitude"),
+        "effect_min": 0.12,   # paleo correlations are inherently weaker than igneous
+        "pmax": 0.01,
     },
 }
 

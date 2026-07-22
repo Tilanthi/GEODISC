@@ -190,7 +190,11 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
             return result
 
     g1_metrics = gate1_run(src, seed=seed)
-    g1_pass, g1_reason = gate1_significant(g1_metrics)
+    _profile = data_profile.active()
+    g1_pass, g1_reason = gate1_significant(
+        g1_metrics,
+        effect_min=_profile.get("effect_min", 0.30),
+        pmax=_profile.get("pmax", 1e-3))
 
     result = {
         "claim": claim,
@@ -388,9 +392,22 @@ def _verdict_feedback_hints(path=None, n_known: int = 5, n_failed: int = 8) -> l
                     "age columns are sparse (~10% of rows).")
             elif top_cat == "weak":
                 hints.append(
-                    f"FAILURE PATTERN ({top_n}/{total}): |effect| < 0.30. Aim for |r|"
-                    " >= 0.4; prefer co-varying element groups (HFSE Zr-Nb-Y, LREE "
-                    "La-Ce-Nd, LILE Rb-Sr-Ba) and PARTIAL correlations.")
+                    f"FAILURE PATTERN ({top_n}/{total}): |effect| < threshold. "
+                    "Ensure you are using the RIGHT analytical approach for this data "
+                    "(log-transform long-tailed counts; use groupby contrasts for "
+                    "categorical columns; check the profile's column list).")
+        # Paleo-specific PBDB feedback: column names + log-transform
+        if data_profile.active_name() == "paleo":
+            attr_err = sum(1 for r in failed_rows
+                           if "attributeerror" in str(((r.get("gate1") or {}).get("metrics", {}) or {}).get("error", "")).lower())
+            mc = cats.get("missing-column", 0)
+            if attr_err + mc >= 2:
+                hints.append(
+                    f"PBDB DATA HANDLING ({attr_err} AttributeError + {mc} missing-column): "
+                    "the PBDB fossil-collection columns are DIFFERENT from Gard. Use: "
+                    "mid_age_ma (NOT 'age'), n_occurrences (ALWAYS log10-transform: "
+                    "np.log10(n_occurrences+1)), environment/lithology (encode via "
+                    "groupby+mean contrast). Do NOT reference sio2, mgo, nb_ppm.")
         # Integrity corrective: if recent gate1 rejections were for misstating the
         # direction or recycling a p-value (the surprise-objective's failure mode),
         # tell the proposer to compute-then-report. Closes the behavior loop.
