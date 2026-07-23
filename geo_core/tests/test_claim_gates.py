@@ -259,13 +259,16 @@ def test_two_gate_rejects_sign_mismatched_claim():
            '    _ = df_eval\n'
            '    return {"effect": -0.55, "pvalue": 1e-12}\n')
     orig = rcs.gate1_run
+    orig_ps = rcs.question_prescreen.enabled
     rcs.gate1_run = lambda s, seed=42, timeout=90.0: {"effect": -0.55, "pvalue": 1e-12}
+    rcs.question_prescreen.enabled = lambda: False
     try:
         v = rcs.two_gate_eval(src, run_gate2=False)
         assert v["gate1"]["pass"] is False
         assert "mismatch" in v["gate1"]["reason"].lower()
     finally:
         rcs.gate1_run = orig
+        rcs.question_prescreen.enabled = orig_ps
 
 
 def test_verdict_feedback_detects_column_name_failures():

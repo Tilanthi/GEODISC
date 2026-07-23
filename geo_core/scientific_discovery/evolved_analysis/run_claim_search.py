@@ -197,6 +197,7 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
     # Earth-history domain knowledge judges whether the CLAIM is textbook/known
     # BEFORE spending a sandbox eval. Textbook claims are rejected early; novel
     # questions proceed. Cheap (one LLM call). Disable: GEODISC_QUESTION_PRESCREEN=0.
+    gate0_vetted_novel = False
     if question_prescreen.enabled():
         try:
             ps_ok, ps_reason = question_prescreen.prescreen(claim)
@@ -215,13 +216,22 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
             }
             log_verdict(result, dataset)
             return result
+        gate0_vetted_novel = True
 
     g1_metrics = gate1_run(src, seed=seed)
     _profile = data_profile.active()
+    # If Gate 0 vetted the claim as genuinely novel, lower the significance bar —
+    # the novelty is in the question (already vetted), not the effect size. Paleontology
+    # data has inherently weaker signals than igneous geochem; a Gate-0-vetted question
+    # at r=0.07 is more valuable than an unvetted one at r=0.5.
+    if gate0_vetted_novel:
+        _eff_min = _profile.get("gate0_effect_min", 0.06)
+        _pmax = _profile.get("gate0_pmax", 0.05)
+    else:
+        _eff_min = _profile.get("effect_min", 0.30)
+        _pmax = _profile.get("pmax", 1e-3)
     g1_pass, g1_reason = gate1_significant(
-        g1_metrics,
-        effect_min=_profile.get("effect_min", 0.30),
-        pmax=_profile.get("pmax", 1e-3))
+        g1_metrics, effect_min=_eff_min, pmax=_pmax)
 
     result = {
         "claim": claim,

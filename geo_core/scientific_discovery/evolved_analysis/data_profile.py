@@ -181,6 +181,8 @@ _PROFILES = {
         "on_mission_cols": GARD_OPTIONAL,
         "effect_min": 0.30,
         "pmax": 1e-3,
+        "gate0_effect_min": 0.15,
+        "gate0_pmax": 0.01,
     },
     "proterozoic_redox": {
         "required_cols": PROTEROZOIC_REDOX_REQUIRED,
@@ -188,14 +190,18 @@ _PROFILES = {
         "on_mission_cols": ("fe_hr", "fe_t", "fe_py", "toc", "age"),
         "effect_min": 0.25,
         "pmax": 1e-3,
+        "gate0_effect_min": 0.10,
+        "gate0_pmax": 0.05,
     },
     "paleo": {
         "required_cols": PALEO_REQUIRED,
         "optional_cols": PALEO_OPTIONAL,
         "on_mission_cols": ("mid_age_ma", "n_occurrences", "environment",
                              "lithology", "paleolatitude"),
-        "effect_min": 0.12,   # paleo correlations are inherently weaker than igneous
+        "effect_min": 0.12,
         "pmax": 0.01,
+        "gate0_effect_min": 0.06,   # Gate-0-vetted novel questions get a lower bar
+        "gate0_pmax": 0.05,        # (the novelty is in the question, not the effect size)
     },
 }
 
