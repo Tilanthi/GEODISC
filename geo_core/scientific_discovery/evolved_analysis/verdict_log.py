@@ -35,6 +35,9 @@ def outcome(verdict: dict) -> str:
     g2 = verdict.get("gate2")
     g1_reason = (g1.get("reason") or "") if isinstance(g1, dict) else ""
 
+    # Gate 0: question-novelty prescreen (LLM judged the claim textbook/known).
+    if isinstance(g1, dict) and g1.get("pass") is None and "gate0" in g1_reason:
+        return "gate0-textbook"
     # Tier 1: canonical-signature pre-filter short-circuit (sandbox skipped for
     # a relation Gate 2 already ruled known). gate1.pass is None (not run), so
     # bucket it distinctly from a real gate1-failed or gate2-known verdict.

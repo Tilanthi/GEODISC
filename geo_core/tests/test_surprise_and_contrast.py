@@ -129,6 +129,7 @@ def test_two_gate_eval_annotates_surprise(monkeypatch):
                         lambda src, seed=42, timeout=90.0:
                         {"effect": 0.8, "pvalue": 1e-9, "effect_type": "x", "summary": "s"})
     monkeypatch.setattr(rcs, "_canonical_prefilter_enabled", lambda: False)
+    monkeypatch.setattr(rcs.question_prescreen, "enabled", lambda: False)
     v = rcs.two_gate_eval(src, run_gate2=False)
     assert v["gate1"]["pass"] is True
     assert v.get("surprise") == 0.0  # Ce-Nb positive is a textbook confirmation

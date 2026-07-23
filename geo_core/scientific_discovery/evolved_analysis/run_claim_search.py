@@ -50,6 +50,10 @@ try:
     from . import diversity, inspirations, data_profile  # Tier 3
 except ImportError:
     import diversity, inspirations, data_profile          # standalone
+try:
+    from . import question_prescreen                     # Gate 0: question novelty prescreen
+except ImportError:
+    import question_prescreen                             # standalone
 
 logger = logging.getLogger(__name__)
 
@@ -184,6 +188,29 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
                 "gate2": {"pass": False, "status": "known", "n_retrieved": 0,
                           "reasoning": "canonical signature previously judged "
                                        "known by Gate 2 (sandbox skipped)"},
+                "both_pass": False,
+            }
+            log_verdict(result, dataset)
+            return result
+
+    # Gate 0 — question novelty prescreen: an LLM agent with paleontology /
+    # Earth-history domain knowledge judges whether the CLAIM is textbook/known
+    # BEFORE spending a sandbox eval. Textbook claims are rejected early; novel
+    # questions proceed. Cheap (one LLM call). Disable: GEODISC_QUESTION_PRESCREEN=0.
+    if question_prescreen.enabled():
+        try:
+            ps_ok, ps_reason = question_prescreen.prescreen(claim)
+        except Exception:
+            ps_ok, ps_reason = True, "prescreen-error"
+        if not ps_ok:
+            result = {
+                "claim": claim,
+                "program_hash": program_hash,
+                "gate0": {"pass": False, "reason": ps_reason},
+                "gate1": {"pass": None,
+                          "reason": "skipped:gate0-textbook",
+                          "metrics": {}},
+                "gate2": None,
                 "both_pass": False,
             }
             log_verdict(result, dataset)
@@ -408,6 +435,18 @@ def _verdict_feedback_hints(path=None, n_known: int = 5, n_failed: int = 8) -> l
                     "mid_age_ma (NOT 'age'), n_occurrences (ALWAYS log10-transform: "
                     "np.log10(n_occurrences+1)), environment/lithology (encode via "
                     "groupby+mean contrast). Do NOT reference sio2, mgo, nb_ppm.")
+        # Gate 0 feedback: if recent questions were rejected as textbook/known,
+        # redirect the proposer toward genuinely under-studied territory.
+        g0 = sum(1 for r in rows[-40:] if r.get("outcome") == "gate0-textbook")
+        if g0 >= 2:
+            hints.append(
+                f"NOVELTY REDIRECT ({g0} recent questions rejected as textbook/known): "
+                "your claims are restating WELL-ESTABLISHED patterns. Think beyond "
+                "standard taphonomic bias and diversity-through-time curves. Aim for: "
+                "latitudinal diversity gradients in deep time; diversity-atmosphere "
+                "coupling across the GOE/Snowball Earth/Cambrian explosion; threshold/"
+                "tipping-point dynamics; counterintuitive or under-sampled-interval "
+                "patterns; interaction effects (does a relationship CHANGE across age?).")
         # Integrity corrective: if recent gate1 rejections were for misstating the
         # direction or recycling a p-value (the surprise-objective's failure mode),
         # tell the proposer to compute-then-report. Closes the behavior loop.

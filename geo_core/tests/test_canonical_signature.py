@@ -94,13 +94,16 @@ def _run_with_gate1_spy(src, is_known_value):
 
     orig_gate1 = rcs.gate1_run
     orig_isknown = rcs.canonical.is_known
+    orig_ps = rcs.question_prescreen.enabled
     rcs.gate1_run = spy
     rcs.canonical.is_known = lambda claim: is_known_value
+    rcs.question_prescreen.enabled = lambda: False  # disable Gate 0 in tests
     try:
         verdict = rcs.two_gate_eval(src, run_gate2=False)
     finally:
         rcs.gate1_run = orig_gate1
         rcs.canonical.is_known = orig_isknown
+        rcs.question_prescreen.enabled = orig_ps
     return verdict, spawned["yes"]
 
 
