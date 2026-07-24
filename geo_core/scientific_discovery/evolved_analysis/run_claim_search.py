@@ -54,6 +54,10 @@ try:
     from . import question_prescreen                     # Gate 0: question novelty prescreen
 except ImportError:
     import question_prescreen                             # standalone
+try:
+    from . import discovery_ranking                       # Discovery ranking (promotion/anomaly/ledger)
+except ImportError:
+    import discovery_ranking                              # standalone
 
 logger = logging.getLogger(__name__)
 
@@ -236,6 +240,7 @@ def two_gate_eval(src: str, seed: int = 42, run_gate2: bool = True,
     result = {
         "claim": claim,
         "program_hash": program_hash,
+        "gate0_vetted_novel": gate0_vetted_novel,
         "gate1": {"pass": g1_pass, "reason": g1_reason,
                   "metrics": {k: v for k, v in g1_metrics.items() if k != "trace"}},
         "gate2": None,
@@ -332,6 +337,27 @@ def _emit(verdict: dict) -> None:
             "pvalue": verdict["gate1"]["metrics"].get("pvalue"),
             "surprise": verdict.get("surprise"),           # Tier 2
             "novelty_tier": verdict.get("novelty_tier"),   # Tier 2
+            # Discovery ranking (from the discovery-process documents):
+            # promotion_score (evidence strength) + anomaly_priority (paradigm-breaking
+            # potential, with mechanism-absence INVERTED into a boost) + four-way
+            # ledger status (EXPLAINED/UNEXPLAINED × CONFIRMED/UNCONFIRMED).
+            "promotion_score": discovery_ranking.promotion_score(
+                verdict["gate1"]["metrics"].get("effect"),
+                verdict["gate1"]["metrics"].get("pvalue"),
+                gate0_vetted=verdict.get("gate0_vetted_novel", False)),
+            "anomaly_priority": discovery_ranking.anomaly_priority(
+                verdict.get("novelty_tier"),
+                verdict.get("surprise")),
+            "ledger_status": discovery_ranking.ledger_status(
+                verdict.get("novelty_tier"),
+                verdict["gate2"].get("status") if verdict.get("gate2") else None),
+            "paradigm_breaker": discovery_ranking.is_paradigm_breaker(
+                discovery_ranking.ledger_status(
+                    verdict.get("novelty_tier"),
+                    verdict["gate2"].get("status") if verdict.get("gate2") else None),
+                discovery_ranking.anomaly_priority(
+                    verdict.get("novelty_tier"),
+                    verdict.get("surprise"))),
         },
     }
     EVOLVED_STORE.parent.mkdir(parents=True, exist_ok=True)
